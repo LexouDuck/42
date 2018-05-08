@@ -1,0 +1,15 @@
+language: C
+
+os:
+  - linux
+
+env:
+  - PKG_CONFIG_PATH=$TRAVIS_BUILD_DIR
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libx11-dev xorg-dev libbsd-dev
+
+script:
+  - make && make clean
+  - make && sudo make install

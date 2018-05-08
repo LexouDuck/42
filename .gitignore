@@ -1,0 +1,13 @@
+# Project subjects and other stuff
+Piscine C/
+*.pdf
+
+# Executables
+*.exe
+*.exe.stackdump
+*.out
+*.dSYM
+
+# Macintosh files
+*.DS_Store
+*._*
