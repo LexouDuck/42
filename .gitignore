@@ -2,10 +2,11 @@
 Piscine C/
 *.pdf
 
-# Executables
+# Executables & object files
+*.o
+*.out
 *.exe
 *.exe.stackdump
-*.out
 *.dSYM
 
 # Macintosh files
