@@ -13,9 +13,6 @@
 #ifndef __FDF_H
 # define __FDF_H
 
-// REMOVE THIS BEFORE UPLOAD
-#include <stdio.h>
-
 # include <math.h>
 # include <stdlib.h>
 # include <unistd.h>
