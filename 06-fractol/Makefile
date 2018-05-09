@@ -3,16 +3,15 @@ NAME	=	fractol
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra
 
-LIBS	=	$(LIBFT) $(LIBX_WIN)
+LIBS	=	$(LIBFT) $(LIBX_MAC)
 LIBFT	=	-L$(LFTDIR) -lft
 LIBX_MAC	=	-lm -lmlx -framework OpenGL -framework AppKit
 LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
 
-SRCDIR	=	./src/
+SRCDIR	=	./
 HDRDIR	=	./
 MLXDIR	=	./minilibx/
 LFTDIR	=	./libft/
-TSTDIR	=	./tests/
 
 HDRS	=	$(HDRDIR)fdf.h				\
 			$(LFTDIR)libft.h
@@ -51,7 +50,7 @@ re: fclean all
 
 test: all
 	@printf "Testing $(NAME):\n"
-	startxwin ./fdf $(TSTDIR)42.fdf
+	startxwin ./fractol julia
 
 mlx:
 	@make -C $(MLXDIR) all && sh ./mlx.sh

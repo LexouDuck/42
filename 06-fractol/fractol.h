@@ -10,8 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
-
 #ifndef __FRACTOL_H
 # define __FRACTOL_H
 
@@ -25,6 +23,16 @@
 # include <mlx.h>
 
 # include "libft/libft.h"
+
+
+
+# define WIN_W	640
+# define WIN_H	480
+
+typedef struct	s_fractol
+{
+	void		*sweg;
+}				t_fractol;
 
 typedef	struct	s_image
 {
@@ -40,6 +48,7 @@ typedef struct	s_mlx
 	void		*win_ptr;
 	void		*img_ptr;
 	t_image		*image;
+	t_fractol	*fractol;
 }				t_mlx;
 
 #endif

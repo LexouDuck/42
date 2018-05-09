@@ -14,7 +14,9 @@
 
 static int	fractol_init(t_fractol *fractol)
 {
-
+	if (fractol == NULL)
+		return (ERROR);
+	return (OK);
 }
 
 static int	img_init(t_mlx *mlx)
@@ -23,7 +25,7 @@ static int	img_init(t_mlx *mlx)
 
 	if (!(image = (t_image *)malloc(sizeof(t_image))))
 		return (ERROR);
-	mlx->img_ptr = mlx_new_image(mlx->mlx_ptr, WIDTH, HEIGHT);
+	mlx->img_ptr = mlx_new_image(mlx->mlx_ptr, WIN_W, WIN_H);
 	image->buffer = (t_u8 *)mlx_get_data_addr(mlx->img_ptr,
 		&(image->bpp),
 		&(image->line),
@@ -36,7 +38,7 @@ static int	open_window(t_fractol *fractol, char *title)
 {
 	t_mlx	mlx;
 
-	mlx.fdf = fdf;
+	mlx.fractol = fractol;
 	if (!(mlx.mlx_ptr = mlx_init()))
 	{
 		ft_putendl("Error: could not initialize MinilibX");
@@ -47,12 +49,12 @@ static int	open_window(t_fractol *fractol, char *title)
 		ft_putendl("Error: could not create render image");
 		return (ERROR);
 	}
-	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIDTH, HEIGHT, title)))
+	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIN_W, WIN_H, title)))
 	{
 		ft_putendl("Error: could not open new window");
 		return (ERROR);
 	}
-	setup_events(&mlx);
+	//setup_events(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
 }
@@ -69,6 +71,6 @@ int			main(int argc, char **argv)
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("fractol: expecting one argument (julia, mandelbrot, or other)");
+	ft_putendl("fractol: expecting one argument among the following:\n - basic\n - julia\n - mandelbrot");
 	return (ERROR);
 }
