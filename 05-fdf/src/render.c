@@ -68,35 +68,35 @@ static void		render_clean(t_matrix *matrix)
 	free(matrix->t);
 }
 /*
-static void		render_debug(t_mlx *mlx, t_camera *camera, t_matrix *matrix)
-{
-	int		length;
-	char	*str;
-
-	length = 48;
-	if (!(str = (char *)malloc(length)))
-		return ;
-	snprintf(str, length, "%f,%f, %f", camera->lat, camera->lon, camera->zoom);
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 20, 0xFFFFFF, "CAMERA->");
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 20, 0xFFFFFF, ft_itoa(camera->render));
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, 0xFFFFFF, "Anchor:");
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 40, 0xFFFFFF, vector_tostr(&camera->anchor));
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 60, 0xFFFFFF, "Vector:");
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 60, 0xFFFFFF, vector_tostr(&camera->pos));
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 80, 0xFFFFFF, "Lat,Lon,Zoom:");
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 90, 80, 0xFFFFFF, str);
-
-	snprintf(str, length, "u:(%f,%f,%f)", matrix->u->x, matrix->u->y, matrix->u->z);
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 20, 0xFFFFFF, str);
-	snprintf(str, length, "v:(%f,%f,%f)", matrix->v->x, matrix->v->y, matrix->v->z);
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 40, 0xFFFFFF, str);
-	snprintf(str, length, "w:(%f,%f,%f)", matrix->w->x, matrix->w->y, matrix->w->z);
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 60, 0xFFFFFF, str);
-	if (matrix->t)	snprintf(str, length, "t:(%f,%f,%f)", matrix->t->x, matrix->t->y, matrix->t->z);
-	else			snprintf(str, length, "t:(NULL)");
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 80, 0xFFFFFF, str);
-	free(str);
-}
+**static void		render_debug(t_mlx *mlx, t_camera *camera, t_matrix *matrix)
+**{
+**	int		length;
+**	char	*str;
+**
+**	length = 48;
+**	if (!(str = (char *)malloc(length)))
+**		return ;
+**	snprintf(str, length, "%f,%f, %f", camera->lat, camera->lon, camera->zoom);
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 20, 0xFFFFFF, "CAMERA->");
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 20, 0xFFFFFF, ft_itoa(camera->render));
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, 0xFFFFFF, "Anchor:");
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 40, 0xFFFFFF, vector_tostr(&camera->anchor));
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 60, 0xFFFFFF, "Vector:");
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 60, 0xFFFFFF, vector_tostr(&camera->pos));
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 80, 0xFFFFFF, "Lat,Lon,Zoom:");
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 90, 80, 0xFFFFFF, str);
+**
+**	snprintf(str, length, "u:(%f,%f,%f)", matrix->u->x, matrix->u->y, matrix->u->z);
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 20, 0xFFFFFF, str);
+**	snprintf(str, length, "v:(%f,%f,%f)", matrix->v->x, matrix->v->y, matrix->v->z);
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 40, 0xFFFFFF, str);
+**	snprintf(str, length, "w:(%f,%f,%f)", matrix->w->x, matrix->w->y, matrix->w->z);
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 60, 0xFFFFFF, str);
+**	if (matrix->t)	snprintf(str, length, "t:(%f,%f,%f)", matrix->t->x, matrix->t->y, matrix->t->z);
+**	else			snprintf(str, length, "t:(NULL)");
+**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 80, 0xFFFFFF, str);
+**	free(str);
+**}
 */
 void			render(t_mlx *mlx, t_camera *camera)
 {

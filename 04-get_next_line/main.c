@@ -1,4 +1,4 @@
-#include "get_next_line.h"
+#include "get_next_line.c"
 
 #include <fcntl.h>
 // These two are only required on some UNIX distribs

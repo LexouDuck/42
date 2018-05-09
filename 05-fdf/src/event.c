@@ -108,6 +108,12 @@ ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 		camera->render += (camera->render & 2) ? -2 : 2;
 	else if (key == KEY_EOL)
 		camera->render += (camera->render & 1) ? -1 : 1;
+	else if (key == KEY_LEFT || key == KEY_RIGHT)
+		camera->anchor.x += (key == KEY_LEFT) ? -1 : 1;
+	else if (key == KEY_DOWN || key == KEY_UP)
+		camera->anchor.z += (key == KEY_UP) ? -1 : 1;
+	else if (key == KEY_PAGE_DOWN || key == KEY_PAGE_UP)
+		camera->anchor.y += (key == KEY_PAGE_DOWN) ? -1 : 1;
 	render(mlx, camera);
 	return (OK);
 }

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/libft.h"
+#include "get_next_line.h"
 
 static	int		gnl_read_file(int const fd, char *tmp[fd])
 {

@@ -4,10 +4,15 @@ Piscine C/
 
 # Executables & object files
 *.o
+*.a
 *.out
 *.exe
 *.exe.stackdump
 *.dSYM
+*/main
+*/fdf
+*/fractol
+
 
 # Macintosh files
 *.DS_Store

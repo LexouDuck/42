@@ -56,15 +56,17 @@ inline void	vector_scale(t_vector *vector, float scale)
 	vector->z *= scale;
 }
 
-char		*vector_tostr(t_vector *vector)
-{
-	char	*result;
-
-	if (!(result = (char *)malloc(36)))
-		return (NULL);
-	snprintf(result, 36, "(%f,%f,%f)",
-		vector->x,
-		vector->y,
-		vector->z);
-	return (result);
-}
+/*
+**char		*vector_tostr(t_vector *vector)
+**{
+**	char	*result;
+**
+**	if (!(result = (char *)malloc(36)))
+**		return (NULL);
+**	snprintf(result, 36, "(%f,%f,%f)",
+**		vector->x,
+**		vector->y,
+**		vector->z);
+**	return (result);
+**}
+*/
