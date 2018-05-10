@@ -10,12 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fractol.h"
+#include "../fractol.h"
 
-static int	fractol_init(t_fractol *fractol)
+static int	fractol_init(t_fractol *fractol, char *arg)
 {
 	if (fractol == NULL)
 		return (ERROR);
+	else if (ft_strcmp(arg, "julia") == 0)
+		fractol->type = julia;
+	else if (ft_strcmp(arg, "fatou") == 0)
+		fractol->type = fatou;
+	else if (ft_strcmp(arg, "mandelbrot") == 0)
+		fractol->type = mandelbrot;
 	return (OK);
 }
 
@@ -54,7 +60,7 @@ static int	open_window(t_fractol *fractol, char *title)
 		ft_putendl("Error: could not open new window");
 		return (ERROR);
 	}
-	//setup_events(&mlx);
+	setup_events(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
 }
@@ -65,12 +71,13 @@ int			main(int argc, char **argv)
 
 	if (argc == 2)
 	{
-		if (fractol_init(&fractol) == ERROR)
+		if (fractol_init(&fractol, argv[1]) == ERROR)
 			return (ERROR);
 		if (open_window(&fractol, ft_strjoin("Fractol - ", argv[1])))
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("fractol: expecting one argument among the following:\n - basic\n - julia\n - mandelbrot");
+	ft_putendl("fractol: expecting one argument among the following:"
+		"\n - julia\n - fatou\n - mandelbrot");
 	return (ERROR);
 }

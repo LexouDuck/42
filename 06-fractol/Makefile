@@ -3,12 +3,12 @@ NAME	=	fractol
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra
 
-LIBS	=	$(LIBFT) $(LIBX_MAC)
+LIBS	=	$(LIBFT) $(LIBX_WIN)
 LIBFT	=	-L$(LFTDIR) -lft
 LIBX_MAC	=	-lm -lmlx -framework OpenGL -framework AppKit
 LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
 
-SRCDIR	=	./
+SRCDIR	=	./src/
 HDRDIR	=	./
 MLXDIR	=	./minilibx/
 LFTDIR	=	./libft/
@@ -16,6 +16,10 @@ LFTDIR	=	./libft/
 HDRS	=	$(HDRDIR)fdf.h				\
 			$(LFTDIR)libft.h
 SRCS	= 	$(SRCDIR)main.c				\
+			$(SRCDIR)event.c			\
+			$(SRCDIR)render.c			\
+			$(SRCDIR)window.c			\
+			$(SRCDIR)color.c			
 
 OBJS	=	$(SRCS:.c=.o)
 

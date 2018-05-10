@@ -115,5 +115,5 @@ fclean: clean
 re: fclean all
 
 test: all
-	$(CC) -o main main_atoi.c $(NAME) && ./main
-	$(CC) -o main main.c $(NAME) && ./main
+	$(CC) -w -o main main_atoi.c $(NAME) && ./main
+	$(CC) -w -o main main.c $(NAME) && ./main

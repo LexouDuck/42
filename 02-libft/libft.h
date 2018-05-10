@@ -517,8 +517,8 @@ char					*ft_strrep_charset(
 */
 char					*ft_strrep_string(
 		char const *str,
-		char const *old,
-		char const *new);
+		char *old,
+		char *new);
 
 /*
 ** ============ Write Functions ============

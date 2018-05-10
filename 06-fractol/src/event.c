@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../fdf.h"
+#include "../fractol.h"
 
 static int	event_mouse_press(int button, int x, int y, void *param)
 {
@@ -19,24 +19,10 @@ ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
 ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
 ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
-	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
-	if (button == MOUSE_SCROLL_UP ||
-		button == MOUSE_SCROLL_DOWN)
-	{
-		camera->zoom *= (button == MOUSE_SCROLL_UP) ? 0.9 : 1.1;
-		if (camera->zoom < 1)
-			camera->zoom = 1;
-	}
-	else if (button == MOUSE_L_CLICK)
-		camera->mode = CAMERA_ZOOM;
-	else if (button == MOUSE_M_CLICK)
-		camera->mode = CAMERA_PAN;
-	else if (button == MOUSE_R_CLICK)
-		camera->mode = CAMERA_ROTATE;
-	render(mlx, camera);
+	if (mlx == NULL)
+		return (ERROR);
 	return (OK);
 }
 
@@ -47,11 +33,10 @@ ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
 ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
 ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
-	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
-	camera->mode = CAMERA_NONE;
+	if (mlx == NULL)
+		return (ERROR);
 	return (OK);
 }
 
@@ -59,27 +44,15 @@ static int	event_mouse_move(int x, int y, void *param)
 {
 	static int	old_x = 0;
 	static int	old_y = 0;
+	float		d_x;
+	float		d_y;
 	t_mlx		*mlx;
-	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
-	if (camera->mode == CAMERA_NONE)
-	{
-		old_x = x;
-		old_y = y;
-		return (OK);
-	}
-	else if (camera->mode == CAMERA_ZOOM)
-		camera_zoom_tilt(camera,
-			(float)(x - old_x) * 0.05, (float)(y - old_y) * 0.05);
-	else if (camera->mode == CAMERA_ROTATE)
-		camera_rotate(camera,
-			(float)(x - old_x) * 0.05, (float)(y - old_y) * 0.05);
-	else if (camera->mode == CAMERA_PAN)
-		camera_pan(camera,
-			(float)(x - old_x) * 0.05, (float)(y - old_y) * 0.02);
-	render(mlx, camera);
+	d_x = (float)(x - old_x) * 0.05;
+	d_y = (float)(y - old_y) * 0.05;
+	if (d_x || d_y)
+		render(mlx);
 	old_x = x;
 	old_y = y;
 	return (OK);
@@ -90,28 +63,15 @@ static int	event_key(int key, void *param)
 ft_putstr("KEY PRESSED: ");
 ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 	t_mlx		*mlx;
-	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
+	if (mlx == NULL)
+		return (ERROR);
 	if (key == KEY_ESC)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr);
 		exit(OK);
 	}
-	else if (key == KEY_DELETE)
-		camera->render += (camera->render & 4) ? -4 : 4;
-	else if (key == KEY_HOME)
-		camera->render += (camera->render & 2) ? -2 : 2;
-	else if (key == KEY_END)
-		camera->render += (camera->render & 1) ? -1 : 1;
-	else if (key == KEY_LEFT || key == KEY_RIGHT)
-		camera->anchor.x += (key == KEY_LEFT) ? -1 : 1;
-	else if (key == KEY_DOWN || key == KEY_UP)
-		camera->anchor.z += (key == KEY_UP) ? -1 : 1;
-	else if (key == KEY_PAGE_DN || key == KEY_PAGE_UP)
-		camera->anchor.y += (key == KEY_PAGE_DN) ? -1 : 1;
-	render(mlx, camera);
 	return (OK);
 }
 

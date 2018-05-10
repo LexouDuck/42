@@ -21,7 +21,7 @@
 # include <sys/stat.h>
 
 # include <mlx.h>
-
+# include "../mlx_events.h"
 # include "libft/libft.h"
 
 
@@ -29,9 +29,23 @@
 # define WIN_W	640
 # define WIN_H	480
 
+typedef struct	s_point
+{
+	int			x;
+	int			y;
+	int			color;
+}				t_point;
+
+typedef enum	e_fractal
+{
+	julia,
+	fatou,
+	mandelbrot
+}				t_fractal;
+
 typedef struct	s_fractol
 {
-	void		*sweg;
+	t_fractal	type;
 }				t_fractol;
 
 typedef	struct	s_image
@@ -50,5 +64,32 @@ typedef struct	s_mlx
 	t_image		*image;
 	t_fractol	*fractol;
 }				t_mlx;
+
+/*
+**	====	color.c
+*/
+int			color_new(char a, t_u8 r, t_u8 g, t_u8 b);
+char		color_get_a(int color);
+t_u8		color_get_r(int color);
+t_u8		color_get_g(int color);
+t_u8		color_get_b(int color);
+
+/*
+**	====	window.c
+*/
+int			is_in_window(int x, int y);
+void		bring_into_window(t_point *point);
+void		set_pixel(t_image *image, t_point *pos);
+int			get_color_mean(int color1, int color2, float ratio);
+
+/*
+**	====	render.c
+*/
+void		render(t_mlx *mlx);
+
+/*
+**	====	event.c
+*/
+int			setup_events(t_mlx *mlx);
 
 #endif
