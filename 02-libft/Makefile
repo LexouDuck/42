@@ -22,6 +22,7 @@ SRCS	=	ft_memalloc.c		\
 			ft_itoa.c			\
 			ft_itoa_hex.c		\
 			ft_itoa_base.c		\
+			ft_ftoa.c			\
 			ft_isalpha.c		\
 			ft_isdigit.c		\
 			ft_isalnum.c		\

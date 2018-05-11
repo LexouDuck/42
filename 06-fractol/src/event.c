@@ -37,6 +37,11 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	mlx = (t_mlx *)param;
 	if (mlx == NULL)
 		return (ERROR);
+	if (button == MOUSE_SCROLL_UP || button == MOUSE_SCROLL_DOWN)
+	{
+		mlx->fractol->zoom += (button == MOUSE_SCROLL_UP) ? -0.1 : 0.1;
+		render(mlx);
+	}
 	return (OK);
 }
 
