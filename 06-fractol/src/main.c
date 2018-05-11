@@ -61,6 +61,7 @@ static int	open_window(t_fractol *fractol, char *title)
 		return (ERROR);
 	}
 	setup_events(&mlx);
+	render(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
 }

@@ -49,6 +49,8 @@ static int	event_mouse_move(int x, int y, void *param)
 	t_mlx		*mlx;
 
 	mlx = (t_mlx *)param;
+	mlx->fractol->mouse_x = x;
+	mlx->fractol->mouse_y = y;
 	d_x = (float)(x - old_x) * 0.05;
 	d_y = (float)(y - old_y) * 0.05;
 	if (d_x || d_y)

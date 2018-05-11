@@ -36,6 +36,12 @@ typedef struct	s_point
 	int			color;
 }				t_point;
 
+typedef struct	s_complex
+{
+	float		x;
+	float		y;
+}				t_complex;
+
 typedef enum	e_fractal
 {
 	julia,
@@ -46,6 +52,8 @@ typedef enum	e_fractal
 typedef struct	s_fractol
 {
 	t_fractal	type;
+	int			mouse_x;
+	int			mouse_y;
 }				t_fractol;
 
 typedef	struct	s_image
