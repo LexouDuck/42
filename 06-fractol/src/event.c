@@ -39,7 +39,7 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 		return (ERROR);
 	if (button == MOUSE_SCROLL_UP || button == MOUSE_SCROLL_DOWN)
 	{
-		mlx->fractol->zoom += (button == MOUSE_SCROLL_UP) ? -0.1 : 0.1;
+		mlx->fractol->zoom *= (button == MOUSE_SCROLL_UP) ? 0.9 : 1.1;
 		render(mlx);
 	}
 	return (OK);
@@ -54,8 +54,13 @@ static int	event_mouse_move(int x, int y, void *param)
 	t_mlx		*mlx;
 
 	mlx = (t_mlx *)param;
-	mlx->fractol->mouse_x = x;
-	mlx->fractol->mouse_y = y;
+	mlx->fractol->mouse.x = x;
+	mlx->fractol->mouse.y = y;
+	if (mlx->fractol->type == mandelbrot)
+	{
+		mlx->fractol->anchor.x = mlx->fractol->mouse.x;
+		mlx->fractol->anchor.y = mlx->fractol->mouse.y;
+	}
 	d_x = (float)(x - old_x) * 0.05;
 	d_y = (float)(y - old_y) * 0.05;
 	if (d_x || d_y)

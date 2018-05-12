@@ -54,7 +54,7 @@ re: fclean all
 
 test: all
 	@printf "Testing $(NAME):\n"
-	startxwin ./fractol julia
+	startxwin ./fractol fatou
 
 mlx:
 	@make -C $(MLXDIR) all && sh ./mlx.sh

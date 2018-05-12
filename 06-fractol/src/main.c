@@ -22,9 +22,12 @@ static int	fractol_init(t_fractol *fractol, char *arg)
 		fractol->type = fatou;
 	else if (ft_strcmp(arg, "mandelbrot") == 0)
 		fractol->type = mandelbrot;
-	fractol->zoom = 1.8;
-	fractol->mouse_x = WIN_W / 2;
-	fractol->mouse_y = 0;
+	fractol->radius = 1.8;
+	fractol->zoom = 2.0;
+	fractol->anchor.x = WIN_W / 2.0;
+	fractol->anchor.y = WIN_H / 2.0;
+	fractol->mouse.x = WIN_W / 2;
+	fractol->mouse.y = 0;
 	return (OK);
 }
 

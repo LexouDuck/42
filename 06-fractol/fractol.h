@@ -52,9 +52,10 @@ typedef enum	e_fractal
 typedef struct	s_fractol
 {
 	t_fractal	type;
+	float		radius;
 	float		zoom;
-	int			mouse_x;
-	int			mouse_y;
+	t_complex	anchor;
+	t_point		mouse;
 }				t_fractol;
 
 typedef	struct	s_image
