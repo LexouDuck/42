@@ -10,7 +10,7 @@ LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
 
 SRCDIR	=	./src/
 HDRDIR	=	./
-MLXDIR	=	./minilibx/
+MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 
 HDRS	=	$(HDRDIR)fdf.h				\
@@ -18,6 +18,8 @@ HDRS	=	$(HDRDIR)fdf.h				\
 SRCS	= 	$(SRCDIR)main.c				\
 			$(SRCDIR)event.c			\
 			$(SRCDIR)render.c			\
+			$(SRCDIR)complex.c			\
+			$(SRCDIR)fractal.c			\
 			$(SRCDIR)window.c			\
 			$(SRCDIR)color.c			
 
@@ -52,11 +54,7 @@ fclean: clean
 
 re: fclean all
 
-test: all
-	@printf "Testing $(NAME):\n"
-	startxwin ./fractol fatou
-
 mlx:
-	@make -C $(MLXDIR) all && sh ./mlx.sh
+	@make -C $(MLXDIR) all && sh ../mlx.sh
 	@make fclean
 	@make test

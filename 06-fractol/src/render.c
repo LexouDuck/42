@@ -12,141 +12,97 @@
 
 #include "../fractol.h"
 
-void	render_debug(t_mlx *mlx, t_complex *complex)
+void	render_debug_complex(t_mlx *mlx, t_complex *complex, t_point p)
 {
-	int index;
-	char *c_real = ft_ftoa(complex->x, 3);
-	char *c_imag = ft_ftoa(complex->y, 3);
-	int c_real_length = ft_strlen(c_real);
-	int c_imag_length = ft_strlen(c_imag);
-	char *c;
+	char *result;
+	char *c_real;
+	char *c_imag;
+	t_point c;
 
-	if (!(c = (char *)malloc(c_real_length + c_imag_length + 8)))
+	c_real = ft_ftoa(complex->x, 3);
+	c_imag = ft_ftoa(complex->y, 3);
+	c.x = ft_strlen(c_real);
+	c.y = ft_strlen(c_imag);
+	if (!(result = (char *)malloc(c.x + c.y + 4)))
 		return;
-	index = 0;
-	c[index++] = 'c';
-	c[index++] = ':';
-	c[index++] = ' ';
-	ft_memcpy(c + index, c_real, c_real_length);
-	index += c_real_length;
-	c[index++] = ' ';
+	c.color = 0;
+	ft_memcpy(result + c.color, c_real, c.x);
+	c.color += c.x;
+	result[c.color++] = ' ';
 	if (ft_isdigit(c_imag[0]))
-		c[index++] = '+';
-	ft_memcpy(c + index, c_imag, c_imag_length);
-	index += c_imag_length;
-	c[index++] = 'i';
-	c[index++] = '\0';
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 20, 0xFFFFFF, c);
+		result[c.color++] = '+';
+	ft_memcpy(result + c.color, c_imag, c.y);
+	c.color += c.y;
+	result[c.color++] = 'i';
+	result[c.color] = '\0';
+	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, p.x, p.y, p.color, result);
 	free(c_real);
 	free(c_imag);
+	free(result);
+}
+
+void	render_debug(t_mlx *mlx, t_complex *complex)
+{
+	t_point pos;
+	char *c;
+
+	pos.color = 0xFFFFFF;
+	c = ft_ftoa(mlx->fractol->radius, 4);
+	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, pos.color, "RADIUS:");
+	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 40, pos.color, c);
 	free(c);
-	c = ft_ftoa(mlx->fractol->zoom, 2);
-	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, 0xFFFFFF, c);
+	c = ft_ftoa(mlx->fractol->zoom, 4);
+	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 60, pos.color, "ZOOM:");
+	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 60, pos.color, c);
 	free(c);
-}
-
-static inline int	render_julia(t_complex *z, t_complex *c, int max, float radius)
-{
-	t_complex tmp;
-	int i;
-
-	i = 0;
-	while (i < max) 
-	{
-		tmp.x = z->x * z->x - z->y * z->y + c->x;
-		tmp.y = 2 * z->x * z->y + c->y;
-		if (tmp.x * tmp.x + tmp.y * tmp.y > radius)
-		{
-			return (color_new(0, i << 8, i << 4, i << 2));
-		}
-		z->x = tmp.x;
-		z->y = tmp.y;
-		++i;
-	}
-	return (0);
-}
-
-static inline int	render_fatou(t_complex *z, t_complex *c, int max, float radius)
-{
-	t_complex tmp;
-	int i;
-
-	i = 0;
-	while (i < max) 
-	{
-		tmp.x = z->x * z->x - z->y * z->y + c->x;
-		tmp.y = 2 * z->x * z->y + c->y;
-		if (tmp.x * tmp.x + tmp.y * tmp.y > radius)
-		{
-			return (0);
-		}
-		z->x = tmp.x;
-		z->y = tmp.y;
-		++i;
-	}
-	i = 16 * (tmp.x * tmp.x + tmp.y * tmp.y);
-	return color_new(0, 255 - i, i << 4, i << 2);
-}
-
-static inline int	render_mandelbrot(t_complex *z, int max, float radius)
-{
-	t_complex c;
-	t_complex tmp;
-	int i;
-
-	c.x = 0;
-	c.y = 0;
-	i = 0;
-	while (i < max) 
-	{
-		tmp.x = c.x * c.x - c.y * c.y + z->x;
-		tmp.y = 2 * c.x * c.y + z->y;
-		if (tmp.x * tmp.x + tmp.y * tmp.y > radius)
-		{
-			return (color_new(0, 255 - i, i << 6, i << 2));
-		}
-		c.x = tmp.x;
-		c.y = tmp.y;
-		++i;
-	}
-	return (0);
+	pos.x = 10;
+	pos.y = 20;
+	render_debug_complex(mlx, complex, pos);
+	pos.y = 80;
+	render_debug_complex(mlx, &mlx->fractol->anchor, pos);
 }
 
 void				render(t_mlx *mlx)
 {
-	float		radius2;
-	float		scale;
+	double		radius2;
+	double		scale;
 	t_point		pos;
 	t_complex	z;
 	t_complex	c;
 
 	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
 	radius2 = mlx->fractol->radius * mlx->fractol->radius;
-	scale = mlx->fractol->zoom * mlx->fractol->radius;
+	scale = mlx->fractol->radius * mlx->fractol->zoom;
 	pos.y = -1;
 	while (++pos.y < WIN_H)
 	{
 		pos.x = -1;
 		while (++pos.x < WIN_W)
 		{
-			z.x = scale * ((float)pos.x - mlx->fractol->anchor.x) / WIN_H;
-			z.y = scale * ((float)pos.y - mlx->fractol->anchor.y) / WIN_H;
+			z.x = scale * (double)(pos.x - WIN_W / 2) / WIN_H + mlx->fractol->anchor.x;
+			z.y = scale * (double)(pos.y - WIN_H / 2) / WIN_H + mlx->fractol->anchor.y;
 			pos.color = 0;
 			if (mlx->fractol->type == mandelbrot)
-				pos.color = render_mandelbrot(&z, 28, radius2);
+				pos.color = render_mandelbrot(28, radius2, &z);
+			else if (mlx->fractol->type == newton)
+				pos.color = render_newton(32, radius2, &z);
 			else
 			{
-				c.x = ((float)mlx->fractol->mouse.x / (float)WIN_W) * 2 - 1;
-				c.y = ((float)mlx->fractol->mouse.y / (float)WIN_H);
+				c.x = ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
+				c.y = ((double)mlx->fractol->mouse.y / (double)WIN_H);
 				if (mlx->fractol->type == julia)
-					pos.color = render_julia(&z, &c, 32, radius2);
+					pos.color = render_julia(32, radius2, &z, &c);
 				if (mlx->fractol->type == fatou)
-					pos.color = render_fatou(&z, &c, 32, radius2);
+					pos.color = render_fatou(32, radius2, &z, &c);
 			}
 			if (pos.color)
 				set_pixel(mlx->image, &pos);
 		}
 	}
+	pos.x = WIN_W / 2 + mlx->fractol->anchor.x * mlx->fractol->zoom;
+	pos.y = WIN_H / 2 + mlx->fractol->anchor.y * mlx->fractol->zoom;
+	pos.color = 0xFFFFFF;
+	set_pixel(mlx->image, &pos);
 	mlx_put_image_to_window(
 		mlx->mlx_ptr,
 		mlx->win_ptr,

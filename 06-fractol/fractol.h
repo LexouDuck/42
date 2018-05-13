@@ -29,6 +29,8 @@
 # define WIN_W	640
 # define WIN_H	480
 
+# define MAX_ZOOM	10000000
+
 typedef struct	s_point
 {
 	int			x;
@@ -38,22 +40,23 @@ typedef struct	s_point
 
 typedef struct	s_complex
 {
-	float		x;
-	float		y;
+	double		x;
+	double		y;
 }				t_complex;
 
 typedef enum	e_fractal
 {
 	julia,
 	fatou,
+	newton,
 	mandelbrot
 }				t_fractal;
 
 typedef struct	s_fractol
 {
 	t_fractal	type;
-	float		radius;
-	float		zoom;
+	double		zoom;
+	double		radius;
 	t_complex	anchor;
 	t_point		mouse;
 }				t_fractol;
@@ -76,6 +79,15 @@ typedef struct	s_mlx
 }				t_mlx;
 
 /*
+**	====	complex.c
+*/
+void		complex_add(t_complex *result, t_complex const c1, t_complex const c2);
+void		complex_sub(t_complex *result, t_complex const c1, t_complex const c2);
+void		complex_mul(t_complex *result, t_complex const c1, t_complex const c2);
+void		complex_div(t_complex *result, t_complex const c1, t_complex const c2);
+void		complex_pow(t_complex *result, t_complex const c, int n);
+
+/*
 **	====	color.c
 */
 int			color_new(char a, t_u8 r, t_u8 g, t_u8 b);
@@ -96,6 +108,14 @@ int			get_color_mean(int color1, int color2, float ratio);
 **	====	render.c
 */
 void		render(t_mlx *mlx);
+
+/*
+**	====	fractal.c
+*/
+int			render_newton(int max, double radius, t_complex *z);
+int			render_mandelbrot(int max, double radius, t_complex *z);
+int			render_fatou(int max, double radius, t_complex *z, t_complex *c);
+int			render_julia(int max, double radius, t_complex *z, t_complex *c);
 
 /*
 **	====	event.c

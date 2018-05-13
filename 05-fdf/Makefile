@@ -10,7 +10,7 @@ LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
 
 SRCDIR	=	./src/
 HDRDIR	=	./
-MLXDIR	=	./minilibx/
+MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 TSTDIR	=	./tests/
 
@@ -70,6 +70,6 @@ test: all
 	startxwin ./fdf $(TSTDIR)42.fdf
 
 mlx:
-	@make -C $(MLXDIR) all && sh ./mlx.sh
+	@make -C $(MLXDIR) all && sh ../mlx.sh
 	@make fclean
 	@make test

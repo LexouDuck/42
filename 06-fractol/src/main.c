@@ -20,12 +20,16 @@ static int	fractol_init(t_fractol *fractol, char *arg)
 		fractol->type = julia;
 	else if (ft_strcmp(arg, "fatou") == 0)
 		fractol->type = fatou;
+	else if (ft_strcmp(arg, "newton") == 0)
+		fractol->type = newton;
 	else if (ft_strcmp(arg, "mandelbrot") == 0)
 		fractol->type = mandelbrot;
+	else
+		return (ERROR);
 	fractol->radius = 1.8;
 	fractol->zoom = 2.0;
-	fractol->anchor.x = WIN_W / 2.0;
-	fractol->anchor.y = WIN_H / 2.0;
+	fractol->anchor.x = 0.0;
+	fractol->anchor.y = 0.0;
 	fractol->mouse.x = WIN_W / 2;
 	fractol->mouse.y = 0;
 	return (OK);
@@ -79,12 +83,16 @@ int			main(int argc, char **argv)
 	if (argc == 2)
 	{
 		if (fractol_init(&fractol, argv[1]) == ERROR)
+		{
+			ft_putendl("fractol: invalid argument, should be:");
+			ft_putendl(" - julia\n - fatou\n - mandelbrot\n - newton");
 			return (ERROR);
+		}
 		if (open_window(&fractol, ft_strjoin("Fractol - ", argv[1])))
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("fractol: expecting one argument among the following:"
-		"\n - julia\n - fatou\n - mandelbrot");
-	return (ERROR);
+	ft_putendl("fractol: expecting one argument among the following:");
+	ft_putendl(" - julia\n - fatou\n - mandelbrot\n - newton");
+	return (OK);
 }
