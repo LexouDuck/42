@@ -16,22 +16,25 @@ static int	fractol_init(t_fractol *fractol, char *arg)
 {
 	if (fractol == NULL)
 		return (ERROR);
-	else if (ft_strcmp(arg, "julia") == 0)
+	else if (ft_strequ(arg, "julia"))
 		fractol->type = julia;
-	else if (ft_strcmp(arg, "fatou") == 0)
+	else if (ft_strequ(arg, "fatou"))
 		fractol->type = fatou;
-	else if (ft_strcmp(arg, "newton") == 0)
+	else if (ft_strequ(arg, "newton"))
 		fractol->type = newton;
-	else if (ft_strcmp(arg, "mandelbrot") == 0)
+	else if (ft_strequ(arg, "mandelbrot"))
 		fractol->type = mandelbrot;
+	else if (ft_strequ(arg, "burningship"))
+		fractol->type = burningship;
 	else
 		return (ERROR);
-	fractol->radius = 1.8;
+	fractol->radius = 2.0;
 	fractol->zoom = 2.0;
 	fractol->anchor.x = 0.0;
 	fractol->anchor.y = 0.0;
 	fractol->mouse.x = WIN_W / 2;
 	fractol->mouse.y = 0;
+	fractol->mouse.color = 0xFFFFFF;
 	return (OK);
 }
 

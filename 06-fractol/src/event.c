@@ -19,15 +19,21 @@ ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
 ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
 ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
+	double		scale;
 
 	mlx = (t_mlx *)param;
 	if (mlx == NULL)
 		return (ERROR);
-	if (button == MOUSE_L_CLICK)
+	else if (button == MOUSE_L_CLICK)
 	{
-		mlx->fractol->anchor.x += (double)(x - WIN_W / 2) / (double)WIN_W * mlx->fractol->zoom;
-		mlx->fractol->anchor.y += (double)(y - WIN_H / 2) / (double)WIN_H * mlx->fractol->zoom;
+		scale = (mlx->fractol->zoom * mlx->fractol->radius);
+		mlx->fractol->anchor.x += scale * (double)(x - WIN_W / 2) / (double)WIN_H;
+		mlx->fractol->anchor.y += scale * (double)(y - WIN_H / 2) / (double)WIN_H;
 		render(mlx);
+	}
+	else if (button == MOUSE_R_CLICK)
+	{
+		mlx->fractol->mouse.color = 0;
 	}
 	return (OK);
 }
@@ -43,11 +49,16 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	mlx = (t_mlx *)param;
 	if (mlx == NULL)
 		return (ERROR);
-	if (button == MOUSE_SCROLL_UP || button == MOUSE_SCROLL_DOWN)
+	else if (button == MOUSE_SCROLL_UP || button == MOUSE_SCROLL_DOWN)
 	{
 		mlx->fractol->zoom *= (button == MOUSE_SCROLL_UP) ? 0.9 : 1.1;
 		if (mlx->fractol->zoom > MAX_ZOOM)
 			mlx->fractol->zoom = MAX_ZOOM;
+		render(mlx);
+	}
+	else if (button == MOUSE_R_CLICK)
+	{
+		mlx->fractol->mouse.color = 0xFFFFFF;
 		render(mlx);
 	}
 	return (OK);
@@ -64,11 +75,14 @@ static int	event_mouse_move(int x, int y, void *param)
 	mlx = (t_mlx *)param;
 	d_x = (double)(x - old_x) * 1.0;
 	d_y = (double)(y - old_y) * 1.0;
-	mlx->fractol->mouse.x = x;
-	mlx->fractol->mouse.y = y;
-	if ((d_x || d_y) &&
-		(mlx->fractol->type == julia || mlx->fractol->type == fatou))
-		render(mlx);
+	if (mlx->fractol->mouse.color)
+	{
+		mlx->fractol->mouse.x = x;
+		mlx->fractol->mouse.y = y;
+		if ((mlx->fractol->type == julia || mlx->fractol->type == fatou)
+			&& (d_x || d_y))
+			render(mlx);
+	}
 	old_x = x;
 	old_y = y;
 	return (OK);

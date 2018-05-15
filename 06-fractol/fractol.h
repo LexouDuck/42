@@ -13,12 +13,9 @@
 #ifndef __FRACTOL_H
 # define __FRACTOL_H
 
-# include <math.h>
 # include <stdlib.h>
-# include <unistd.h>
-# include <fcntl.h>
-# include <sys/types.h>
-# include <sys/stat.h>
+# include <math.h>
+# include <pthread.h>
 
 # include <mlx.h>
 # include "../mlx_events.h"
@@ -29,7 +26,7 @@
 # define WIN_W	640
 # define WIN_H	480
 
-# define MAX_ZOOM	10000000
+# define MAX_ZOOM	200
 
 typedef struct	s_point
 {
@@ -48,8 +45,9 @@ typedef enum	e_fractal
 {
 	julia,
 	fatou,
-	newton,
-	mandelbrot
+	mandelbrot,
+	burningship,
+	newton
 }				t_fractal;
 
 typedef struct	s_fractol
@@ -75,6 +73,7 @@ typedef struct	s_mlx
 	void		*win_ptr;
 	void		*img_ptr;
 	t_image		*image;
+	void		*render;
 	t_fractol	*fractol;
 }				t_mlx;
 
@@ -112,10 +111,16 @@ void		render(t_mlx *mlx);
 /*
 **	====	fractal.c
 */
-int			render_newton(int max, double radius, t_complex *z);
-int			render_mandelbrot(int max, double radius, t_complex *z);
-int			render_fatou(int max, double radius, t_complex *z, t_complex *c);
-int			render_julia(int max, double radius, t_complex *z, t_complex *c);
+int			render_julia(
+			int max, double radius, t_complex *z, t_complex *c);
+int			render_fatou(
+			int max, double radius, t_complex *z, t_complex *c);
+int			render_mandelbrot(
+			int max, double radius, t_complex *z, t_complex *c);
+int			render_burningship(
+			int max, double radius, t_complex *z, t_complex *c);
+int			render_newton(
+			int max, double radius, t_complex *z, t_complex *c);
 
 /*
 **	====	event.c

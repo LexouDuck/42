@@ -57,55 +57,62 @@ void	render_debug(t_mlx *mlx, t_complex *complex)
 	free(c);
 	pos.x = 10;
 	pos.y = 20;
-	render_debug_complex(mlx, complex, pos);
-	pos.y = 80;
 	render_debug_complex(mlx, &mlx->fractol->anchor, pos);
+	pos.y = 80;
+	if (mlx->fractol->type == julia || mlx->fractol->type == fatou)
+		render_debug_complex(mlx, complex, pos);
 }
 
-void				render(t_mlx *mlx)
+static void			render_fractal(t_mlx *mlx, t_complex *c,
+	int (*get_color)(int, double, t_complex *, t_complex *))
 {
 	double		radius2;
+	t_complex	anchor;
 	double		scale;
 	t_point		pos;
 	t_complex	z;
-	t_complex	c;
 
-	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
-	radius2 = mlx->fractol->radius * mlx->fractol->radius;
+	radius2 = (mlx->fractol->type == newton) ?
+		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
 	scale = mlx->fractol->radius * mlx->fractol->zoom;
+	anchor = mlx->fractol->anchor;
 	pos.y = -1;
 	while (++pos.y < WIN_H)
 	{
 		pos.x = -1;
 		while (++pos.x < WIN_W)
 		{
-			z.x = scale * (double)(pos.x - WIN_W / 2) / WIN_H + mlx->fractol->anchor.x;
-			z.y = scale * (double)(pos.y - WIN_H / 2) / WIN_H + mlx->fractol->anchor.y;
-			pos.color = 0;
-			if (mlx->fractol->type == mandelbrot)
-				pos.color = render_mandelbrot(28, radius2, &z);
-			else if (mlx->fractol->type == newton)
-				pos.color = render_newton(32, radius2, &z);
-			else
-			{
-				c.x = ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
-				c.y = ((double)mlx->fractol->mouse.y / (double)WIN_H);
-				if (mlx->fractol->type == julia)
-					pos.color = render_julia(32, radius2, &z, &c);
-				if (mlx->fractol->type == fatou)
-					pos.color = render_fatou(32, radius2, &z, &c);
-			}
+			z.x = scale * (double)(pos.x - WIN_W / 2) / WIN_H + anchor.x;
+			z.y = scale * (double)(pos.y - WIN_H / 2) / WIN_H + anchor.y;
+			pos.color = (*get_color)(32, radius2, &z, c);
 			if (pos.color)
 				set_pixel(mlx->image, &pos);
 		}
 	}
-	pos.x = WIN_W / 2 + mlx->fractol->anchor.x * mlx->fractol->zoom;
-	pos.y = WIN_H / 2 + mlx->fractol->anchor.y * mlx->fractol->zoom;
-	pos.color = 0xFFFFFF;
-	set_pixel(mlx->image, &pos);
-	mlx_put_image_to_window(
-		mlx->mlx_ptr,
-		mlx->win_ptr,
-		mlx->img_ptr, 0, 0);
+}
+
+void				render(t_mlx *mlx)
+{
+	int	tmp;
+	static void *functions[5] = 
+	{
+		&render_julia,
+		&render_fatou,
+		&render_mandelbrot,
+		&render_burningship,
+		&render_newton
+	};
+	//pthread_t	thread;
+	t_complex	c;
+
+	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
+	tmp = !(mlx->fractol->type == julia || mlx->fractol->type == fatou);
+	c.x = tmp ? 0 : ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
+	c.y = tmp ? 0 : ((double)mlx->fractol->mouse.y / (double)WIN_H);
+	mlx->render = functions[(int)mlx->fractol->type];
+	//pthread_create(&thread, NULL, render_fractal, NULL);
+	//pthread_join(thread, NULL);
+	render_fractal(mlx, &c, mlx->render);
+	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 	render_debug(mlx, &c);
 }
