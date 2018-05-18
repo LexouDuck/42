@@ -93,15 +93,22 @@ static int	event_key(int key, void *param)
 ft_putstr("KEY PRESSED: ");
 ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 	t_mlx		*mlx;
+	double		tmp;
 
 	mlx = (t_mlx *)param;
+	tmp = mlx->fractol->zoom;
 	if (mlx == NULL)
 		return (ERROR);
-	if (key == KEY_ESC)
+	else if (key == KEY_ESC)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr);
 		exit(OK);
 	}
+	else if (key == KEY_LEFT || key == KEY_RIGHT)
+		mlx->fractol->anchor.x += (key == KEY_LEFT) ? -tmp : tmp;
+	else if (key == KEY_UP || key == KEY_DOWN)
+		mlx->fractol->anchor.y += (key == KEY_UP) ? -tmp : tmp;
+	render(mlx);
 	return (OK);
 }
 

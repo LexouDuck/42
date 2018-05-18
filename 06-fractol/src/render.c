@@ -63,7 +63,7 @@ void	render_debug(t_mlx *mlx, t_complex *complex)
 		render_debug_complex(mlx, complex, pos);
 }
 
-static void			render_fractal(t_mlx *mlx, t_complex *c,
+static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
 	int (*get_color)(int, double, t_complex *, t_complex *))
 {
 	double		radius2;
@@ -76,6 +76,7 @@ static void			render_fractal(t_mlx *mlx, t_complex *c,
 		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
 	scale = mlx->fractol->radius * mlx->fractol->zoom;
 	anchor = mlx->fractol->anchor;
+	pos.color = 0;
 	pos.y = -1;
 	while (++pos.y < WIN_H)
 	{
@@ -84,9 +85,8 @@ static void			render_fractal(t_mlx *mlx, t_complex *c,
 		{
 			z.x = scale * (double)(pos.x - WIN_W / 2) / WIN_H + anchor.x;
 			z.y = scale * (double)(pos.y - WIN_H / 2) / WIN_H + anchor.y;
-			pos.color = (*get_color)(32, radius2, &z, c);
-			if (pos.color)
-				set_pixel(mlx->image, &pos);
+			buffer[pos.color] = (*get_color)(64, radius2, &z, c);
+			++pos.color;
 		}
 	}
 }
@@ -102,7 +102,6 @@ void				render(t_mlx *mlx)
 		&render_burningship,
 		&render_newton
 	};
-	//pthread_t	thread;
 	t_complex	c;
 
 	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
@@ -110,9 +109,14 @@ void				render(t_mlx *mlx)
 	c.x = tmp ? 0 : ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
 	c.y = tmp ? 0 : ((double)mlx->fractol->mouse.y / (double)WIN_H);
 	mlx->render = functions[(int)mlx->fractol->type];
-	//pthread_create(&thread, NULL, render_fractal, NULL);
-	//pthread_join(thread, NULL);
-	render_fractal(mlx, &c, mlx->render);
+	render_fractal(mlx, (t_u32 *)mlx->image->buffer, &c, mlx->render);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 	render_debug(mlx, &c);
+}
+
+void				update_display()
+{
+	//pthread_t	thread;
+	//pthread_create(&thread, NULL, render_fractal, NULL);
+	//pthread_join(thread, NULL);
 }

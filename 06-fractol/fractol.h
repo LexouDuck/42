@@ -96,14 +96,6 @@ t_u8		color_get_g(int color);
 t_u8		color_get_b(int color);
 
 /*
-**	====	window.c
-*/
-int			is_in_window(int x, int y);
-void		bring_into_window(t_point *point);
-void		set_pixel(t_image *image, t_point *pos);
-int			get_color_mean(int color1, int color2, float ratio);
-
-/*
 **	====	render.c
 */
 void		render(t_mlx *mlx);

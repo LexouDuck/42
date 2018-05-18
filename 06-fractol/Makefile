@@ -20,7 +20,6 @@ SRCS	= 	$(SRCDIR)main.c				\
 			$(SRCDIR)render.c			\
 			$(SRCDIR)complex.c			\
 			$(SRCDIR)fractal.c			\
-			$(SRCDIR)window.c			\
 			$(SRCDIR)color.c			
 
 OBJS	=	$(SRCS:.c=.o)
