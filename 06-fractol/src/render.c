@@ -12,7 +12,8 @@
 
 #include "../fractol.h"
 
-void	render_debug_complex(t_mlx *mlx, t_complex *complex, t_point p)
+void				render_debug_complex(t_mlx *mlx,
+	t_complex *complex, t_point p)
 {
 	char *result;
 	char *c_real;
@@ -41,7 +42,7 @@ void	render_debug_complex(t_mlx *mlx, t_complex *complex, t_point p)
 	free(result);
 }
 
-void	render_debug(t_mlx *mlx, t_complex *complex)
+void				render_debug(t_mlx *mlx, t_complex *complex)
 {
 	t_point pos;
 	char *c;
@@ -64,15 +65,16 @@ void	render_debug(t_mlx *mlx, t_complex *complex)
 }
 
 static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
-	int (*get_color)(int, double, t_complex *, t_complex *))
+	int (*get_color)(t_fractol *, t_complex *, t_complex *))
 {
-	double		radius2;
 	t_complex	anchor;
 	double		scale;
 	t_point		pos;
 	t_complex	z;
 
-	radius2 = (mlx->fractol->type == newton) ?
+	mlx->fractol->max = 
+		(mlx->fractol->type == julia || mlx->fractol->type == fatou) ? 32 : 64;
+	mlx->fractol->radius2 = (mlx->fractol->type == newton) ?
 		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
 	scale = mlx->fractol->radius * mlx->fractol->zoom;
 	anchor = mlx->fractol->anchor;
@@ -85,14 +87,15 @@ static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
 		{
 			z.x = scale * (double)(pos.x - WIN_W / 2) / WIN_H + anchor.x;
 			z.y = scale * (double)(pos.y - WIN_H / 2) / WIN_H + anchor.y;
-			buffer[pos.color] = (*get_color)(64, radius2, &z, c);
+			buffer[pos.color] = (*get_color)(mlx->fractol, &z, c);
 			++pos.color;
 		}
 	}
 }
 
-void				render(t_mlx *mlx)
+void			*render(void *arg)
 {
+	t_mlx *mlx;
 	int	tmp;
 	static void *functions[5] = 
 	{
@@ -104,6 +107,9 @@ void				render(t_mlx *mlx)
 	};
 	t_complex	c;
 
+	mlx = (t_mlx *)arg;
+ft_putendl("RENDER: ");
+	mlx->rendering = 1;
 	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
 	tmp = !(mlx->fractol->type == julia || mlx->fractol->type == fatou);
 	c.x = tmp ? 0 : ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
@@ -112,11 +118,24 @@ void				render(t_mlx *mlx)
 	render_fractal(mlx, (t_u32 *)mlx->image->buffer, &c, mlx->render);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 	render_debug(mlx, &c);
+	mlx->rendering = 0;
+ft_putendl("DONE");
+	pthread_exit(NULL);
 }
 
-void				update_display()
+void				update_display(t_mlx *mlx)
 {
-	//pthread_t	thread;
-	//pthread_create(&thread, NULL, render_fractal, NULL);
-	//pthread_join(thread, NULL);
+	pthread_t	thread;
+
+	if (mlx->rendering)
+	{
+ft_putendl("prevented render");
+		return ;
+	}
+	if (pthread_create(&thread, NULL, render, mlx))
+	{
+		ft_putendl("Error: couldn't create rendering thread");
+		return ;
+	}
+	pthread_detach(thread);
 }

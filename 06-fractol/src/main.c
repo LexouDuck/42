@@ -12,7 +12,7 @@
 
 #include "../fractol.h"
 
-static int	fractol_init(t_fractol *fractol, char *arg)
+static int	init_fractol(t_fractol *fractol, char *arg)
 {
 	if (fractol == NULL)
 		return (ERROR);
@@ -28,8 +28,9 @@ static int	fractol_init(t_fractol *fractol, char *arg)
 		fractol->type = burningship;
 	else
 		return (ERROR);
-	fractol->radius = 2.0;
+	fractol->max = 64;
 	fractol->zoom = 2.0;
+	fractol->radius = 2.0;
 	fractol->anchor.x = 0.0;
 	fractol->anchor.y = 0.0;
 	fractol->mouse.x = WIN_W / 2;
@@ -38,7 +39,55 @@ static int	fractol_init(t_fractol *fractol, char *arg)
 	return (OK);
 }
 
-static int	img_init(t_mlx *mlx)
+t_channel	set_channel(
+	int			center,
+	int			amplitude,
+	double		phase,
+	double		frequency)
+{
+	t_channel	result;
+
+	result.center = center;
+	result.amplitude = amplitude;
+	result.phase = phase;
+	result.frequency = frequency;
+	return (result);
+}
+
+static void	init_palette(t_fractol *fractol)
+{
+	if (fractol->type == julia)
+	{
+		/*
+		fractol->palette.r = set_channel(0, 256, 0, 0);
+		fractol->palette.g = set_channel(0, 16, 0, 0);
+		fractol->palette.b = set_channel(0, 4, 0, 0);
+		*/
+		fractol->palette.r = set_channel(150, 99, 1, 0.12);
+		fractol->palette.g = set_channel(100, 99, 0, 0.13);
+		fractol->palette.b = set_channel(230, 25, 0, 0.16);
+	}
+	if (fractol->type == fatou)
+	{
+		fractol->palette.r = set_channel(0, 128, 0, 0);
+		fractol->palette.g = set_channel(200, 1, 0, 0);
+		fractol->palette.b = set_channel(0, 16, 0, 0);
+	}
+	if (fractol->type == mandelbrot)
+	{
+		fractol->palette.r = set_channel(100, 99, 0.0, 0.13);
+		fractol->palette.g = set_channel(150, 99, 1.0, 0.12);
+		fractol->palette.b = set_channel(230, 25, 0.0, 0.16);
+	}
+	if (fractol->type == burningship)
+	{
+		fractol->palette.r = set_channel(230, 25, 0.0, 0.16);
+		fractol->palette.g = set_channel(100, 99, 1.0, 0.13);
+		fractol->palette.b = set_channel(100, 99, 2.0, 0.10);
+	}
+}
+
+static int	init_image(t_mlx *mlx)
 {
 	t_image	*image;
 
@@ -50,6 +99,7 @@ static int	img_init(t_mlx *mlx)
 		&(image->line),
 		&(image->endian));
 	mlx->image = image;
+	mlx->rendering = 0;
 	return (OK);
 }
 
@@ -63,7 +113,7 @@ static int	open_window(t_fractol *fractol, char *title)
 		ft_putendl("Error: could not initialize MinilibX");
 		return (ERROR);
 	}
-	if (img_init(&mlx))
+	if (init_image(&mlx))
 	{
 		ft_putendl("Error: could not create render image");
 		return (ERROR);
@@ -74,7 +124,7 @@ static int	open_window(t_fractol *fractol, char *title)
 		return (ERROR);
 	}
 	setup_events(&mlx);
-	render(&mlx);
+	update_display(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
 }
@@ -85,12 +135,13 @@ int			main(int argc, char **argv)
 
 	if (argc == 2)
 	{
-		if (fractol_init(&fractol, argv[1]) == ERROR)
+		if (init_fractol(&fractol, argv[1]) == ERROR)
 		{
 			ft_putendl("fractol: invalid argument, should be:");
 			ft_putendl(" - julia\n - fatou\n - mandelbrot\n - newton");
 			return (ERROR);
 		}
+		init_palette(&fractol);
 		if (open_window(&fractol, ft_strjoin("Fractol - ", argv[1])))
 			return (ERROR);
 		return (OK);

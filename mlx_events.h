@@ -33,12 +33,29 @@
 
 #  define KEY_PAGE_UP	0x74
 #  define KEY_PAGE_DN	0x79
-
 #  define KEY_HOME		0x73
 #  define KEY_END		0x77
-
 #  define KEY_HELP		0x72
 #  define KEY_DELETE	0x75
+
+#  define KEY_NUMPAD_0			0x52
+#  define KEY_NUMPAD_1			0x53
+#  define KEY_NUMPAD_2			0x54
+#  define KEY_NUMPAD_3			0x55
+#  define KEY_NUMPAD_4			0x56
+#  define KEY_NUMPAD_5			0x57
+#  define KEY_NUMPAD_6			0x58
+#  define KEY_NUMPAD_7			0x59
+#  define KEY_NUMPAD_8			0x5B
+#  define KEY_NUMPAD_9			0x5C
+#  define KEY_NUMPAD_PERIOD		0x41
+#  define KEY_NUMPAD_ENTER		0x4C
+#  define KEY_NUMPAD_ADD		0x45
+#  define KEY_NUMPAD_SUB		0x4E
+#  define KEY_NUMPAD_MUL		0x43
+#  define KEY_NUMPAD_DIV		0x4B
+#  define KEY_NUMPAD_CLEAR		0x47
+#  define KEY_NUMPAD_EQUALS		0x51
 
 /*
 **	=== INPUT EVENTS - WINDOWS ===
@@ -60,12 +77,27 @@
 
 #  define KEY_PAGE_UP	0xFF55
 #  define KEY_PAGE_DN	0xFF56
-
 #  define KEY_HOME		0xFF50
 #  define KEY_END		0xFF57
-
 #  define KEY_INSERT	0xFF63
 #  define KEY_DELETE	0xFFFF
+
+#  define KEY_NUMPAD_0		0xFF9E
+#  define KEY_NUMPAD_1		0xFF9C
+#  define KEY_NUMPAD_2		0xFF99
+#  define KEY_NUMPAD_3		0xFF9B
+#  define KEY_NUMPAD_4		0xFF96
+#  define KEY_NUMPAD_5		0xFF9D
+#  define KEY_NUMPAD_6		0xFF98
+#  define KEY_NUMPAD_7		0xFF95
+#  define KEY_NUMPAD_8		0xFF97
+#  define KEY_NUMPAD_9		0xFF9A
+#  define KEY_NUMPAD_PERIOD	0xFF9F
+#  define KEY_NUMPAD_ENTER	0xFF8D
+#  define KEY_NUMPAD_ADD	0xFFAB
+#  define KEY_NUMPAD_SUB	0xFFAD
+#  define KEY_NUMPAD_MUL	0xFFAA
+#  define KEY_NUMPAD_DIV	0xFFAF
 
 # endif
 

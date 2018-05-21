@@ -41,6 +41,21 @@ typedef struct	s_complex
 	double		y;
 }				t_complex;
 
+typedef struct	s_channel
+{
+	int			center;
+	int			amplitude;
+	double		phase;
+	double		frequency;
+}				t_channel;
+
+typedef struct	s_palette
+{
+	t_channel	r;
+	t_channel	g;
+	t_channel	b;
+}				t_palette;
+
 typedef enum	e_fractal
 {
 	julia,
@@ -53,10 +68,13 @@ typedef enum	e_fractal
 typedef struct	s_fractol
 {
 	t_fractal	type;
+	int			max;
 	double		zoom;
 	double		radius;
+	double		radius2;
 	t_complex	anchor;
 	t_point		mouse;
+	t_palette	palette;
 }				t_fractol;
 
 typedef	struct	s_image
@@ -74,6 +92,7 @@ typedef struct	s_mlx
 	void		*img_ptr;
 	t_image		*image;
 	void		*render;
+	int			rendering;
 	t_fractol	*fractol;
 }				t_mlx;
 
@@ -98,21 +117,22 @@ t_u8		color_get_b(int color);
 /*
 **	====	render.c
 */
-void		render(t_mlx *mlx);
+void		*render(void *arg);
+void		update_display(t_mlx *mlx);
 
 /*
 **	====	fractal.c
 */
 int			render_julia(
-			int max, double radius, t_complex *z, t_complex *c);
+			t_fractol *fractol, t_complex *z, t_complex *c);
 int			render_fatou(
-			int max, double radius, t_complex *z, t_complex *c);
+			t_fractol *fractol, t_complex *z, t_complex *c);
 int			render_mandelbrot(
-			int max, double radius, t_complex *z, t_complex *c);
+			t_fractol *fractol, t_complex *z, t_complex *c);
 int			render_burningship(
-			int max, double radius, t_complex *z, t_complex *c);
+			t_fractol *fractol, t_complex *z, t_complex *c);
 int			render_newton(
-			int max, double radius, t_complex *z, t_complex *c);
+			t_fractol *fractol, t_complex *z, t_complex *c);
 
 /*
 **	====	event.c
