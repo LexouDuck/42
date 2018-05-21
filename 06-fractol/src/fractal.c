@@ -68,6 +68,7 @@ int	render_fatou(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 
 	z = *z_ptr;
 	c = *c_ptr;
+	n = 0;
 	i = 0;
 	while (i < fractol->max) 
 	{

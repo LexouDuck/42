@@ -48,11 +48,11 @@ void				render_debug(t_mlx *mlx, t_complex *complex)
 	char *c;
 
 	pos.color = 0xFFFFFF;
-	c = ft_ftoa(mlx->fractol->radius, 4);
+	c = ft_ftoa(mlx->fractol->radius, 8);
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, pos.color, "RADIUS:");
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 40, pos.color, c);
 	free(c);
-	c = ft_ftoa(mlx->fractol->zoom, 4);
+	c = ft_ftoa(mlx->fractol->zoom, 8);
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 60, pos.color, "ZOOM:");
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 60, pos.color, c);
 	free(c);
@@ -93,49 +93,18 @@ static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
 	}
 }
 
-void			*render(void *arg)
+void			render(t_mlx *mlx)
 {
-	t_mlx *mlx;
-	int	tmp;
-	static void *functions[5] = 
-	{
-		&render_julia,
-		&render_fatou,
-		&render_mandelbrot,
-		&render_burningship,
-		&render_newton
-	};
 	t_complex	c;
 
-	mlx = (t_mlx *)arg;
-ft_putendl("RENDER: ");
+//ft_putendl("RENDER: ");
 	mlx->rendering = 1;
 	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
-	tmp = !(mlx->fractol->type == julia || mlx->fractol->type == fatou);
-	c.x = tmp ? 0 : ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
-	c.y = tmp ? 0 : ((double)mlx->fractol->mouse.y / (double)WIN_H);
-	mlx->render = functions[(int)mlx->fractol->type];
+	c.x = mlx->mouse ? 0 : ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
+	c.y = mlx->mouse ? 0 : ((double)mlx->fractol->mouse.y / (double)WIN_H);
 	render_fractal(mlx, (t_u32 *)mlx->image->buffer, &c, mlx->render);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 	render_debug(mlx, &c);
 	mlx->rendering = 0;
-ft_putendl("DONE");
-	pthread_exit(NULL);
-}
-
-void				update_display(t_mlx *mlx)
-{
-	pthread_t	thread;
-
-	if (mlx->rendering)
-	{
-ft_putendl("prevented render");
-		return ;
-	}
-	if (pthread_create(&thread, NULL, render, mlx))
-	{
-		ft_putendl("Error: couldn't create rendering thread");
-		return ;
-	}
-	pthread_detach(thread);
+//ft_putendl("DONE");
 }

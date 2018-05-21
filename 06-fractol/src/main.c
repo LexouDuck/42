@@ -39,57 +39,48 @@ static int	init_fractol(t_fractol *fractol, char *arg)
 	return (OK);
 }
 
-t_channel	set_channel(
-	int			center,
-	int			amplitude,
-	double		phase,
-	double		frequency)
-{
-	t_channel	result;
-
-	result.center = center;
-	result.amplitude = amplitude;
-	result.phase = phase;
-	result.frequency = frequency;
-	return (result);
-}
-
 static void	init_palette(t_fractol *fractol)
 {
 	if (fractol->type == julia)
 	{
-		/*
-		fractol->palette.r = set_channel(0, 256, 0, 0);
-		fractol->palette.g = set_channel(0, 16, 0, 0);
-		fractol->palette.b = set_channel(0, 4, 0, 0);
-		*/
-		fractol->palette.r = set_channel(150, 99, 1, 0.12);
-		fractol->palette.g = set_channel(100, 99, 0, 0.13);
-		fractol->palette.b = set_channel(230, 25, 0, 0.16);
+		//fractol->palette.r = set_channel(0, 256, 0, 0);
+		//fractol->palette.g = set_channel(0, 16, 0, 0);
+		//fractol->palette.b = set_channel(0, 4, 0, 0);
+		fractol->palette.r = palette_set_channel(150, 99, 1, 0.12);
+		fractol->palette.g = palette_set_channel(100, 99, 0, 0.13);
+		fractol->palette.b = palette_set_channel(230, 25, 0, 0.16);
 	}
-	if (fractol->type == fatou)
+	else if (fractol->type == fatou)
 	{
-		fractol->palette.r = set_channel(0, 128, 0, 0);
-		fractol->palette.g = set_channel(200, 1, 0, 0);
-		fractol->palette.b = set_channel(0, 16, 0, 0);
+		fractol->palette.r = palette_set_channel(0, 128, 0, 0);
+		fractol->palette.g = palette_set_channel(200, 1, 0, 0);
+		fractol->palette.b = palette_set_channel(0, 16, 0, 0);
 	}
-	if (fractol->type == mandelbrot)
+	else if (fractol->type == mandelbrot)
 	{
-		fractol->palette.r = set_channel(100, 99, 0.0, 0.13);
-		fractol->palette.g = set_channel(150, 99, 1.0, 0.12);
-		fractol->palette.b = set_channel(230, 25, 0.0, 0.16);
+		fractol->palette.r = palette_set_channel(100, 99, 0.0, 0.13);
+		fractol->palette.g = palette_set_channel(150, 99, 1.0, 0.12);
+		fractol->palette.b = palette_set_channel(230, 25, 0.0, 0.16);
 	}
-	if (fractol->type == burningship)
+	else if (fractol->type == burningship)
 	{
-		fractol->palette.r = set_channel(230, 25, 0.0, 0.16);
-		fractol->palette.g = set_channel(100, 99, 1.0, 0.13);
-		fractol->palette.b = set_channel(100, 99, 2.0, 0.10);
+		fractol->palette.r = palette_set_channel(230, 25, 0.0, 0.16);
+		fractol->palette.g = palette_set_channel(100, 99, 1.0, 0.13);
+		fractol->palette.b = palette_set_channel(100, 99, 2.0, 0.10);
 	}
 }
 
 static int	init_image(t_mlx *mlx)
 {
-	t_image	*image;
+	t_image		*image;
+	static void	*functions[5] = 
+	{
+		&render_julia,
+		&render_fatou,
+		&render_mandelbrot,
+		&render_burningship,
+		&render_newton
+	};
 
 	if (!(image = (t_image *)malloc(sizeof(t_image))))
 		return (ERROR);
@@ -99,6 +90,8 @@ static int	init_image(t_mlx *mlx)
 		&(image->line),
 		&(image->endian));
 	mlx->image = image;
+	mlx->mouse = !(mlx->fractol->type == julia || mlx->fractol->type == fatou);
+	mlx->render = functions[(int)mlx->fractol->type];
 	mlx->rendering = 0;
 	return (OK);
 }
@@ -115,7 +108,7 @@ static int	open_window(t_fractol *fractol, char *title)
 	}
 	if (init_image(&mlx))
 	{
-		ft_putendl("Error: could not create render image");
+		ft_putendl("Error: could not create the rendering image buffer");
 		return (ERROR);
 	}
 	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIN_W, WIN_H, title)))
@@ -124,7 +117,7 @@ static int	open_window(t_fractol *fractol, char *title)
 		return (ERROR);
 	}
 	setup_events(&mlx);
-	update_display(&mlx);
+	render(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
 }

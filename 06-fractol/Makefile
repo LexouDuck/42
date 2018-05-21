@@ -1,9 +1,9 @@
 NAME	=	fractol
 
 CC		=	gcc
-CFLAGS	=	-Wall -Werror -Wextra
+CFLAGS	=	-Wall -Werror -Wextra -O3
 
-LIBS	=	$(LIBFT) $(LIBX_WIN) -lpthread
+LIBS	=	$(LIBFT) $(LIBX_WIN)
 LIBFT	=	-L$(LFTDIR) -lft
 LIBX_MAC	=	-lm -lmlx -framework OpenGL -framework AppKit
 LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
@@ -20,6 +20,7 @@ SRCS	= 	$(SRCDIR)main.c				\
 			$(SRCDIR)render.c			\
 			$(SRCDIR)complex.c			\
 			$(SRCDIR)fractal.c			\
+			$(SRCDIR)palette.c			\
 			$(SRCDIR)color.c			
 
 OBJS	=	$(SRCS:.c=.o)

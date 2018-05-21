@@ -15,7 +15,6 @@
 
 # include <stdlib.h>
 # include <math.h>
-# include <pthread.h>
 
 # include <mlx.h>
 # include "../mlx_events.h"
@@ -91,6 +90,7 @@ typedef struct	s_mlx
 	void		*win_ptr;
 	void		*img_ptr;
 	t_image		*image;
+	int			mouse;
 	void		*render;
 	int			rendering;
 	t_fractol	*fractol;
@@ -117,8 +117,14 @@ t_u8		color_get_b(int color);
 /*
 **	====	render.c
 */
-void		*render(void *arg);
-void		update_display(t_mlx *mlx);
+void		render(t_mlx *mlx);
+
+t_channel	palette_set_channel(
+	int			center,
+	int			amplitude,
+	double		phase,
+	double		frequency);
+int			event_key_palette(t_mlx *mlx, int key);
 
 /*
 **	====	fractal.c

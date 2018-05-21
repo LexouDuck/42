@@ -22,14 +22,12 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	double		scale;
 
 	mlx = (t_mlx *)param;
-	if (mlx == NULL)
-		return (ERROR);
-	else if (button == MOUSE_L_CLICK)
+	if (button == MOUSE_L_CLICK)
 	{
 		scale = (mlx->fractol->zoom * mlx->fractol->radius);
 		mlx->fractol->anchor.x += scale * (double)(x - WIN_W / 2) / (double)WIN_H;
 		mlx->fractol->anchor.y += scale * (double)(y - WIN_H / 2) / (double)WIN_H;
-		update_display(mlx);
+		render(mlx);
 	}
 	else if (button == MOUSE_R_CLICK)
 	{
@@ -47,19 +45,17 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
 
 	mlx = (t_mlx *)param;
-	if (mlx == NULL)
-		return (ERROR);
-	else if (button == MOUSE_SCROLL_UP || button == MOUSE_SCROLL_DOWN)
+	if (button == MOUSE_SCROLL_UP || button == MOUSE_SCROLL_DOWN)
 	{
 		mlx->fractol->zoom *= (button == MOUSE_SCROLL_UP) ? 0.9 : 1.1;
 		if (mlx->fractol->zoom > MAX_ZOOM)
 			mlx->fractol->zoom = MAX_ZOOM;
-		update_display(mlx);
+		render(mlx);
 	}
 	else if (button == MOUSE_R_CLICK)
 	{
 		mlx->fractol->mouse.color = 0xFFFFFF;
-		update_display(mlx);
+		render(mlx);
 	}
 	return (OK);
 }
@@ -81,7 +77,7 @@ static int	event_mouse_move(int x, int y, void *param)
 		mlx->fractol->mouse.y = y;
 		if ((mlx->fractol->type == julia || mlx->fractol->type == fatou)
 			&& (d_x || d_y))
-			update_display(mlx);
+			render(mlx);
 	}
 	old_x = x;
 	old_y = y;
@@ -93,41 +89,25 @@ static int	event_key(int key, void *param)
 ft_putstr("KEY PRESSED: ");
 ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 	t_mlx		*mlx;
-	double		tmp;
+	int			tmp;
+	double		d;
 
 	mlx = (t_mlx *)param;
-	tmp = mlx->fractol->zoom;
-	if (mlx == NULL)
-		return (ERROR);
-	else if (key == KEY_ESC)
+	d = mlx->fractol->zoom;
+	if (key == KEY_ESC)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr);
 		exit(OK);
 	}
-	else if (key == KEY_LEFT || key == KEY_RIGHT)
-		mlx->fractol->anchor.x += (key == KEY_LEFT) ? -tmp : tmp;
-	else if (key == KEY_UP || key == KEY_DOWN)
-		mlx->fractol->anchor.y += (key == KEY_UP) ? -tmp : tmp;
-
-	else if (key == KEY_NUMPAD_7)
-		mlx->fractol->palette.r.center += 20;
-	else if (key == KEY_NUMPAD_8)
-		mlx->fractol->palette.r.amplitude += 2;
-	else if (key == KEY_NUMPAD_9)
-		mlx->fractol->palette.r.frequency += 0.01;
-	else if (key == KEY_NUMPAD_4)
-		mlx->fractol->palette.g.center += 20;
-	else if (key == KEY_NUMPAD_5)
-		mlx->fractol->palette.g.amplitude += 20;
-	else if (key == KEY_NUMPAD_6)
-		mlx->fractol->palette.g.frequency += 20;
-	else if (key == KEY_NUMPAD_1)
-		mlx->fractol->palette.b.center += 20;
-	else if (key == KEY_NUMPAD_2)
-		mlx->fractol->palette.b.amplitude += 2;
-	else if (key == KEY_NUMPAD_3)
-		mlx->fractol->palette.b.frequency += 0.01;
-	update_display(mlx);
+	else if ((tmp = key == KEY_LEFT) || key == KEY_RIGHT)
+		mlx->fractol->anchor.x += tmp ? -d : d;
+	else if ((tmp = key == KEY_UP) || key == KEY_DOWN)
+		mlx->fractol->anchor.y += tmp ? -d : d;
+	else if ((tmp = key == KEY_PAGE_UP) || key == KEY_PAGE_DN)
+		mlx->fractol->radius *= tmp ? 0.9 : 1.1;
+	else if (event_key_palette(mlx, key))
+		return (OK);
+	render(mlx);
 	return (OK);
 }
 
