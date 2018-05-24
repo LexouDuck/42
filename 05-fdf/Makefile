@@ -1,7 +1,7 @@
 NAME	=	fdf
 
 CC		=	gcc
-CFLAGS	=	-Wall -Werror -Wextra
+CFLAGS	=	-Wall -Werror -Wextra -O3
 
 LIBS	=	$(LIBFT) $(LIBX_WIN)
 LIBFT	=	-L$(LFTDIR) -lft

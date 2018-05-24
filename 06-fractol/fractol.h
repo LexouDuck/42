@@ -15,6 +15,7 @@
 
 # include <stdlib.h>
 # include <math.h>
+# include <time.h>
 
 # include <mlx.h>
 # include "../mlx_events.h"

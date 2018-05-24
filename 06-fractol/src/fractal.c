@@ -45,11 +45,8 @@ int	render_julia(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		tmp.y = 2 * z.x * z.y + c.y;
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
 		{
-			//n = i - log(log(n)) / log (2.0);
-			return (palette_getcolor(fractol->palette, i, n)); //(color_new(0, i << 8, i << 4, i << 2));
-			//	150 + 99 * sin(0.12 * n + 1),
-			//	100 + 99 * sin(0.13 * n + 0),
-			//	230 + 25 * sin(0.16 * n + 0)));
+			return (palette_getcolor(fractol->palette, i, n));
+			//(color_new(0, i << 8, i << 4, i << 2));
 		}
 		z.x = tmp.x;
 		z.y = tmp.y;
@@ -75,15 +72,16 @@ int	render_fatou(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		tmp.x = z.x * z.x - z.y * z.y + c.x;
 		tmp.y = 2 * z.x * z.y + c.y;
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
-		{
 			return (0);
-		}
 		z.x = tmp.x;
 		z.y = tmp.y;
 		++i;
 	}
 	i = n * 20;
-	return color_new(0, i<<6, 200-i, i<<4);
+	return (color_new(0,
+		fractol->palette.r.center + i * fractol->palette.r.amplitude,
+		fractol->palette.g.center + i * fractol->palette.g.amplitude,
+		fractol->palette.b.center + i * fractol->palette.b.amplitude));
 }
 
 int	render_mandelbrot(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
@@ -103,7 +101,8 @@ int	render_mandelbrot(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		tmp.y = 2 * c.x * c.y + z.y;
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
 		{
-			return (palette_getcolor(fractol->palette, i, n)); //(color_new(0, i<<4, i<<2, 200-(i<<1)));
+			return (palette_getcolor(fractol->palette, i, n));
+			//(color_new(0, i<<4, i<<2, 200-(i<<1)));
 		}
 		c.x = tmp.x;
 		c.y = tmp.y;
@@ -128,7 +127,8 @@ int	render_burningship(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		tmp.y = fabs((double)(2 * c.x * c.y + z.y));
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
 		{
-			return (palette_getcolor(fractol->palette, i, n)); // (color_new(0, 255 - i, i<<4, i<<2));
+			return (palette_getcolor(fractol->palette, i, n));
+			//(color_new(0, 255 - i, i<<4, i<<2));
 		}
 		c.x = tmp.x;
 		c.y = tmp.y;

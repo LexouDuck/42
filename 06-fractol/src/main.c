@@ -134,6 +134,7 @@ int			main(int argc, char **argv)
 			ft_putendl(" - julia\n - fatou\n - mandelbrot\n - newton");
 			return (ERROR);
 		}
+		srand(time(NULL));
 		init_palette(&fractol);
 		if (open_window(&fractol, ft_strjoin("Fractol - ", argv[1])))
 			return (ERROR);

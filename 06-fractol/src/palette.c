@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../fractol.h"
-#include <time.h>
 
 t_channel	palette_set_channel(
 	int			center,
@@ -30,9 +29,6 @@ t_channel	palette_set_channel(
 
 static void	palette_randomize(t_palette *palette)
 {
-	time_t	t;
-
-	srand((unsigned)time(&t));
 	palette->r.center = rand() % 256;
 	palette->r.amplitude = rand() % (256 - palette->r.center);
 	palette->r.phase = (double)(rand() % 360) * M_PI / 180;
@@ -60,9 +56,9 @@ int			event_key_palette(t_mlx *mlx, int key)
 	else if (key == KEY_NUMPAD_4)
 		mlx->fractol->palette.g.center += 20;
 	else if (key == KEY_NUMPAD_5)
-		mlx->fractol->palette.g.amplitude += 20;
+		mlx->fractol->palette.g.amplitude += 2;
 	else if (key == KEY_NUMPAD_6)
-		mlx->fractol->palette.g.frequency += 20;
+		mlx->fractol->palette.g.frequency += 0.01;
 	else if (key == KEY_NUMPAD_7)
 		mlx->fractol->palette.b.center += 20;
 	else if (key == KEY_NUMPAD_8)
