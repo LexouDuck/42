@@ -1,4 +1,4 @@
-NAME	=	fractol
+NAME	=	rtv1
 
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
@@ -13,14 +13,11 @@ HDRDIR	=	./
 MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 
-HDRS	=	$(HDRDIR)fractol.h			\
+HDRS	=	$(HDRDIR)rtv1.h				\
 			$(LFTDIR)libft.h
 SRCS	= 	$(SRCDIR)main.c				\
 			$(SRCDIR)event.c			\
 			$(SRCDIR)render.c			\
-			$(SRCDIR)complex.c			\
-			$(SRCDIR)fractal.c			\
-			$(SRCDIR)palette.c			\
 			$(SRCDIR)color.c			
 
 OBJS	=	$(SRCS:.c=.o)

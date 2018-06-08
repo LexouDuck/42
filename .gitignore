@@ -1,6 +1,7 @@
 # Project subjects and other stuff
 Piscine C/
 *.pdf
+*.gif
 
 # Executables & object files
 *.o
