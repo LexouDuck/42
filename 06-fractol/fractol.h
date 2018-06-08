@@ -21,8 +21,6 @@
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-
-
 # define WIN_W	640
 # define WIN_H	480
 
@@ -100,10 +98,14 @@ typedef struct	s_mlx
 /*
 **	====	complex.c
 */
-void		complex_add(t_complex *result, t_complex const c1, t_complex const c2);
-void		complex_sub(t_complex *result, t_complex const c1, t_complex const c2);
-void		complex_mul(t_complex *result, t_complex const c1, t_complex const c2);
-void		complex_div(t_complex *result, t_complex const c1, t_complex const c2);
+void		complex_add(t_complex *result,
+	t_complex const c1, t_complex const c2);
+void		complex_sub(t_complex *result,
+	t_complex const c1, t_complex const c2);
+void		complex_mul(t_complex *result,
+	t_complex const c1, t_complex const c2);
+void		complex_div(t_complex *result,
+	t_complex const c1, t_complex const c2);
 void		complex_pow(t_complex *result, t_complex const c, int n);
 
 /*
@@ -120,11 +122,15 @@ t_u8		color_get_b(int color);
 */
 void		render(t_mlx *mlx);
 
+/*
+**	====	palette.c
+*/
 t_channel	palette_set_channel(
 	int			center,
 	int			amplitude,
 	double		phase,
 	double		frequency);
+int			palette_getcolor(t_palette const palette, int i, double n);
 int			event_key_palette(t_mlx *mlx, int key);
 
 /*

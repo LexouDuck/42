@@ -46,7 +46,7 @@ inline void	set_pixel(t_image *image, t_point *pos)
 
 inline int	get_color_mean(int color1, int color2, float ratio)
 {
-	int 	result;
+	int		result;
 	int		channel;
 	float	tmp;
 

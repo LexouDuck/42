@@ -43,9 +43,6 @@ static void	init_palette(t_fractol *fractol)
 {
 	if (fractol->type == julia)
 	{
-		//fractol->palette.r = set_channel(0, 256, 0, 0);
-		//fractol->palette.g = set_channel(0, 16, 0, 0);
-		//fractol->palette.b = set_channel(0, 4, 0, 0);
 		fractol->palette.r = palette_set_channel(150, 99, 1, 0.12);
 		fractol->palette.g = palette_set_channel(100, 99, 0, 0.13);
 		fractol->palette.b = palette_set_channel(230, 25, 0, 0.16);
@@ -73,7 +70,7 @@ static void	init_palette(t_fractol *fractol)
 static int	init_image(t_mlx *mlx)
 {
 	t_image		*image;
-	static void	*functions[5] = 
+	static void	*functions[5] =
 	{
 		&render_julia,
 		&render_fatou,

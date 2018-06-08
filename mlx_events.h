@@ -18,8 +18,8 @@
 */
 # ifdef __APPLE__
 
-#  define MOUSE_L_CLICK		3
-#  define MOUSE_M_CLICK		1
+#  define MOUSE_L_CLICK		1
+#  define MOUSE_M_CLICK		3
 #  define MOUSE_R_CLICK		2
 #  define MOUSE_SCROLL_UP	4
 #  define MOUSE_SCROLL_DOWN	5
