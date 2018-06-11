@@ -1,35 +1,35 @@
 NAME	=	fractol
 
+RESET	=	"\033[0m"
+RED		=	"\033[0;31m"
+GREEN	=	"\033[0;32m"
+
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
 
-LIBS	=	$(LIBFT) $(LIBX_MAC)
+LIBS	=	$(LIBFT) $(LIBX_WIN)
 LIBFT	=	-L$(LFTDIR) -lft
 LIBX_MAC	=	-lm -lmlx -framework OpenGL -framework AppKit
 LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
 
 SRCDIR	=	./src/
-HDRDIR	=	./
+OBJDIR	=	./obj/
 MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 
-HDRS	=	$(HDRDIR)fractol.h			\
+HDRS	=	fractol.h			\
 			$(LFTDIR)libft.h
-SRCS	= 	$(SRCDIR)main.c				\
-			$(SRCDIR)event.c			\
-			$(SRCDIR)render.c			\
-			$(SRCDIR)complex.c			\
-			$(SRCDIR)fractal.c			\
-			$(SRCDIR)palette.c			\
-			$(SRCDIR)color.c			
+SRCS	= 	color.c				\
+			palette.c			\
+			complex.c			\
+			fractal.c			\
+			render.c			\
+			event.c				\
+			main.c
 
-OBJS	=	$(SRCS:.c=.o)
+OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
-RESET	=	"\033[0m"
-RED		=	"\033[0;31m"
-GREEN	=	"\033[0;32m"
-
-%.o: %.c
+$(OBJDIR)%.o : $(SRCDIR)%.c
 	@printf "Compiling file: "$@" -> "$(RED)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"

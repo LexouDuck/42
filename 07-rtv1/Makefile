@@ -1,5 +1,9 @@
 NAME	=	rtv1
 
+RESET	=	"\033[0m"
+RED		=	"\033[0;31m"
+GREEN	=	"\033[0;32m"
+
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
 
@@ -9,24 +13,20 @@ LIBX_MAC	=	-lm -lmlx -framework OpenGL -framework AppKit
 LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll
 
 SRCDIR	=	./src/
-HDRDIR	=	./
+OBJDIR	=	./obj/
 MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 
-HDRS	=	$(HDRDIR)rtv1.h				\
+HDRS	=	rtv1.h				\
 			$(LFTDIR)libft.h
-SRCS	= 	$(SRCDIR)main.c				\
-			$(SRCDIR)event.c			\
-			$(SRCDIR)render.c			\
-			$(SRCDIR)color.c			
+SRCS	= 	main.c				\
+			event.c				\
+			render.c			\
+			color.c			
 
 OBJS	=	$(SRCS:.c=.o)
 
-RESET	=	"\033[0m"
-RED		=	"\033[0;31m"
-GREEN	=	"\033[0;32m"
-
-%.o: %.c
+$(OBJDIR)%.o : $(SRCDIR)%.c
 	@printf "Compiling file: "$@" -> "$(RED)
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
