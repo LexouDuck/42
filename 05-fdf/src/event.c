@@ -31,9 +31,9 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 			camera->zoom = 1;
 	}
 	else if (button == MOUSE_L_CLICK)
-		camera->mode = CAMERA_ZOOM;
-	else if (button == MOUSE_M_CLICK)
 		camera->mode = CAMERA_PAN;
+	else if (button == MOUSE_M_CLICK)
+		camera->mode = CAMERA_ZOOM;
 	else if (button == MOUSE_R_CLICK)
 		camera->mode = CAMERA_ROTATE;
 	render(mlx, camera);
@@ -61,25 +61,22 @@ static int	event_mouse_move(int x, int y, void *param)
 	static int	old_y = 0;
 	t_mlx		*mlx;
 	t_camera	*camera;
+	t_vector	mouse;
 
 	mlx = (t_mlx *)param;
 	camera = mlx->fdf->camera;
-	if (camera->mode == CAMERA_NONE)
+	mouse.x = (float)(x - old_x) * 0.05;
+	mouse.y = (float)(y - old_y) * 0.05;
+	if (camera->mode != CAMERA_NONE)
 	{
-		old_x = x;
-		old_y = y;
-		return (OK);
+		if (camera->mode == CAMERA_ZOOM)
+			camera_zoom_tilt(camera, mouse.x, mouse.y);
+		else if (camera->mode == CAMERA_ROTATE)
+			camera_rotate(camera, mouse.x, mouse.y);
+		else if (camera->mode == CAMERA_PAN)
+			camera_pan(camera, mouse.x, mouse.y * 0.5);
+		render(mlx, camera);
 	}
-	else if (camera->mode == CAMERA_ZOOM)
-		camera_zoom_tilt(camera,
-			(float)(x - old_x) * 0.05, (float)(y - old_y) * 0.05);
-	else if (camera->mode == CAMERA_ROTATE)
-		camera_rotate(camera,
-			(float)(x - old_x) * 0.05, (float)(y - old_y) * 0.05);
-	else if (camera->mode == CAMERA_PAN)
-		camera_pan(camera,
-			(float)(x - old_x) * 0.05, (float)(y - old_y) * 0.02);
-	render(mlx, camera);
 	old_x = x;
 	old_y = y;
 	return (OK);

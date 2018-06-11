@@ -13,19 +13,20 @@
 #include "../fractol.h"
 
 void				render_debug_complex(t_mlx *mlx,
-	t_complex *complex, t_point p)
+	t_complex *complex,
+	t_point p)
 {
-	char *result;
-	char *c_real;
-	char *c_imag;
-	t_point c;
+	char	*result;
+	char	*c_real;
+	char	*c_imag;
+	t_point	c;
 
 	c_real = ft_ftoa(complex->x, 3);
 	c_imag = ft_ftoa(complex->y, 3);
 	c.x = ft_strlen(c_real);
 	c.y = ft_strlen(c_imag);
 	if (!(result = (char *)malloc(c.x + c.y + 4)))
-		return;
+		return ;
 	c.color = 0;
 	ft_memcpy(result + c.color, c_real, c.x);
 	c.color += c.x;
@@ -44,8 +45,8 @@ void				render_debug_complex(t_mlx *mlx,
 
 void				render_debug(t_mlx *mlx, t_complex *complex)
 {
-	t_point pos;
-	char *c;
+	t_point	pos;
+	char	*c;
 
 	pos.color = 0xFFFFFF;
 	c = ft_ftoa(mlx->fractol->radius, 8);
@@ -64,7 +65,9 @@ void				render_debug(t_mlx *mlx, t_complex *complex)
 		render_debug_complex(mlx, complex, pos);
 }
 
-static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
+static void			render_fractal(t_mlx *mlx,
+	t_u32 *buffer,
+	t_complex *c,
 	int (*get_color)(t_fractol *, t_complex *, t_complex *))
 {
 	t_complex	anchor;
@@ -72,7 +75,7 @@ static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
 	t_point		pos;
 	t_complex	z;
 
-	mlx->fractol->max = 
+	mlx->fractol->max =
 		(mlx->fractol->type == julia || mlx->fractol->type == fatou) ? 32 : 64;
 	mlx->fractol->radius2 = (mlx->fractol->type == newton) ?
 		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
@@ -93,18 +96,24 @@ static void			render_fractal(t_mlx *mlx, t_u32 *buffer, t_complex *c,
 	}
 }
 
-void			render(t_mlx *mlx)
+void				render(t_mlx *mlx)
 {
 	t_complex	c;
 
-//ft_putendl("RENDER: ");
 	mlx->rendering = 1;
 	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
-	c.x = mlx->mouse ? 0 : ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
-	c.y = mlx->mouse ? 0 : ((double)mlx->fractol->mouse.y / (double)WIN_H);
+	if (mlx->mouse)
+	{
+		c.x = 0;
+		c.y = 0;
+	}
+	else
+	{
+		c.x = ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
+		c.y = ((double)mlx->fractol->mouse.y / (double)WIN_H);
+	}
 	render_fractal(mlx, (t_u32 *)mlx->image->buffer, &c, mlx->render);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 	render_debug(mlx, &c);
 	mlx->rendering = 0;
-//ft_putendl("DONE");
 }

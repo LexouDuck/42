@@ -41,10 +41,10 @@ void				get_camera_matrix(t_camera *camera)
 }
 
 static inline void	project_vertex(
-	t_vertex	*vertex,
-	t_matrix	*camera_matrix,
-	float		camera_zoom,
-	int			perspective)
+	t_vertex *vertex,
+	t_matrix *camera_matrix,
+	float camera_zoom,
+	int perspective)
 {
 	t_vector	*result;
 	float		tmp;
@@ -69,8 +69,8 @@ static inline void	project_vertex(
 }
 
 void				project_vertices(t_mlx *mlx,
-	t_matrix 	*camera_matrix,
-	t_camera 	*camera)
+	t_matrix *camera_matrix,
+	t_camera *camera)
 {
 	int			perspective;
 	t_list		*lst;

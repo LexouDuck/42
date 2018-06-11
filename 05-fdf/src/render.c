@@ -24,8 +24,9 @@ static void		render_vertices(t_mlx *mlx, int render_colors)
 		vertex = (t_vertex *)lst->content;
 		if (vertex && (vertex->display & 0xFF000000))
 		{
-			pos.x =     ((vertex->projected.x + 1) * 0.5) * WIDTH;
-			pos.y = (1 - (vertex->projected.y + 1) * 0.5) * HEIGHT;
+			pos.x = ((vertex->projected.x + 1) * 0.5) * WIDTH;
+			pos.y = ((vertex->projected.y + 1) * 0.5) * HEIGHT;
+			pos.y = (HEIGHT - pos.y);
 			pos.color = (render_colors) ? vertex->display : 0xFFFFFF;
 			if (is_in_window(pos.x, pos.y))
 				set_pixel(mlx->image, &pos);
@@ -42,17 +43,19 @@ static void		render_edge(t_mlx *mlx, int render_colors, t_edge *edge)
 	int			render;
 
 	render = 0;
-	if ((vertex = edge->vertex1) && (vertex->display & 0xFF000000)) 
+	if ((vertex = edge->vertex1) && (vertex->display & 0xFF000000))
 	{
-		pos1.x =     ((vertex->projected.x + 1) * 0.5) * WIDTH;
-		pos1.y = (1 - (vertex->projected.y + 1) * 0.5) * HEIGHT;
+		pos1.x = ((vertex->projected.x + 1) * 0.5) * WIDTH;
+		pos1.y = ((vertex->projected.y + 1) * 0.5) * HEIGHT;
+		pos1.y = (HEIGHT - pos1.y);
 		pos1.color = (render_colors) ? vertex->display : 0xFFFFFF;
 		++render;
 	}
 	if ((vertex = edge->vertex2) && (vertex->display & 0xFF000000))
 	{
-		pos2.x =     ((vertex->projected.x + 1) * 0.5) * WIDTH;
-		pos2.y = (1 - (vertex->projected.y + 1) * 0.5) * HEIGHT;
+		pos2.x = ((vertex->projected.x + 1) * 0.5) * WIDTH;
+		pos2.y = ((vertex->projected.y + 1) * 0.5) * HEIGHT;
+		pos2.y = (HEIGHT - pos2.y);
 		pos2.color = (render_colors) ? vertex->display : 0xFFFFFF;
 		++render;
 	}
@@ -120,10 +123,9 @@ void			render(t_mlx *mlx, t_camera *camera)
 			lst = lst->next;
 		}
 	}
-	mlx_put_image_to_window(
-		mlx->mlx_ptr,
-		mlx->win_ptr,
-		mlx->img_ptr, 0, 0);
+	mlx_put_image_to_window(mlx->mlx_ptr,
+							mlx->win_ptr,
+							mlx->img_ptr, 0, 0);
 	//render_debug(mlx, camera, &camera->matrix);
 	render_clean(&(camera->matrix));
 }

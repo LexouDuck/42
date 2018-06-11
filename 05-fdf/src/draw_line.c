@@ -52,7 +52,7 @@ static void	draw_line_v(t_mlx *mlx, t_point *pos1, t_point *pos2)
 	e = dy;
 	dx *= 2;
 	dy *= 2;
-	while (is_in_window(pos1->x, pos1->y)) 
+	while (is_in_window(pos1->x, pos1->y))
 	{
 		set_pixel(mlx->image, pos1);
 		if ((pos1->y += increment) == pos2->y)

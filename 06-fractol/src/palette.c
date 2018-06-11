@@ -13,10 +13,10 @@
 #include "../fractol.h"
 
 t_channel	palette_set_channel(
-	int			center,
-	int			amplitude,
-	double		phase,
-	double		frequency)
+	int center,
+	int amplitude,
+	double phase,
+	double frequency)
 {
 	t_channel	result;
 
@@ -24,6 +24,22 @@ t_channel	palette_set_channel(
 	result.amplitude = amplitude;
 	result.phase = phase;
 	result.frequency = frequency;
+	return (result);
+}
+
+int			palette_getcolor(t_palette const palette, int i, double n)
+{
+	int		result;
+	double	tmp;
+
+	result = 0;
+	n = i - log(log(n)) / log(2.0);
+	tmp = palette.r.amplitude * sin(palette.r.phase + palette.r.frequency * n);
+	result |= (t_u8)(palette.r.center + tmp) << 16;
+	tmp = palette.g.amplitude * sin(palette.g.phase + palette.g.frequency * n);
+	result |= (t_u8)(palette.g.center + tmp) << 8;
+	tmp = palette.b.amplitude * sin(palette.b.phase + palette.b.frequency * n);
+	result |= (t_u8)(palette.b.center + tmp);
 	return (result);
 }
 

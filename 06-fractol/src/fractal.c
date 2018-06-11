@@ -12,22 +12,6 @@
 
 #include "../fractol.h"
 
-int			palette_getcolor(t_palette const palette, int i, double n)
-{
-	int		result;
-	double	tmp;
-
-	result = 0;
-	n = i - log(log(n)) / log (2.0);
-	tmp = palette.r.amplitude * sin(palette.r.phase + palette.r.frequency * n);
-	result |= (t_u8)(palette.r.center + tmp) << 16;
-	tmp = palette.g.amplitude * sin(palette.g.phase + palette.g.frequency * n);
-	result |= (t_u8)(palette.g.center + tmp) << 8;
-	tmp = palette.b.amplitude * sin(palette.b.phase + palette.b.frequency * n);
-	result |= (t_u8)(palette.b.center + tmp);
-	return (result);
-}
-
 int	render_julia(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 {
 	t_complex	tmp;
@@ -39,14 +23,13 @@ int	render_julia(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 	z = *z_ptr;
 	c = *c_ptr;
 	i = 0;
-	while (i < fractol->max) 
+	while (i < fractol->max)
 	{
 		tmp.x = z.x * z.x - z.y * z.y + c.x;
 		tmp.y = 2 * z.x * z.y + c.y;
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
 		{
 			return (palette_getcolor(fractol->palette, i, n));
-			//(color_new(0, i << 8, i << 4, i << 2));
 		}
 		z.x = tmp.x;
 		z.y = tmp.y;
@@ -67,7 +50,7 @@ int	render_fatou(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 	c = *c_ptr;
 	n = 0;
 	i = 0;
-	while (i < fractol->max) 
+	while (i < fractol->max)
 	{
 		tmp.x = z.x * z.x - z.y * z.y + c.x;
 		tmp.y = 2 * z.x * z.y + c.y;
@@ -102,7 +85,6 @@ int	render_mandelbrot(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
 		{
 			return (palette_getcolor(fractol->palette, i, n));
-			//(color_new(0, i<<4, i<<2, 200-(i<<1)));
 		}
 		c.x = tmp.x;
 		c.y = tmp.y;
@@ -128,7 +110,6 @@ int	render_burningship(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		if ((n = tmp.x * tmp.x + tmp.y * tmp.y) > fractol->radius2)
 		{
 			return (palette_getcolor(fractol->palette, i, n));
-			//(color_new(0, 255 - i, i<<4, i<<2));
 		}
 		c.x = tmp.x;
 		c.y = tmp.y;
@@ -159,5 +140,5 @@ int	render_newton(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 	if (tmp <= fractol->radius2)
 		return (0);
 	i = (tmp < 255) ? tmp : 255;
-	return (color_new(0, i<<4, i<<2, i<<6));
+	return (color_new(0, i << 4, i << 2, i << 6));
 }

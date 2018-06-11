@@ -52,24 +52,24 @@ void		matrix_inverse(t_matrix *matrix)
 	t_vector	*u;
 	t_vector	*v;
 	t_vector	*w;
-	double		det;
+	double		deter;
 
 	u = vector_new(matrix->u->x, matrix->u->y, matrix->u->z);
 	v = vector_new(matrix->v->x, matrix->v->y, matrix->v->z);
 	w = vector_new(matrix->w->x, matrix->w->y, matrix->w->z);
-	det = u->x * (v->y * w->z - v->z * w->y) -
-		  u->y * (v->x * w->z - v->z * w->x) +
-		  u->z * (v->x * w->y - v->y * w->x);
-	det = 1 / det;
-	matrix->u->x = (v->y * w->z - w->y * v->z) * det;
-	matrix->u->y = (w->y * u->z - u->y * w->z) * det;
-	matrix->u->z = (u->y * v->z - v->y * u->z) * det;
-	matrix->v->x = (v->z * w->x - w->z * v->x) * det;
-	matrix->v->y = (w->z * u->x - u->z * w->x) * det;
-	matrix->v->z = (u->z * v->x - v->z * u->x) * det;
-	matrix->w->x = (v->x * w->y - w->x * v->y) * det;
-	matrix->w->y = (w->x * u->y - u->x * w->y) * det;
-	matrix->w->z = (u->x * v->y - v->x * u->y) * det;
+	deter = u->x * (v->y * w->z - v->z * w->y) -
+			u->y * (v->x * w->z - v->z * w->x) +
+			u->z * (v->x * w->y - v->y * w->x);
+	deter = 1 / deter;
+	matrix->u->x = (v->y * w->z - w->y * v->z) * deter;
+	matrix->u->y = (w->y * u->z - u->y * w->z) * deter;
+	matrix->u->z = (u->y * v->z - v->y * u->z) * deter;
+	matrix->v->x = (v->z * w->x - w->z * v->x) * deter;
+	matrix->v->y = (w->z * u->x - u->z * w->x) * deter;
+	matrix->v->z = (u->z * v->x - v->z * u->x) * deter;
+	matrix->w->x = (v->x * w->y - w->x * v->y) * deter;
+	matrix->w->y = (w->x * u->y - u->x * w->y) * deter;
+	matrix->w->z = (u->x * v->y - v->x * u->y) * deter;
 	free(u);
 	free(v);
 	free(w);
