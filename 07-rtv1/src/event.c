@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../fdf.h"
+#include "../rtv1.h"
 
 static int	event_mouse_press(int button, int x, int y, void *param)
 {
@@ -22,7 +22,7 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
+	camera = mlx->rtv1->camera;
 	if (button == MOUSE_SCROLL_UP ||
 		button == MOUSE_SCROLL_DOWN)
 	{
@@ -50,7 +50,7 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
+	camera = mlx->rtv1->camera;
 	camera->mode = CAMERA_NONE;
 	return (OK);
 }
@@ -63,7 +63,7 @@ static int	event_mouse_move(int x, int y, void *param)
 	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
+	camera = mlx->rtv1->camera;
 	if (camera->mode == CAMERA_NONE)
 	{
 		old_x = x;
@@ -93,7 +93,7 @@ ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
-	camera = mlx->fdf->camera;
+	camera = mlx->rtv1->camera;
 	if (key == KEY_ESC)
 	{
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr);

@@ -10,63 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../fdf.h"
+#include "../rtv1.h"
 
-static void		render_vertices(t_mlx *mlx, int render_colors)
-{
-	t_point		pos;
-	t_list		*lst;
-	t_vertex	*vertex;
-
-	lst = mlx->fdf->space->vertices;
-	while (lst)
-	{
-		vertex = (t_vertex *)lst->content;
-		if (vertex && (vertex->display & 0xFF000000))
-		{
-			pos.x =     ((vertex->projected.x + 1) * 0.5) * WIDTH;
-			pos.y = (1 - (vertex->projected.y + 1) * 0.5) * HEIGHT;
-			pos.color = (render_colors) ? vertex->display : 0xFFFFFF;
-			if (is_in_window(pos.x, pos.y))
-				set_pixel(mlx->image, &pos);
-		}
-		lst = lst->next;
-	}
-}
-
-static void		render_edge(t_mlx *mlx, int render_colors, t_edge *edge)
-{
-	t_point		pos1;
-	t_point		pos2;
-	t_vertex	*vertex;
-	int			render;
-
-	render = 0;
-	if ((vertex = edge->vertex1) && (vertex->display & 0xFF000000)) 
-	{
-		pos1.x =     ((vertex->projected.x + 1) * 0.5) * WIDTH;
-		pos1.y = (1 - (vertex->projected.y + 1) * 0.5) * HEIGHT;
-		pos1.color = (render_colors) ? vertex->display : 0xFFFFFF;
-		++render;
-	}
-	if ((vertex = edge->vertex2) && (vertex->display & 0xFF000000))
-	{
-		pos2.x =     ((vertex->projected.x + 1) * 0.5) * WIDTH;
-		pos2.y = (1 - (vertex->projected.y + 1) * 0.5) * HEIGHT;
-		pos2.color = (render_colors) ? vertex->display : 0xFFFFFF;
-		++render;
-	}
-	if (render == 2)
-		draw_line(mlx, &pos1, &pos2);
-}
-
-static void		render_clean(t_matrix *matrix)
-{
-	free(matrix->u);
-	free(matrix->v);
-	free(matrix->w);
-	free(matrix->t);
-}
 /*
 **static void		render_debug(t_mlx *mlx, t_camera *camera, t_matrix *matrix)
 **{
@@ -98,32 +43,43 @@ static void		render_clean(t_matrix *matrix)
 **	free(str);
 **}
 */
+
+static t_vector	*cast_ray(t_mlx *mlx, t_vector *origin, t_vector *direction)
+{
+	if (mlx || origin || direction)
+		return (NULL);
+	return (NULL);
+}
+
 void			render(t_mlx *mlx, t_camera *camera)
 {
-	int			render_colors;
-	t_list		*lst;
+	t_vector	origin;
+	t_vector	*pixel;
+	t_vector	*direction;
+	float		scale = tan(camera->fov * 0.5 * M_PI / 180);
+	float		ratio = (float)WIDTH / (float)HEIGHT;
+	float		x;
+	float		y;
+	t_u32		*buffer = (t_u32 *)mlx->image->buffer;
+	t_u32		color;
+	int			index;
 
 	ft_bzero(mlx->image->buffer, HEIGHT * mlx->image->line);
-	camera_update(camera);
-	get_camera_matrix(camera);
-	project_vertices(mlx, &camera->matrix, camera);
-	render_colors = (camera->render & 4);
-	if (camera->render & 2)
-		render_vertices(mlx, render_colors);
-	else
+	vector_set(&origin, 0, 0, 0);
+	for (t_u32 j = 0; j < HEIGHT; ++j)
+	for (t_u32 i = 0; i < WIDTH; ++i)
 	{
-		lst = mlx->fdf->space->edges;
-		while (lst)
-		{
-			if (lst->content)
-				render_edge(mlx, render_colors, (t_edge *)lst->content);
-			lst = lst->next;
-		}
+		x =     (2 * (i + 0.5) / (float)WIDTH - 1) * ratio * scale;
+		y = (1 - 2 * (j + 0.5) / (float)HEIGHT) * scale;
+		direction = vector_new(x, y, -1);
+		vector_normalize(direction);
+		pixel = cast_ray(mlx, &origin, direction);
+		color = color_new(0, pixel->x, pixel->y, pixel->z);
+		buffer[index++] = color;
 	}
 	mlx_put_image_to_window(
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
 	//render_debug(mlx, camera, &camera->matrix);
-	render_clean(&(camera->matrix));
 }

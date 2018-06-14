@@ -10,27 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../fdf.h"
+#include "../rtv1.h"
 
-static int	fdf_init(t_fdf *fdf, int fd)
+static int	rtv1_init(t_rtv1 *rtv1, int fd)
 {
-	if (fdf_readmap(fdf, fd) == ERROR)
+	if (rtv1_readmap(rtv1, fd) == ERROR)
 	{
-		ft_putendl("Error: the given fdf file is invalid");
+		ft_putendl("Error: the given rtv1 file is invalid");
 		return (ERROR);
 	}
-	if (!(fdf->camera = camera_new(fdf)) ||
-		!(fdf->space = (t_space *)malloc(sizeof(t_space))))
+	if (!(rtv1->camera = camera_new(rtv1)) ||
+		!(rtv1->space = (t_space *)malloc(sizeof(t_space))))
 	{
 		ft_putendl("Error: could not initialize the 3d space");
 		return (ERROR);
 	}
-	if (fdf_getmap_verts(fdf) == ERROR)
+	if (rtv1_getmap_verts(rtv1) == ERROR)
 	{
 		ft_putendl("Error: could not create the vertices for the 3d space");
 		return (ERROR);
 	}
-	if (fdf_getmap_edges(fdf) == ERROR)
+	if (rtv1_getmap_edges(rtv1) == ERROR)
 	{
 		ft_putendl("Error: could not create the edges for the 3d space");
 		return (ERROR);
@@ -53,11 +53,11 @@ static int	img_init(t_mlx *mlx)
 	return (OK);
 }
 
-static int	open_window(t_fdf *fdf, char *title)
+static int	open_window(t_rtv1 *rtv1, char *title)
 {
 	t_mlx	mlx;
 
-	mlx.fdf = fdf;
+	mlx.rtv1 = rtv1;
 	if (!(mlx.mlx_ptr = mlx_init()))
 	{
 		ft_putendl("Error: could not initialize MinilibX");
@@ -73,7 +73,7 @@ static int	open_window(t_fdf *fdf, char *title)
 		ft_putendl("Error: could not open new window");
 		return (ERROR);
 	}
-	render(&mlx, mlx.fdf->camera);
+	render(&mlx, mlx.rtv1->camera);
 	setup_events(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
@@ -81,7 +81,7 @@ static int	open_window(t_fdf *fdf, char *title)
 
 int			main(int argc, char **argv)
 {
-	t_fdf	fdf;
+	t_rtv1	rtv1;
 	int		fd;
 
 	if (argc == 2)
@@ -92,12 +92,12 @@ int			main(int argc, char **argv)
 			ft_putendl("Error: could not open file");
 			return (ERROR);
 		}
-		if (fdf_init(&fdf, fd) == ERROR)
+		if (rtv1_init(&rtv1, fd) == ERROR)
 			return (ERROR);
-		if (open_window(&fdf, ft_strjoin("FdF - ", argv[1])))
+		if (open_window(&rtv1, ft_strjoin("FdF - ", argv[1])))
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("fdf: expecting one file as argument");
+	ft_putendl("rtv1: expecting one file as argument");
 	return (ERROR);
 }

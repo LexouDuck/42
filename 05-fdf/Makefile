@@ -19,7 +19,7 @@ LFTDIR	=	./libft/
 
 HDRS	=	fdf.h				\
 			$(LFTDIR)libft.h
-SRCS	= 	../get_next_line.c  \
+SRCS	= 	../../get_next_line.c  \
 			space_fdf.c			\
 			space_add.c			\
 			space_get.c			\
@@ -39,15 +39,16 @@ SRCS	= 	../get_next_line.c  \
 
 OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
-$(OBJDIR)%.o : $(SRCDIR)%.c
-	@printf "Compiling file: "$@" -> "$(RED)
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@printf $(GREEN)"OK!"$(RESET)"\n"
-
 $(NAME): $(OBJS)
 	@make -C $(LFTDIR) all
 	@printf "Compiling program: "$@" -> "
-	@$(CC) $^ $(CFLAGS) -o $@ $(LIBS)
+	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
+
+$(OBJDIR)%.o : $(SRCDIR)%.c
+	@mkdir -p $(OBJDIR)
+	@printf "Compiling file: "$@" -> "$(RED)
+	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 all: $(NAME)
@@ -64,11 +65,11 @@ fclean: clean
 
 re: fclean all
 
-test: all
-	@printf "Testing $(NAME):\n"
-	startxwin ./fdf tests/42.fdf
-
 mlx:
 	@make -C $(MLXDIR) all && sh ../mlx.sh
 	@make fclean
 	@make test
+
+test: all
+	@printf "Testing $(NAME):\n"
+	startxwin ./fdf tests/42.fdf

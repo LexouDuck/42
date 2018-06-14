@@ -10,10 +10,16 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
-
 #ifndef __GET_NEXT_LINE_H
 # define __GET_NEXT_LINE_H
+
+# include <stdlib.h>
+# include <unistd.h>
+# include <fcntl.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+
+# include "02-libft/libft.h"
 
 # define GNL_ERROR -1
 # define GNL_LINE	1

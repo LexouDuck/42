@@ -19,22 +19,27 @@ LFTDIR	=	./libft/
 
 HDRS	=	rtv1.h				\
 			$(LFTDIR)libft.h
-SRCS	= 	main.c				\
-			event.c				\
+SRCS	= 	../../get_next_line.c  \
+			color.c				\
+			vector.c			\
+			vector_op.c			\
 			render.c			\
-			color.c			
+			event.c				\
+			read.c				\
+			main.c
 
-OBJS	=	$(SRCS:.c=.o)
-
-$(OBJDIR)%.o : $(SRCDIR)%.c
-	@printf "Compiling file: "$@" -> "$(RED)
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@printf $(GREEN)"OK!"$(RESET)"\n"
+OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
 $(NAME): $(OBJS)
 	@make -C $(LFTDIR) all
 	@printf "Compiling program: "$@" -> "
-	@$(CC) $^ $(CFLAGS) -o $@ $(LIBS)
+	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
+
+$(OBJDIR)%.o : $(SRCDIR)%.c
+	@mkdir -p $(OBJDIR)
+	@printf "Compiling file: "$@" -> "$(RED)
+	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 all: $(NAME)
@@ -54,4 +59,3 @@ re: fclean all
 mlx:
 	@make -C $(MLXDIR) all && sh ../mlx.sh
 	@make fclean
-	@make test

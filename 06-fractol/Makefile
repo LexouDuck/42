@@ -29,15 +29,16 @@ SRCS	= 	color.c				\
 
 OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
-$(OBJDIR)%.o : $(SRCDIR)%.c
-	@printf "Compiling file: "$@" -> "$(RED)
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@printf $(GREEN)"OK!"$(RESET)"\n"
-
 $(NAME): $(OBJS)
 	@make -C $(LFTDIR) all
 	@printf "Compiling program: "$@" -> "
-	@$(CC) $^ $(CFLAGS) -o $@ $(LIBS)
+	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
+
+$(OBJDIR)%.o : $(SRCDIR)%.c
+	@mkdir -p $(OBJDIR)
+	@printf "Compiling file: "$@" -> "$(RED)
+	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 all: $(NAME)
@@ -57,4 +58,3 @@ re: fclean all
 mlx:
 	@make -C $(MLXDIR) all && sh ../mlx.sh
 	@make fclean
-	@make test

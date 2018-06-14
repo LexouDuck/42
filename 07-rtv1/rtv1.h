@@ -38,14 +38,6 @@ typedef struct	s_point
 	int			color;
 }				t_point;
 
-typedef struct	s_rect
-{
-	int			x;
-	int			y;
-	int			width;
-	int			height;
-}				t_rect;
-
 typedef struct	s_vector
 {
 	float		x;
@@ -115,14 +107,11 @@ typedef struct	s_frustum
 	float		r;
 }				t_frustum;
 
-typedef struct	s_fdf
+typedef struct	s_rtv1
 {
-	char		**map;
-	t_u32		map_width;
-	t_u32		map_height;
 	t_camera	*camera;
 	t_space		*space;
-}				t_fdf;
+}				t_rtv1;
 
 typedef	struct	s_image
 {
@@ -138,20 +127,8 @@ typedef struct	s_mlx
 	void		*win_ptr;
 	void		*img_ptr;
 	t_image		*image;
-	t_fdf		*fdf;
+	t_rtv1		*rtv1;
 }				t_mlx;
-
-/*
-**	====	draw_line.c
-*/
-
-void		draw_line(t_mlx	*mlx, t_point *pos1, t_point *pos2);
-
-/*
-**	====	draw_rectangle.c
-*/
-void		draw_rectangle(t_mlx *mlx, t_rect *rectangle, int color);
-void		fill_rectangle(t_mlx *mlx, t_rect *rectangle, int color);
 
 /*
 **	====	color.c
@@ -161,14 +138,6 @@ char		color_get_a(int color);
 t_u8		color_get_r(int color);
 t_u8		color_get_g(int color);
 t_u8		color_get_b(int color);
-
-/*
-**	====	window.c
-*/
-int			is_in_window(int x, int y);
-void		bring_into_window(t_point *point);
-void		set_pixel(t_image *image, t_point *pos);
-int			get_color_mean(int color1, int color2, float ratio);
 
 /*
 **	====	space_add.c
@@ -185,11 +154,11 @@ t_edge		*get_edge(t_space *space, t_vertex *v1, t_vertex *v2);
 t_face		*get_face(t_space *space, t_edge *e1, t_edge *e2, t_edge *e3);
 
 /*
-**	====	space_fdf.c
+**	====	space_rtv1.c
 */
-int			fdf_readmap(t_fdf *fdf, int fd);
-int			fdf_getmap_verts(t_fdf *fdf);
-int			fdf_getmap_edges(t_fdf *fdf);
+int			rtv1_readmap(t_rtv1 *rtv1, int fd);
+int			rtv1_getmap_verts(t_rtv1 *rtv1);
+int			rtv1_getmap_edges(t_rtv1 *rtv1);
 
 /*
 **	====	vector.c
@@ -221,7 +190,7 @@ t_matrix	*matrix_multiply(t_matrix *m1, t_matrix *m2);
 /*
 **	====	camera.c
 */
-t_camera	*camera_new(t_fdf *fdf);
+t_camera	*camera_new(t_rtv1 *rtv1);
 void		camera_pan(t_camera *camera, float x, float y);
 void		camera_rotate(t_camera *camera, float x, float y);
 void		camera_zoom_tilt(t_camera *camera, float x, float y);
