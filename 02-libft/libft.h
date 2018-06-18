@@ -195,6 +195,11 @@ char					*ft_itoa_hex(unsigned int number, char const *prefix);
 char					*ft_itoa_base(int number, char const *base);
 
 /*
+** Returns an floating-point numbee parsed from the given string number 'str'
+** (returns 0.0 if 'str' is invalid).
+*/
+float					ft_atof(char const *str);
+/*
 ** Returns a newly allocated string which is the string representation of
 ** the given float 'number', with 'precision' digits after the decimal point.
 */

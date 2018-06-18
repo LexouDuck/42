@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_atof.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aduquesn <AlexisDuquesne@outlook.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,29 +12,31 @@
 
 #include "libft.h"
 
-int	ft_atoi(const char *str)
+float ft_atof(const char* str)
 {
-	int		i;
-	long	result;
-	int		negative;
+	float	result;
+	float	factor;
+	int		point_seen;
 
-	i = 0;
-	while (!(ft_isdigit(str[i]) || str[i] == '+' || str[i] == '-'))
-	{
-		if (!str[i] || !ft_isspace(str[i]))
-			return (0);
-		++i;
-	}
-	negative = 0;
-	if (str[i] == '-')
-	{
-		negative = 1;
-		++i;
-	}
-	else if (str[i] == '+')
-		++i;
 	result = 0;
-	while (str[i] && ft_isdigit(str[i]))
-		result = result * 10 + str[i++] - '0';
-	return ((int)(negative ? -result : result));
+	factor = 1;
+	if (*str == '-')
+	{
+		str++;
+		factor = -1;
+	}
+	point_seen = 0;
+	while (*str)
+	{
+		if (*str == '.')
+			point_seen = 1;
+		else if (ft_isdigit(*str))
+		{
+			if (point_seen)
+				factor /= 10.0f;
+			result = result * 10.0f + (float)(*str - '0');
+		}
+		++str;
+	}
+	return (result * factor);
 }

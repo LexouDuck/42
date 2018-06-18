@@ -105,16 +105,6 @@ typedef struct	s_camera
 	t_matrix	matrix;
 }				t_camera;
 
-typedef struct	s_frustum
-{
-	float		n;
-	float		f;
-	float		t;
-	float		b;
-	float		l;
-	float		r;
-}				t_frustum;
-
 typedef struct	s_fdf
 {
 	char		**map;

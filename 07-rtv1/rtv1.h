@@ -24,12 +24,20 @@
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-int			get_next_line(const int fd, char **line);
+int			get_next_line(int const fd, char **line);
+int			read_file(int const fd, char **file);
 
 # define ALT	0.1
 
 # define WIDTH	512
 # define HEIGHT	512
+
+typedef struct	s_parser
+{
+	char		*file;
+	int			index;
+	int			line;
+}				t_parser;
 
 typedef struct	s_point
 {
@@ -53,32 +61,31 @@ typedef struct	s_matrix
 	t_vector	*t;
 }				t_matrix;
 
-typedef struct	s_vertex
+typedef enum	e_geom
 {
-	int			display;
-	t_vector	absolute;
-	t_vector	projected;
-}				t_vertex;
+	none,
+	plane,
+	triangle,
+	sphere,
+	cylinder,
+	cone,
+}				t_geom;
 
-typedef struct	s_edge
+typedef struct	s_object
 {
-	t_vertex	*vertex1;
-	t_vertex	*vertex2;
-}				t_edge;
+	t_geom		type;
+	t_vector	position;
+	t_vector	rotation;
+	t_vector	scale;
+	t_u32		color;
+}				t_object;
 
-typedef struct	s_face
+typedef struct	s_light
 {
-	t_edge		*edge1;
-	t_edge		*edge2;
-	t_edge		*edge3;
-}				t_face;
-
-typedef struct	s_space
-{
-	t_list		*vertices;
-	t_list		*edges;
-	t_list		*faces;
-}				t_space;
+	t_vector	position;
+	float		strength;
+	t_u32		color;
+}				t_light;
 
 typedef struct	s_camera
 {
@@ -97,20 +104,12 @@ typedef struct	s_camera
 	t_matrix	matrix;
 }				t_camera;
 
-typedef struct	s_frustum
-{
-	float		n;
-	float		f;
-	float		t;
-	float		b;
-	float		l;
-	float		r;
-}				t_frustum;
-
 typedef struct	s_rtv1
 {
 	t_camera	*camera;
-	t_space		*space;
+	t_list		*lights;
+	t_list		*objects;
+	t_u32		bg_color;
 }				t_rtv1;
 
 typedef	struct	s_image
@@ -138,27 +137,6 @@ char		color_get_a(int color);
 t_u8		color_get_r(int color);
 t_u8		color_get_g(int color);
 t_u8		color_get_b(int color);
-
-/*
-**	====	space_add.c
-*/
-t_vertex	*add_vertex(t_space *space, float x, float y, float z);
-t_edge		*add_edge(t_space *space, t_vertex *v1, t_vertex *v2);
-t_face		*add_face(t_space *space, t_edge *e1, t_edge *e2, t_edge *e3);
-
-/*
-**	====	space_get.c
-*/
-t_vertex	*get_vertex(t_space *space, float x, float y, float z);
-t_edge		*get_edge(t_space *space, t_vertex *v1, t_vertex *v2);
-t_face		*get_face(t_space *space, t_edge *e1, t_edge *e2, t_edge *e3);
-
-/*
-**	====	space_rtv1.c
-*/
-int			rtv1_readmap(t_rtv1 *rtv1, int fd);
-int			rtv1_getmap_verts(t_rtv1 *rtv1);
-int			rtv1_getmap_edges(t_rtv1 *rtv1);
 
 /*
 **	====	vector.c
@@ -190,19 +168,21 @@ t_matrix	*matrix_multiply(t_matrix *m1, t_matrix *m2);
 /*
 **	====	camera.c
 */
-t_camera	*camera_new(t_rtv1 *rtv1);
+t_camera	*camera_new();
 void		camera_pan(t_camera *camera, float x, float y);
 void		camera_rotate(t_camera *camera, float x, float y);
 void		camera_zoom_tilt(t_camera *camera, float x, float y);
 void		camera_update(t_camera *camera);
 
 /*
-**	====	projection.c
+**	====	read.c & read_util.c
 */
-void		get_camera_matrix(t_camera *camera);
-void		project_vertices(t_mlx *mlx,
-	t_matrix *camera_matrix,
-	t_camera *camera);
+char		*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd);
+
+void		read_whitespace(t_parser *parser);
+char		*read_vector_arg(t_parser *parser, t_vector *result);
+char		*read_number_arg(t_parser *parser, float *result);
+char		*read_color_arg(t_parser *parser, t_u32 *result);
 
 /*
 **	====	render.c

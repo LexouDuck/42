@@ -23,8 +23,10 @@ SRCS	= 	../../get_next_line.c  \
 			color.c				\
 			vector.c			\
 			vector_op.c			\
+			camera.c			\
 			render.c			\
 			event.c				\
+			read_util.c			\
 			read.c				\
 			main.c
 

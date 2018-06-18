@@ -25,7 +25,7 @@
 # define GNL_LINE	1
 # define GNL_END	0
 
-# define BUFF_SIZE 32
+# define BUFF_SIZE 1024
 
 #endif
 
@@ -35,6 +35,7 @@ static	int		gnl_read_file(int const fd, char *tmp[fd])
 	char	buffer[BUFF_SIZE + 1];
 	char	*temp;
 
+	result = 0;
 	while (ft_strchr(tmp[fd], '\n') == NULL &&
 		(result = read(fd, buffer, BUFF_SIZE)) > 0)
 	{
@@ -96,3 +97,23 @@ int				get_next_line(int const fd, char **line)
 ** ft_putstr(     ", length:");
 ** ft_putstr(ft_strpad_l(ft_itoa(length), ' ', 2)); ft_putstr(" | ");
 */
+
+int				read_file(int const fd, char **file)
+{
+	int		result;
+	char	buffer[BUFF_SIZE + 1];
+	char	*tmp;
+
+	result = 0;
+	*file = (char *)malloc(1);
+	**file = '\0';
+	while ((result = read(fd, buffer, BUFF_SIZE)) > 0)
+	{
+		buffer[result] = '\0';
+		tmp = *file;
+		if ((*file = ft_strjoin(tmp, buffer)) == NULL)
+			return (GNL_ERROR);
+		free(tmp);
+	}
+	return (result);
+}

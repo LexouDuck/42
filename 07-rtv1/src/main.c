@@ -12,27 +12,71 @@
 
 #include "../rtv1.h"
 
+static void	rtv1_printdebug(t_rtv1 *rtv1)
+{
+	t_object *object;
+	t_light *light;
+	t_list *lst;
+
+	ft_putendl("RTV1 File successfully read:");
+	ft_putstr("BG Color: "); ft_putendl(ft_itoa_hex(rtv1->bg_color, "#"));
+	ft_putendl("Lights:"); lst = rtv1->lights;
+	while (lst)
+	{
+		light = (t_light *)lst->content;
+		ft_putstr(ft_itoa_hex(light->color, "\t#"));
+		ft_putstr(", ");
+		ft_putstr(ft_itoa(light->strength));
+		ft_putstr(", (");
+		ft_putstr(ft_ftoa(light->position.x, 6)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(light->position.y, 6)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(light->position.z, 6)); ft_putstr(")\n");
+		lst = lst->next;
+	}
+	ft_putendl("Objects:"); lst = rtv1->objects;
+	while (lst)
+	{
+		object = (t_object *)lst->content;
+		static const char *types[6] = {
+			"N/A", "PLANE   ", "TRIANGLE", "SPHERE  ", "CYLINDER", "CONE    "};
+		ft_putstr(types[(int)object->type]);
+		ft_putstr(ft_itoa_hex(object->color, "-> #"));
+		ft_putstr(", (");
+		ft_putstr(ft_ftoa(object->position.x, 3)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(object->position.y, 3)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(object->position.z, 3)); ft_putstr(")");
+		ft_putstr(", {");
+		ft_putstr(ft_ftoa(object->rotation.x, 3)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(object->rotation.y, 3)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(object->rotation.z, 3)); ft_putstr("}");
+		ft_putstr(", [");
+		ft_putstr(ft_ftoa(object->scale.x, 3)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(object->scale.y, 3)); ft_putstr(", ");
+		ft_putstr(ft_ftoa(object->scale.z, 3)); ft_putstr("]\n");
+		lst = lst->next;
+	}
+}
+
 static int	rtv1_init(t_rtv1 *rtv1, int fd)
 {
-	if (rtv1_readmap(rtv1, fd) == ERROR)
+	t_parser	parser;
+	char		*error;
+
+	rtv1->camera = NULL;
+	rtv1->lights = NULL;
+	rtv1->objects = NULL;
+	if ((error = rtv1_read_file(rtv1, &parser, fd)))
 	{
-		ft_putendl("Error: the given rtv1 file is invalid");
+		ft_putstr("Error: while reading rt file -> at line ");
+		ft_putnbr(parser.line);
+		ft_putstr(":\n");
+		ft_putendl(error);
 		return (ERROR);
 	}
-	if (!(rtv1->camera = camera_new(rtv1)) ||
-		!(rtv1->space = (t_space *)malloc(sizeof(t_space))))
+	else rtv1_printdebug(rtv1);
+	if (!(rtv1->camera = camera_new()))
 	{
-		ft_putendl("Error: could not initialize the 3d space");
-		return (ERROR);
-	}
-	if (rtv1_getmap_verts(rtv1) == ERROR)
-	{
-		ft_putendl("Error: could not create the vertices for the 3d space");
-		return (ERROR);
-	}
-	if (rtv1_getmap_edges(rtv1) == ERROR)
-	{
-		ft_putendl("Error: could not create the edges for the 3d space");
+		ft_putendl("Error: could not initialize the camera");
 		return (ERROR);
 	}
 	return (OK);
@@ -94,7 +138,7 @@ int			main(int argc, char **argv)
 		}
 		if (rtv1_init(&rtv1, fd) == ERROR)
 			return (ERROR);
-		if (open_window(&rtv1, ft_strjoin("FdF - ", argv[1])))
+		if (open_window(&rtv1, ft_strjoin("RTV1 - ", argv[1])))
 			return (ERROR);
 		return (OK);
 	}

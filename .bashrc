@@ -16,3 +16,5 @@ alias compile="gcc -o main -Wall -Wextra -Werror"
 # 42 program aliases for windows
 alias fdf="startxwin ./fdf"
 alias fractol="startxwin ./fractol"
+alias rtv1="startxwin ./rtv1"
+alias rt="startxwin ./rt"

@@ -44,11 +44,89 @@
 **}
 */
 
+/*
+**	Returns true if the ray intersects an object, false otherwise.
+**	- orig is the ray origin
+**	- dir is the ray direction
+**	- objects is the list of objects the scene contains
+**	-[out] tNear contains the distance to the cloesest intersected object.
+**	-[out] index stores the index of the intersect triangle if the interesected object is a mesh.
+**	-[out] uv stores the u and v barycentric coordinates of the intersected point
+**	-[out] *hitObject stores the pointer to the intersected object (used to retrieve material information, etc.)
+**	- isShadowRay is it a shadow ray. We can return from the function sooner as soon as we have found a hit.
+*
+static int		trace( 
+	const t_vector &orig, const t_vector &dir, 
+	const std::vector<std::unique_ptr<Object>> &objects, 
+	float &tNear, uint32_t &index, Vec2f &uv, Object **hitObject) 
+{ 
+	*hitObject = nullptr; 
+	for (uint32_t k = 0; k < objects.size(); ++k)
+	{
+		float tNearK = kInfinity; 
+		uint32_t indexK; 
+		Vec2f uvK; 
+		if (objects[k]->intersect(orig, dir, tNearK, indexK, uvK) && tNearK < tNear)
+		{
+			*hitObject = objects[k].get(); 
+			tNear = tNearK; 
+			index = indexK; 
+			uv = uvK; 
+		}
+	}
+	return (*hitObject != nullptr); 
+} 
+
 static t_vector	*cast_ray(t_mlx *mlx, t_vector *origin, t_vector *direction)
 {
-	if (mlx || origin || direction)
+	t_vector color = options.backgroundColor; 
+	float tnear = kInfinity; 
+	Vec2f uv; 
+	t_u32 index = 0; 
+	Object *hitObject = nullptr; 
+	if (trace(orig, dir, objects, tnear, index, uv, &hitObject))
+	{
+		t_vector hitPoint = orig + dir * tnear; 
+		t_vector N; // normal 
+		Vec2f st; // st coordinates 
+		hitObject->getSurfaceProperties(hitPoint, dir, index, uv, N, st); 
+		t_vector tmp = hitPoint; 
+		switch (hitObject->materialType)
+		{
+			//We use the Phong illumation model int the default case. The phong model is composed of a diffuse and a specular reflection component. 
+			t_vector lightAmt = 0, specularColor = 0; 
+			t_vector shadowPointOrig = (vector_scalar(dir, N) < 0) ? 
+				hitPoint + N * options.bias :
+				hitPoint - N * options.bias;
+			//Loop over all lights in the scene and sum their contribution up We also apply the lambert cosine law here though we haven't explained yet what this means. 
+			for (uint32_t i = 0; i < lights.size(); ++i)
+			{
+				t_vector lightDir = lights[i]->position - hitPoint; 
+				// square of the distance between hitPoint and the light
+				float lightDistance2 = vector_scalar(lightDir, lightDir); 
+				lightDir = normalize(lightDir); 
+				float LdotN = std::max(0.f, vector_scalar(lightDir, N)); 
+				Object *shadowHitObject = nullptr; 
+				float tNearShadow = kInfinity; 
+				// is the point in shadow, and is the nearest occluding object closer to the object than the light itself?
+				bool inShadow = trace(shadowPointOrig, lightDir, objects, tNearShadow, index, uv, &shadowHitObject) && 
+				    tNearShadow * tNearShadow < lightDistance2; 
+				lightAmt += (1 - inShadow) * lights[i]->intensity * LdotN; 
+				Vec3f reflectionDirection = reflect(-lightDir, N); 
+				specularColor += powf(std::max(0.f, -vector_scalar(reflectionDirection, dir)), hitObject->specularExponent) * lights[i]->intensity; 
+			}
+			color = lightAmt * hitObject->evalDiffuseColor(st) * hitObject->Kd + specularColor * hitObject->Ks; 
+			break ;
+		}
+	}
+	return (color); 
+}
+*/
+static t_vector	*cast_ray(t_mlx *mlx, t_vector *origin, t_vector *direction)
+{
+	if (mlx ||origin || direction)
 		return (NULL);
-	return (NULL);
+	else return (NULL);
 }
 
 void			render(t_mlx *mlx, t_camera *camera)
@@ -57,7 +135,7 @@ void			render(t_mlx *mlx, t_camera *camera)
 	t_vector	*pixel;
 	t_vector	*direction;
 	float		scale = tan(camera->fov * 0.5 * M_PI / 180);
-	float		ratio = (float)WIDTH / (float)HEIGHT;
+	float		ratio = ((float)WIDTH / (float)HEIGHT);
 	float		x;
 	float		y;
 	t_u32		*buffer = (t_u32 *)mlx->image->buffer;
