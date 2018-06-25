@@ -44,7 +44,7 @@ inline void	set_pixel(t_image *image, t_point *pos)
 	buffer[index++] = color_get_r(pos->color);
 }
 
-inline int	get_color_mean(int color1, int color2, float ratio)
+inline t_u32	get_color_mean(t_u32 color1, t_u32 color2, float ratio)
 {
 	int		result;
 	int		channel;

@@ -28,8 +28,8 @@ int				get_next_line(const int fd, char **line);
 
 # define ALT	0.1
 
-# define WIDTH	512
-# define HEIGHT	512
+# define WIDTH	1600
+# define HEIGHT	900
 
 typedef struct	s_point
 {
@@ -179,7 +179,7 @@ t_u8			color_get_b(t_u32 color);
 int				is_in_window(int x, int y);
 void			bring_into_window(t_point *point);
 void			set_pixel(t_image *image, t_point *pos);
-t_u32				get_color_mean(t_u32 color1, t_u32 color2, float ratio);
+t_u32			get_color_mean(t_u32 color1, t_u32 color2, float ratio);
 
 /*
 **	====	vector.c
