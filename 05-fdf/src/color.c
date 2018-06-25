@@ -12,27 +12,27 @@
 
 #include "../fdf.h"
 
-inline char	color_get_a(int color)
+inline t_u8	color_get_a(t_u32 color)
 {
-	return ((char)((color >> 24) & 0xFF));
+	return ((t_u8)((color >> 24) & 0xFF));
 }
 
-inline t_u8	color_get_r(int color)
+inline t_u8	color_get_r(t_u32 color)
 {
 	return ((t_u8)((color >> 16) & 0xFF));
 }
 
-inline t_u8	color_get_g(int color)
+inline t_u8	color_get_g(t_u32 color)
 {
 	return ((t_u8)((color >> 8) & 0xFF));
 }
 
-inline t_u8	color_get_b(int color)
+inline t_u8	color_get_b(t_u32 color)
 {
 	return ((t_u8)(color & 0xFF));
 }
 
-inline int	color_new(char a, t_u8 r, t_u8 g, t_u8 b)
+inline t_u32	color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b)
 {
-	return ((a << 24) | (r << 16) | (g << 8) | b);
+	return ((t_u32)((a << 24) | (r << 16) | (g << 8) | b));
 }

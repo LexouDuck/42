@@ -41,7 +41,10 @@ static char	*read_vector_arg_number(t_parser *parser, float *result, char sep)
 	file = parser->file;
 	number = file + parser->index;
 	while (file[parser->index] &&
-		(ft_isdigit(file[parser->index]) || file[parser->index] == '.'))
+		(ft_isdigit(file[parser->index]) ||
+			file[parser->index] == '+' ||
+			file[parser->index] == '-' ||
+			file[parser->index] == '.'))
 		++(parser->index);
 	if (!file[parser->index])
 		return ("Unexpected end of file inside vector argument");

@@ -23,13 +23,13 @@ t_camera	*camera_new()
 	result->render = RENDER_EDGE_PERSP;
 	result->fov = 80;
 	vector_set(&result->anchor, 0, 0, 0);
-	vector_set(&result->pos, 1, 0, 0);
+	vector_set(&result->pos, 0, 0, 0);
 	result->lat = 90;
 	result->lon = 0;
 	result->angle = 0;
 	vector_set(&result->tilt, 0, 1, 0);
 	result->range_min = 0.1;
-	result->range_max = 10000;
+	result->range_max = 1000000;
 	return (result);
 }
 
@@ -58,7 +58,11 @@ void		camera_rotate(t_camera *camera, float x, float y)
 
 	if (x)
 	{
-		lat = fmod(camera->lat + x, 360);
+		lat = camera->lat + x;
+		if (lat < 0)
+			lat += 360;
+		else if (lat >= 360)
+			lat -= 360;
 		camera->lat = lat;
 	}
 	if (y)
@@ -88,7 +92,10 @@ void		camera_zoom_tilt(t_camera *camera, float x, float y)
 	if (x)
 	{
 		camera->angle += (x * M_PI / 180);
-		camera->angle = fmod(camera->angle, 2 * M_PI);
+		if (camera->angle < 0)
+			camera->angle += 2 * M_PI;
+		else if (camera->angle >= 2 * M_PI)
+			camera->angle -= 2 * M_PI;
 		camera->tilt.x = sinf(camera->angle);
 		camera->tilt.y = cosf(camera->angle);
 		camera->tilt.z = sinf(camera->angle);

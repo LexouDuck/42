@@ -16,7 +16,14 @@ static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 {
 	char		*error;
 	t_object	*object;
+	int			(*f[6])(t_object *object, t_ray *ray);
 
+	f[0] = NULL;
+	f[1] = intersect_plane;
+	f[2] = intersect_triangle;
+	f[3] = intersect_sphere;
+	f[4] = intersect_cylinder;
+	f[5] = intersect_cone;
 	if (!(object = (t_object *)malloc(sizeof(t_object))))
 		return ("Couldn't create 3D object");
 	object->type = shape;
@@ -28,6 +35,7 @@ static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 		return (error);
 	if ((error = read_vector_arg(parser, &(object->scale))))
 		return (error);
+	object->intersect = f[(int)shape];
 	ft_lstadd(&(rtv1->objects), ft_lstnew(object, sizeof(t_object)));
 	return (NULL);
 }

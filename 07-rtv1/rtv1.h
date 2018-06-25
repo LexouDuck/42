@@ -61,6 +61,13 @@ typedef struct	s_matrix
 	t_vector	*t;
 }				t_matrix;
 
+typedef struct	s_ray
+{
+	t_vector	orig;
+	t_vector	dir;
+	float		t;
+}				t_ray;
+
 typedef enum	e_geom
 {
 	none,
@@ -78,6 +85,7 @@ typedef struct	s_object
 	t_vector	rotation;
 	t_vector	scale;
 	t_u32		color;
+	int			(*intersect)(struct s_object *object, t_ray *ray);
 }				t_object;
 
 typedef struct	s_light
@@ -132,11 +140,11 @@ typedef struct	s_mlx
 /*
 **	====	color.c
 */
-int			color_new(char a, t_u8 r, t_u8 g, t_u8 b);
-char		color_get_a(int color);
-t_u8		color_get_r(int color);
-t_u8		color_get_g(int color);
-t_u8		color_get_b(int color);
+t_u32		color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
+t_u8		color_get_a(t_u32 color);
+t_u8		color_get_r(t_u32 color);
+t_u8		color_get_g(t_u32 color);
+t_u8		color_get_b(t_u32 color);
 
 /*
 **	====	vector.c
@@ -145,7 +153,7 @@ t_vector	*vector_new(float x, float y, float z);
 void		vector_set(t_vector *vector, float x, float y, float z);
 float		vector_length(t_vector const *vector);
 void		vector_scale(t_vector *vector, float scale);
-char		*vector_tostr(t_vector *vector);
+char		*vector_tostr(t_vector *vector, int precision);
 
 /*
 **	====	vector_op.c
@@ -173,6 +181,15 @@ void		camera_pan(t_camera *camera, float x, float y);
 void		camera_rotate(t_camera *camera, float x, float y);
 void		camera_zoom_tilt(t_camera *camera, float x, float y);
 void		camera_update(t_camera *camera);
+
+/*
+**	====	intersect.c
+*/
+int			intersect_plane(t_object *object, t_ray *ray);
+int			intersect_triangle(t_object *object, t_ray *ray);
+int			intersect_sphere(t_object *object, t_ray *ray);
+int			intersect_cylinder(t_object *object, t_ray *ray);
+int			intersect_cone(t_object *object, t_ray *ray);
 
 /*
 **	====	read.c & read_util.c

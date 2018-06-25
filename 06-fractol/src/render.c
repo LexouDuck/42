@@ -72,7 +72,7 @@ static void			render_fractal(t_mlx *mlx,
 {
 	t_complex	anchor;
 	double		scale;
-	t_point		pos;
+	t_point		pixel;
 	t_complex	z;
 
 	mlx->fractol->max =
@@ -81,17 +81,17 @@ static void			render_fractal(t_mlx *mlx,
 		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
 	scale = mlx->fractol->radius * mlx->fractol->zoom;
 	anchor = mlx->fractol->anchor;
-	pos.color = 0;
-	pos.y = -1;
-	while (++pos.y < WIN_H)
+	pixel.color = 0;
+	pixel.y = -1;
+	while (++pixel.y < WIN_H)
 	{
-		pos.x = -1;
-		while (++pos.x < WIN_W)
+		pixel.x = -1;
+		while (++pixel.x < WIN_W)
 		{
-			z.x = scale * (double)(pos.x - WIN_W / 2) / WIN_H + anchor.x;
-			z.y = scale * (double)(pos.y - WIN_H / 2) / WIN_H + anchor.y;
-			buffer[pos.color] = (*get_color)(mlx->fractol, &z, c);
-			++pos.color;
+			z.x = scale * (double)(pixel.x - WIN_W / 2) / WIN_H + anchor.x;
+			z.y = scale * (double)(pixel.y - WIN_H / 2) / WIN_H + anchor.y;
+			buffer[pixel.color] = (*get_color)(mlx->fractol, &z, c);
+			++pixel.color;
 		}
 	}
 }

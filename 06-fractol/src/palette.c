@@ -27,12 +27,12 @@ t_channel	palette_set_channel(
 	return (result);
 }
 
-int			palette_getcolor(t_palette const palette, int i, double n)
+t_u32		palette_getcolor(t_palette const palette, int i, double n)
 {
-	int		result;
+	t_u32	result;
 	double	tmp;
 
-	result = 0;
+	result = 0xFF000000;
 	n = i - log(log(n)) / log(2.0);
 	tmp = palette.r.amplitude * sin(palette.r.phase + palette.r.frequency * n);
 	result |= (t_u8)(palette.r.center + tmp) << 16;

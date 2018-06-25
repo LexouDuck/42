@@ -49,8 +49,6 @@ static inline void	project_vertex(
 	t_vector	*result;
 	float		tmp;
 
-	if (vertex == NULL)
-		return ;
 	result = &vertex->absolute;
 	vector_set(&vertex->projected, result->x, result->z, result->y);
 	result = &vertex->projected;
@@ -73,19 +71,25 @@ void				project_vertices(t_mlx *mlx,
 	t_camera *camera)
 {
 	int			perspective;
+	t_vertex	*vertex;
 	t_list		*lst;
 
-	if (camera_matrix == NULL)
-		return ;
-	perspective = (camera->render % 2 == 0);
-	lst = mlx->fdf->space->vertices;
-	while (lst)
+	if (camera_matrix)
 	{
-		project_vertex((t_vertex *)lst->content,
-			camera_matrix,
-			camera->zoom,
-			perspective);
-		lst = lst->next;
+		perspective = (camera->render % 2 == 0);
+		lst = mlx->fdf->space->vertices;
+		while (lst)
+		{
+			vertex = (t_vertex *)lst->content;
+			if (vertex)
+			{
+				project_vertex(vertex,
+					camera_matrix,
+					camera->zoom,
+					perspective);
+			}
+			lst = lst->next;
+		}
 	}
 }
 /*

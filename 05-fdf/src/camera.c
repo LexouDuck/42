@@ -58,7 +58,11 @@ void		camera_rotate(t_camera *camera, float x, float y)
 
 	if (x)
 	{
-		lat = fmod(camera->lat + x, 360);
+		lat = camera->lat + x;
+		if (lat < 0)
+			lat += 360;
+		else if (lat >= 360)
+			lat -= 360;
 		camera->lat = lat;
 	}
 	if (y)
@@ -88,7 +92,10 @@ void		camera_zoom_tilt(t_camera *camera, float x, float y)
 	if (x)
 	{
 		camera->angle += (x * M_PI / 180);
-		camera->angle = fmod(camera->angle, 2 * M_PI);
+		if (camera->angle < 0)
+			camera->angle += 2 * M_PI;
+		else if (camera->angle >= 2 * M_PI)
+			camera->angle -= 2 * M_PI;
 		camera->tilt.x = sinf(camera->angle);
 		camera->tilt.y = cosf(camera->angle);
 		camera->tilt.z = sinf(camera->angle);

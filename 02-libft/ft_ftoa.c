@@ -47,7 +47,7 @@ char		*ft_ftoa(float number, int precision)
 	long	n;
 	int		i;
 
-	if (number == 0)
+	if (number == 0.0)
 	{
 		if (!(result = (char *)malloc(2)))
 			return (NULL);

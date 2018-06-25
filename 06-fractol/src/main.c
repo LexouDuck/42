@@ -138,6 +138,6 @@ int			main(int argc, char **argv)
 		return (OK);
 	}
 	ft_putendl("fractol: expecting one argument among the following:");
-	ft_putendl(" - julia\n - fatou\n - mandelbrot\n - newton");
+	ft_putendl(" - julia\n - fatou\n - mandelbrot\n - burningship\n - newton");
 	return (OK);
 }

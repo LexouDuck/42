@@ -56,17 +56,28 @@ inline void	vector_scale(t_vector *vector, float scale)
 	vector->z *= scale;
 }
 
-/*
-**char		*vector_tostr(t_vector *vector)
-**{
-**	char	*result;
-**
-**	if (!(result = (char *)malloc(36)))
-**		return (NULL);
-**	snprintf(result, 36, "(%f,%f,%f)",
-**		vector->x,
-**		vector->y,
-**		vector->z);
-**	return (result);
-**}
-*/
+
+char		*vector_tostr(t_vector *vector, int precision)
+{
+	char	*x; int x_len;
+	char	*y; int y_len;
+	char	*z; int z_len;
+	char	*result;
+	int		i;
+
+	x = ft_ftoa(vector->x, precision);
+	y = ft_ftoa(vector->y, precision);
+	z = ft_ftoa(vector->z, precision);
+	x_len = ft_strlen(x);
+	y_len = ft_strlen(y);
+	z_len = ft_strlen(z);
+	if (!(result = (char *)malloc(x_len + y_len + z_len + 7)))
+		return (NULL);
+	i = 0;
+	result[i++] = '(';
+	ft_memcpy(result + i, x, x_len); i += x_len; result[i++] = ','; result[i++] = ' ';
+	ft_memcpy(result + i, y, y_len); i += y_len; result[i++] = ','; result[i++] = ' ';
+	ft_memcpy(result + i, z, z_len); i += z_len; result[i++] = ')'; result[i++] = '\0';
+	return (result);
+}
+

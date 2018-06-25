@@ -111,11 +111,11 @@ void		complex_pow(t_complex *result, t_complex const c, int n);
 /*
 **	====	color.c
 */
-int			color_new(char a, t_u8 r, t_u8 g, t_u8 b);
-char		color_get_a(int color);
-t_u8		color_get_r(int color);
-t_u8		color_get_g(int color);
-t_u8		color_get_b(int color);
+t_u32		color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
+t_u8		color_get_a(t_u32 color);
+t_u8		color_get_r(t_u32 color);
+t_u8		color_get_g(t_u32 color);
+t_u8		color_get_b(t_u32 color);
 
 /*
 **	====	render.c
@@ -125,27 +125,27 @@ void		render(t_mlx *mlx);
 /*
 **	====	palette.c
 */
+int			event_key_palette(t_mlx *mlx, int key);
+t_u32		palette_getcolor(t_palette const palette, int i, double n);
 t_channel	palette_set_channel(
 	int			center,
 	int			amplitude,
 	double		phase,
 	double		frequency);
-int			palette_getcolor(t_palette const palette, int i, double n);
-int			event_key_palette(t_mlx *mlx, int key);
 
 /*
 **	====	fractal.c
 */
-int			render_julia(
-			t_fractol *fractol, t_complex *z, t_complex *c);
-int			render_fatou(
-			t_fractol *fractol, t_complex *z, t_complex *c);
-int			render_mandelbrot(
-			t_fractol *fractol, t_complex *z, t_complex *c);
-int			render_burningship(
-			t_fractol *fractol, t_complex *z, t_complex *c);
-int			render_newton(
-			t_fractol *fractol, t_complex *z, t_complex *c);
+t_u32		render_julia(
+	t_fractol *fractol, t_complex *z, t_complex *c);
+t_u32		render_fatou(
+	t_fractol *fractol, t_complex *z, t_complex *c);
+t_u32		render_mandelbrot(
+	t_fractol *fractol, t_complex *z, t_complex *c);
+t_u32		render_burningship(
+	t_fractol *fractol, t_complex *z, t_complex *c);
+t_u32		render_newton(
+	t_fractol *fractol, t_complex *z, t_complex *c);
 
 /*
 **	====	event.c

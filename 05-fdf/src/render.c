@@ -63,6 +63,25 @@ static void		render_edge(t_mlx *mlx, int render_colors, t_edge *edge)
 		draw_line(mlx, &pos1, &pos2);
 }
 
+static void		render_debug(void *mlx, void *win, t_camera *camera)
+{
+	t_u32	color;
+
+	color = 0xFFFFFF;
+	mlx_string_put(mlx, win, 10, 20, color, "CAMERA->");
+	mlx_string_put(mlx, win, 60, 20, color, ft_itoa(camera->render));
+	mlx_string_put(mlx, win, 10, 40, color, "Anchor:");
+	mlx_string_put(mlx, win, 60, 40, color, vector_tostr(&camera->anchor, 3));
+	mlx_string_put(mlx, win, 10, 60, color, "Vector:");
+	mlx_string_put(mlx, win, 60, 60, color, vector_tostr(&camera->pos, 3));
+	mlx_string_put(mlx, win, 10, 80, color, "Lat:");
+	mlx_string_put(mlx, win, 50, 80, color, ft_ftoa(camera->lat, 8));
+	mlx_string_put(mlx, win, 10, 100, color, "Lon:");
+	mlx_string_put(mlx, win, 50, 100, color, ft_ftoa(camera->lon, 8));
+	mlx_string_put(mlx, win, 10, 120, color, "Zoom:");
+	mlx_string_put(mlx, win, 50, 120, color, ft_ftoa(camera->zoom, 8));
+}
+
 static void		render_clean(t_matrix *matrix)
 {
 	free(matrix->u);
@@ -70,37 +89,7 @@ static void		render_clean(t_matrix *matrix)
 	free(matrix->w);
 	free(matrix->t);
 }
-/*
-**static void		render_debug(t_mlx *mlx, t_camera *camera, t_matrix *matrix)
-**{
-**	int		length;
-**	char	*str;
-**
-**	length = 48;
-**	if (!(str = (char *)malloc(length)))
-**		return ;
-**	snprintf(str, length, "%f,%f, %f", camera->lat, camera->lon, camera->zoom);
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 20, 0xFFFFFF, "CAMERA->");
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 20, 0xFFFFFF, ft_itoa(camera->render));
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, 0xFFFFFF, "Anchor:");
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 40, 0xFFFFFF, vector_tostr(&camera->anchor));
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 60, 0xFFFFFF, "Vector:");
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 60, 0xFFFFFF, vector_tostr(&camera->pos));
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 80, 0xFFFFFF, "Lat,Lon,Zoom:");
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 90, 80, 0xFFFFFF, str);
-**
-**	snprintf(str, length, "u:(%f,%f,%f)", matrix->u->x, matrix->u->y, matrix->u->z);
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 20, 0xFFFFFF, str);
-**	snprintf(str, length, "v:(%f,%f,%f)", matrix->v->x, matrix->v->y, matrix->v->z);
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 40, 0xFFFFFF, str);
-**	snprintf(str, length, "w:(%f,%f,%f)", matrix->w->x, matrix->w->y, matrix->w->z);
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 60, 0xFFFFFF, str);
-**	if (matrix->t)	snprintf(str, length, "t:(%f,%f,%f)", matrix->t->x, matrix->t->y, matrix->t->z);
-**	else			snprintf(str, length, "t:(NULL)");
-**	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 300, 80, 0xFFFFFF, str);
-**	free(str);
-**}
-*/
+
 void			render(t_mlx *mlx, t_camera *camera)
 {
 	int			render_colors;
@@ -126,6 +115,6 @@ void			render(t_mlx *mlx, t_camera *camera)
 	mlx_put_image_to_window(mlx->mlx_ptr,
 							mlx->win_ptr,
 							mlx->img_ptr, 0, 0);
-	//render_debug(mlx, camera, &camera->matrix);
-	render_clean(&(camera->matrix));
+	render_debug(mlx->mlx_ptr, mlx->win_ptr, camera);
+	render_clean(&camera->matrix);
 }

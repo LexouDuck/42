@@ -132,35 +132,6 @@ typedef struct	s_mlx
 }				t_mlx;
 
 /*
-**	====	draw_line.c
-*/
-
-void			draw_line(t_mlx	*mlx, t_point *pos1, t_point *pos2);
-
-/*
-**	====	draw_rectangle.c
-*/
-void			draw_rectangle(t_mlx *mlx, t_rect *rectangle, int color);
-void			fill_rectangle(t_mlx *mlx, t_rect *rectangle, int color);
-
-/*
-**	====	color.c
-*/
-int				color_new(char a, t_u8 r, t_u8 g, t_u8 b);
-char			color_get_a(int color);
-t_u8			color_get_r(int color);
-t_u8			color_get_g(int color);
-t_u8			color_get_b(int color);
-
-/*
-**	====	window.c
-*/
-int				is_in_window(int x, int y);
-void			bring_into_window(t_point *point);
-void			set_pixel(t_image *image, t_point *pos);
-int				get_color_mean(int color1, int color2, float ratio);
-
-/*
 **	====	space_add.c
 */
 t_vertex		*add_vertex(t_space *space, float x, float y, float z);
@@ -182,13 +153,42 @@ int				fdf_getmap_verts(t_fdf *fdf);
 int				fdf_getmap_edges(t_fdf *fdf);
 
 /*
+**	====	draw_line.c
+*/
+
+void			draw_line(t_mlx	*mlx, t_point *pos1, t_point *pos2);
+
+/*
+**	====	draw_rectangle.c
+*/
+void			draw_rectangle(t_mlx *mlx, t_rect *rectangle, int color);
+void			fill_rectangle(t_mlx *mlx, t_rect *rectangle, int color);
+
+/*
+**	====	color.c
+*/
+t_u32			color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
+t_u8			color_get_a(t_u32 color);
+t_u8			color_get_r(t_u32 color);
+t_u8			color_get_g(t_u32 color);
+t_u8			color_get_b(t_u32 color);
+
+/*
+**	====	window.c
+*/
+int				is_in_window(int x, int y);
+void			bring_into_window(t_point *point);
+void			set_pixel(t_image *image, t_point *pos);
+t_u32				get_color_mean(t_u32 color1, t_u32 color2, float ratio);
+
+/*
 **	====	vector.c
 */
 t_vector		*vector_new(float x, float y, float z);
 void			vector_set(t_vector *vector, float x, float y, float z);
 float			vector_length(t_vector const *vector);
 void			vector_scale(t_vector *vector, float scale);
-char			*vector_tostr(t_vector *vector);
+char			*vector_tostr(t_vector *vector, int precision);
 
 /*
 **	====	vector_op.c
