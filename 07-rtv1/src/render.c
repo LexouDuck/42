@@ -43,21 +43,30 @@ void				get_camera_matrix(t_camera *camera)
 
 static void		render_debug(void *mlx, void *win, t_camera *camera)
 {
+	char	*str;
 	t_u32	color;
 
 	color = 0xFFFFFF;
-	mlx_string_put(mlx, win, 10, 20, color, "CAMERA->");
-	mlx_string_put(mlx, win, 60, 20, color, ft_itoa(camera->render));
+	str = vector_tostr(&camera->anchor, 3);
 	mlx_string_put(mlx, win, 10, 40, color, "Anchor:");
-	mlx_string_put(mlx, win, 60, 40, color, vector_tostr(&camera->anchor, 3));
+	mlx_string_put(mlx, win, 60, 40, color, str);
+	free(str);
+	str = vector_tostr(&camera->pos, 3);
 	mlx_string_put(mlx, win, 10, 60, color, "Vector:");
-	mlx_string_put(mlx, win, 60, 60, color, vector_tostr(&camera->pos, 3));
+	mlx_string_put(mlx, win, 60, 60, color, str);
+	free(str);
+	str = ft_ftoa(camera->lat, 8);
 	mlx_string_put(mlx, win, 10, 80, color, "Lat:");
-	mlx_string_put(mlx, win, 50, 80, color, ft_ftoa(camera->lat, 8));
+	mlx_string_put(mlx, win, 50, 80, color, str);
+	free(str);
+	str = ft_ftoa(camera->lon, 8);
 	mlx_string_put(mlx, win, 10, 100, color, "Lon:");
-	mlx_string_put(mlx, win, 50, 100, color, ft_ftoa(camera->lon, 8));
+	mlx_string_put(mlx, win, 50, 100, color, str);
+	free(str);
+	str = ft_ftoa(camera->zoom, 8);
 	mlx_string_put(mlx, win, 10, 120, color, "Zoom:");
-	mlx_string_put(mlx, win, 50, 120, color, ft_ftoa(camera->zoom, 8));
+	mlx_string_put(mlx, win, 50, 120, color, str);
+	free(str);
 }
 
 t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray)
@@ -83,41 +92,68 @@ t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray)
 		}
 		lst = lst->next;
 	}
+	ray->t = t;
 	return (result);
 }
 
-/*
-static t_u32	render_shade(t_rtv1 *rtv1, t_vector *dir, t_vector *hit_normal)
+static t_u32	render_shade(t_rtv1 *rtv1,
+	t_u32 color, t_ray *ray,
+	t_vector *hit_pos, t_vector *hit_normal)
 {
 	t_light		*light;
-	t_object 	*object;
-	t_ray		ray;
-	float		tmp;
+	t_object	*object;
+	t_ray		lightray;
+	float		light_distance;
+	t_vector	reflection;
+	float		specular;
 	float		result;
+	t_list		*lst;
 
-	ray.orig = (vector_scalar(dir, hit_normal) < 0) ?
-		hit_pos + hit_normal * 0.00001 :
-		hit_pos - hit_normal * 0.00001;
-
+	ft_memcpy(&lightray.orig, hit_normal, sizeof(t_vector));
+	//vector_scale(&lightray.orig, 0.00001);
+	if (vector_scalar(&ray->dir, hit_normal) < 0)
+		vector_invert(&lightray.orig);
+	lightray.orig.x += hit_pos->x;
+	lightray.orig.y += hit_pos->y;
+	lightray.orig.z += hit_pos->z;
+	specular = 0;
+	result = 0.1;
 	lst = rtv1->lights;
 	while (lst)
 	{
-		t_vector ray.dir = light->position - hitPoint;
-		ray.dir = vector_normalize(ray.dir);
-		float LdotN = std::max(0.f, vector_scalar(ray.dir, hit_normal));
+		light = (t_light *)lst->content;
+		lightray.dir.x = light->position.x - hit_pos->x;
+		lightray.dir.y = light->position.y - hit_pos->y;
+		lightray.dir.z = light->position.z - hit_pos->z;
+		light_distance = vector_scalar(&lightray.dir, &lightray.dir);
+		vector_normalize(&lightray.dir);
 		object = NULL;
-		if (!(object = render_trace(rtv1, ray)) &&
-			(ray.t * ray.t < vector_scalar(ray.dir, ray.dir)))
-		// is the point in shadow, and is the nearest occluding object closer to the object than the light itself?
-			lightAmt += light->strength * LdotN;
-		t_vector reflectionDirection = -ray.dir - 2 * vector_scalar(-ray.dir, hit_normal) * hit_normal;
-		specularColor += powf(std::max(0.f, -vector_scalar(reflectionDirection, dir)), hitObject->specularExponent) * light->strength;
+		if (!(object = render_trace(rtv1, &lightray)) ||
+			(lightray.t * lightray.t < light_distance))
+		{
+			lightray.t = vector_scalar(&lightray.dir, hit_normal);
+			if (lightray.t < 0)
+				lightray.t = 0;
+			result += light->strength * lightray.t;
+		}
+		ft_memcpy(&reflection, &lightray.dir, sizeof(t_vector));
+		vector_invert(&reflection);
+		lightray.t = 2 * vector_scalar(&reflection, hit_normal);
+		reflection.x -= hit_normal->x * lightray.t;
+		reflection.y -= hit_normal->y * lightray.t;
+		reflection.z -= hit_normal->z * lightray.t;
+		lightray.t = -vector_scalar(&reflection, &ray->dir);
+		if (lightray.t < 0)
+			lightray.t = 0;
+		specular += light->strength * lightray.t;
 		lst = lst->next;
 	}
-	hitColor = lightAmt * hitObject->evalDiffuseColor(st) * hitObject->Kd + specularColor * hitObject->Ks;
-	break;
+	t_u32 shine = specular * 256;
+	t_u32 c_r = color_get_r(color) * result + shine; if (c_r >= 256) c_r = 255;
+	t_u32 c_g = color_get_g(color) * result + shine; if (c_g >= 256) c_g = 255;
+	t_u32 c_b = color_get_b(color) * result + shine; if (c_b >= 256) c_b = 255;
+	return (color_new(0, c_r, c_g, c_b));
 }
-*/
 
 static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 {
@@ -131,15 +167,18 @@ static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 		t_vector hit_pos;
 		t_vector hit_normal;
 
+		vector_invert(&ray->dir);
 		vector_set(&hit_pos,
 			ray->orig.x + ray->dir.x * ray->t,
 			ray->orig.y + ray->dir.y * ray->t,
 			ray->orig.z + ray->dir.z * ray->t);
 		/*
+		if (hit_pos.x || hit_pos.y || hit_pos.z) {
 		ft_putstr("HITPOS: ");
 		ft_putstr(ft_ftoa(hit_pos.x, 10));	ft_putstr(", ");
 		ft_putstr(ft_ftoa(hit_pos.y, 10));	ft_putstr(", ");
 		ft_putstr(ft_ftoa(hit_pos.z, 10));	ft_putstr("\n");
+		}
 		*/
 		vector_set(&hit_normal,
 			hit_pos.x - object->position.x,
@@ -147,12 +186,14 @@ static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 			hit_pos.z - object->position.z);
 		vector_normalize(&hit_normal);
 		/*
+		if (hit_normal.x || hit_normal.y || hit_normal.z) {
 		ft_putstr("NORMAL: ");
 		ft_putstr(ft_ftoa(hit_normal.x, 10));	ft_putstr(", ");
 		ft_putstr(ft_ftoa(hit_normal.y, 10));	ft_putstr(", ");
 		ft_putstr(ft_ftoa(hit_normal.z, 10));	ft_putstr("\n");
+		}
 		*/
-		result = object->color;
+		result = render_shade(rtv1, object->color, ray, &hit_pos, &hit_normal);
 	}
 	return (result);
 }

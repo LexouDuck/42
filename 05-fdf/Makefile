@@ -7,7 +7,7 @@ GREEN	=	"\033[0;32m"
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
 
-LIBS	=	$(LIBFT) $(LIBX_MAC)
+LIBS	=	$(LIBFT) $(LIBX_WIN)
 LIBFT	=	-L$(LFTDIR) -lft
 LIBX_MAC	=	-lm -lmlx -framework OpenGL -framework AppKit
 LIBX_WIN	=	-lm -L/usr/lib/ -I/usr/include/X11/ -lmlx -lX11.dll -lXext.dll

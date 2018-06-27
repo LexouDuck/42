@@ -65,21 +65,30 @@ static void		render_edge(t_mlx *mlx, int render_colors, t_edge *edge)
 
 static void		render_debug(void *mlx, void *win, t_camera *camera)
 {
+	char	*str;
 	t_u32	color;
 
 	color = 0xFFFFFF;
-	mlx_string_put(mlx, win, 10, 20, color, "CAMERA->");
-	mlx_string_put(mlx, win, 60, 20, color, ft_itoa(camera->render));
+	str = vector_tostr(&camera->anchor, 3);
 	mlx_string_put(mlx, win, 10, 40, color, "Anchor:");
-	mlx_string_put(mlx, win, 60, 40, color, vector_tostr(&camera->anchor, 3));
+	mlx_string_put(mlx, win, 60, 40, color, str);
+	free(str);
+	str = vector_tostr(&camera->pos, 3);
 	mlx_string_put(mlx, win, 10, 60, color, "Vector:");
-	mlx_string_put(mlx, win, 60, 60, color, vector_tostr(&camera->pos, 3));
+	mlx_string_put(mlx, win, 60, 60, color, str);
+	free(str);
+	str = ft_ftoa(camera->lat, 8);
 	mlx_string_put(mlx, win, 10, 80, color, "Lat:");
-	mlx_string_put(mlx, win, 50, 80, color, ft_ftoa(camera->lat, 8));
+	mlx_string_put(mlx, win, 50, 80, color, str);
+	free(str);
+	str = ft_ftoa(camera->lon, 8);
 	mlx_string_put(mlx, win, 10, 100, color, "Lon:");
-	mlx_string_put(mlx, win, 50, 100, color, ft_ftoa(camera->lon, 8));
+	mlx_string_put(mlx, win, 50, 100, color, str);
+	free(str);
+	str = ft_ftoa(camera->zoom, 8);
 	mlx_string_put(mlx, win, 10, 120, color, "Zoom:");
-	mlx_string_put(mlx, win, 50, 120, color, ft_ftoa(camera->zoom, 8));
+	mlx_string_put(mlx, win, 50, 120, color, str);
+	free(str);
 }
 
 static void		render_clean(t_matrix *matrix)

@@ -67,6 +67,8 @@ int	intersect_sphere(t_object *object, t_ray *ray)
 	quadratic.z -= (object->scale.x * object->scale.x);
 	if (!solve_quadratic(&quadratic, &t0, &t1))
 		return (0);
+	if (t0 > t1)
+		ft_swap(&t0, &t1, sizeof(float)); 
 	if (t0 < 0)
 	{
 		t0 = t1;
