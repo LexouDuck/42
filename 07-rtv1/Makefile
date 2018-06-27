@@ -25,9 +25,14 @@ SRCS	= 	../../get_next_line.c  \
 			vector_op.c			\
 			matrix.c			\
 			camera.c			\
-			intersect.c			\
-			render.c			\
 			event.c				\
+			render.c			\
+			render_rt.c			\
+			rt_plane.c			\
+			rt_sphere.c			\
+			rt_triangle.c		\
+			rt_cylinder.c		\
+			rt_cone.c			\
 			read_util.c			\
 			read.c				\
 			main.c

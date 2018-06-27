@@ -85,7 +85,8 @@ typedef struct	s_object
 	t_vector	rotation;
 	t_vector	scale;
 	t_u32		color;
-	int			(*intersect)(struct s_object *object, t_ray *ray);
+	int			(*intersect)(struct s_object *, t_ray *);
+	void		(*getnormal)(t_vector *, struct s_object *, t_vector *);
 }				t_object;
 
 typedef struct	s_light
@@ -183,13 +184,29 @@ void		camera_zoom_tilt(t_camera *camera, float x, float y);
 void		camera_update(t_camera *camera);
 
 /*
-**	====	intersect.c
+**	====	rt object files
 */
-int			intersect_plane(t_object *object, t_ray *ray);
-int			intersect_triangle(t_object *object, t_ray *ray);
-int			intersect_sphere(t_object *object, t_ray *ray);
-int			intersect_cylinder(t_object *object, t_ray *ray);
-int			intersect_cone(t_object *object, t_ray *ray);
+int			intersect_plane(
+	t_object *object, t_ray *ray);
+int			intersect_triangle(
+	t_object *object, t_ray *ray);
+int			intersect_sphere(
+	t_object *object, t_ray *ray);
+int			intersect_cylinder(
+	t_object *object, t_ray *ray);
+int			intersect_cone(
+	t_object *object, t_ray *ray);
+
+void		getnormal_plane(
+	t_vector *result, t_object *object, t_vector *hit_pos);
+void		getnormal_triangle(
+	t_vector *result, t_object *object, t_vector *hit_pos);
+void		getnormal_sphere(
+	t_vector *result, t_object *object, t_vector *hit_pos);
+void		getnormal_cylinder(
+	t_vector *result, t_object *object, t_vector *hit_pos);
+void		getnormal_cone(
+	t_vector *result, t_object *object, t_vector *hit_pos);
 
 /*
 **	====	read.c & read_util.c
@@ -202,9 +219,10 @@ char		*read_number_arg(t_parser *parser, float *result);
 char		*read_color_arg(t_parser *parser, t_u32 *result);
 
 /*
-**	====	render.c
+**	====	render.c & render_rt.c
 */
 void		render(t_mlx *mlx, t_camera *camera);
+t_u32		render_cast_ray(t_rtv1 *rtv1, t_ray *ray);
 
 /*
 **	====	event.c
@@ -218,13 +236,5 @@ int			setup_events(t_mlx *mlx);
 # define CAMERA_ROTATE		1
 # define CAMERA_ZOOM		2
 # define CAMERA_PAN			3
-
-/*
-** === RENDERING MODES ===
-*/
-# define RENDER_EDGE_PERSP	0
-# define RENDER_EDGE_ORTHO	1
-# define RENDER_VERT_PERSP	2
-# define RENDER_VERT_ORTHO	3
 
 #endif

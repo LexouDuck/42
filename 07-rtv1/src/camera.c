@@ -20,7 +20,7 @@ t_camera	*camera_new()
 		return (NULL);
 	result->mode = CAMERA_NONE;
 	result->zoom = 50.0;
-	result->render = RENDER_EDGE_PERSP;
+	result->render = 0;
 	result->fov = 80;
 	vector_set(&result->anchor, 0, 0, 0);
 	vector_set(&result->pos, 0, 0, 0);
@@ -44,9 +44,9 @@ void		camera_pan(t_camera *camera, float x, float y)
 	vector_invert(&camera->pos);
 	vector_normalize(x_axis);
 	vector_normalize(y_axis);
-	camera->anchor.x += (x * x_axis->x + y * y_axis->x);
-	camera->anchor.y += (x * x_axis->y + y * y_axis->y);
-	camera->anchor.z += (x * x_axis->z + y * y_axis->z);
+	camera->anchor.x -= (x * x_axis->x + y * y_axis->x);
+	camera->anchor.y -= (x * x_axis->y + y * y_axis->y);
+	camera->anchor.z -= (x * x_axis->z + y * y_axis->z);
 	free(x_axis);
 	free(y_axis);
 }

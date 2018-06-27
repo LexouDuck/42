@@ -28,8 +28,8 @@ int				get_next_line(const int fd, char **line);
 
 # define ALT	0.1
 
-# define WIDTH	1600
-# define HEIGHT	900
+# define WIDTH	512
+# define HEIGHT	512
 
 typedef struct	s_point
 {

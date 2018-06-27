@@ -44,9 +44,9 @@ void		camera_pan(t_camera *camera, float x, float y)
 	vector_invert(&camera->pos);
 	vector_normalize(x_axis);
 	vector_normalize(y_axis);
-	camera->anchor.x += (x * x_axis->x + y * y_axis->x);
-	camera->anchor.y += (x * x_axis->y + y * y_axis->y);
-	camera->anchor.z += (x * x_axis->z + y * y_axis->z);
+	camera->anchor.x -= (x * x_axis->x + y * y_axis->x);
+	camera->anchor.y -= (x * x_axis->y + y * y_axis->y);
+	camera->anchor.z -= (x * x_axis->z + y * y_axis->z);
 	free(x_axis);
 	free(y_axis);
 }

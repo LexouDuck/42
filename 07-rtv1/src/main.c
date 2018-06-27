@@ -82,6 +82,36 @@ static int	rtv1_init(t_rtv1 *rtv1, int fd)
 	return (OK);
 }
 
+static int	rtv1_init_objects(t_rtv1 *rtv1)
+{
+	t_list		*lst;
+	t_object	*object;
+	int			(*intersect[6])(t_object *, t_ray *);
+	void		(*getnormal[6])(t_vector *, t_object *, t_vector *);
+
+	lst = rtv1->objects;
+	while (lst)
+	{
+		object = (t_object *)lst->content;
+		intersect[0] = NULL;
+		intersect[1] = intersect_plane;
+		intersect[2] = intersect_triangle;
+		intersect[3] = intersect_sphere;
+		intersect[4] = intersect_cylinder;
+		intersect[5] = intersect_cone;
+		object->intersect = intersect[(int)object->type];
+		getnormal[0] = NULL;
+		getnormal[1] = getnormal_plane;
+		getnormal[2] = getnormal_triangle;
+		getnormal[3] = getnormal_sphere;
+		getnormal[4] = getnormal_cylinder;
+		getnormal[5] = getnormal_cone;
+		object->getnormal = getnormal[(int)object->type];
+		lst = lst->next;
+	}
+	return (OK);
+}
+
 static int	img_init(t_mlx *mlx)
 {
 	t_image	*image;
@@ -136,7 +166,9 @@ int			main(int argc, char **argv)
 			ft_putendl("Error: could not open file");
 			return (ERROR);
 		}
-		if (rtv1_init(&rtv1, fd) == ERROR)
+		if (rtv1_init(&rtv1, fd))
+			return (ERROR);
+		if (rtv1_init_objects(&rtv1))
 			return (ERROR);
 		if (open_window(&rtv1, ft_strjoin("RTV1 - ", argv[1])))
 			return (ERROR);
