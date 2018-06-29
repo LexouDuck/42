@@ -20,13 +20,19 @@ int	main(int argc, char **argv)
 			ft_putendl("get_next_line: could not open file");
 			return (ERROR);
 		}
+		char *str;
+		char *tmp;
 		line = NULL;
 		while (get_next_line(fd, &line) == GNL_LINE)
 		{
-			ft_putstr(ft_strpad_l(ft_itoa(i), ' ', 4));
+			tmp = ft_itoa(i);
+			str = ft_strpad_l(tmp, ' ', 4);
+			ft_putstr(str);
 			ft_putstr(" |");
 			ft_putendl(line);
 			free(line);
+			free(str);
+			free(tmp);
 			//line = NULL;
 			++i;
 		}

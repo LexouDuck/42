@@ -39,10 +39,7 @@ static char		*ft_strrep_string_getresult(
 			old_i += old->elem_size;
 		}
 		else
-		{
-			result[new_i++] = str[old_i];
-			++old_i;
-		}
+			result[new_i++] = str[old_i++];
 	}
 	result[new_i] = '\0';
 	return (result);

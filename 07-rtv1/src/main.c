@@ -82,30 +82,29 @@ static int	rtv1_init(t_rtv1 *rtv1, int fd)
 	return (OK);
 }
 
-static int	rtv1_init_objects(t_rtv1 *rtv1)
+static int	rtv1_init_objects(t_list *lst)
 {
-	t_list		*lst;
 	t_object	*object;
 	int			(*intersect[6])(t_object *, t_ray *);
 	void		(*getnormal[6])(t_vector *, t_object *, t_vector *);
 
-	lst = rtv1->objects;
+	intersect[0] = NULL;
+	intersect[1] = intersect_plane;
+	intersect[2] = intersect_triangle;
+	intersect[3] = intersect_sphere;
+	intersect[4] = intersect_cylinder;
+	intersect[5] = intersect_cone;
+	getnormal[0] = NULL;
+	getnormal[1] = getnormal_plane;
+	getnormal[2] = getnormal_triangle;
+	getnormal[3] = getnormal_sphere;
+	getnormal[4] = getnormal_cylinder;
+	getnormal[5] = getnormal_cone;
 	while (lst)
 	{
-		object = (t_object *)lst->content;
-		intersect[0] = NULL;
-		intersect[1] = intersect_plane;
-		intersect[2] = intersect_triangle;
-		intersect[3] = intersect_sphere;
-		intersect[4] = intersect_cylinder;
-		intersect[5] = intersect_cone;
+		if (!(object = (t_object *)lst->content))
+			return (ERROR);
 		object->intersect = intersect[(int)object->type];
-		getnormal[0] = NULL;
-		getnormal[1] = getnormal_plane;
-		getnormal[2] = getnormal_triangle;
-		getnormal[3] = getnormal_sphere;
-		getnormal[4] = getnormal_cylinder;
-		getnormal[5] = getnormal_cone;
 		object->getnormal = getnormal[(int)object->type];
 		lst = lst->next;
 	}
@@ -168,7 +167,7 @@ int			main(int argc, char **argv)
 		}
 		if (rtv1_init(&rtv1, fd))
 			return (ERROR);
-		if (rtv1_init_objects(&rtv1))
+		if (rtv1_init_objects(rtv1.objects))
 			return (ERROR);
 		if (open_window(&rtv1, ft_strjoin("RTV1 - ", argv[1])))
 			return (ERROR);

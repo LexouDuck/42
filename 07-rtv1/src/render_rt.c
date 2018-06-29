@@ -60,7 +60,7 @@ static t_u32	render_shade(t_rtv1 *rtv1,
 	lightray.orig.y += hit_pos->y;
 	lightray.orig.z += hit_pos->z;
 	specular = 0;
-	result = 0.1;
+	result = 0.2;
 	lst = rtv1->lights;
 	while (lst)
 	{
@@ -74,6 +74,12 @@ static t_u32	render_shade(t_rtv1 *rtv1,
 		if (!(object = render_trace(rtv1, &lightray)) ||
 			(lightray.t * lightray.t < light_distance))
 		{
+/*
+ft_putstr("t: ");
+ft_putstr(ft_ftoa(lightray.t, 6));
+ft_putstr(", distance: ");
+ft_putendl(ft_ftoa(light_distance, 6));
+*/
 			lightray.t = vector_scalar(&lightray.dir, hit_normal);
 			if (lightray.t < 0)
 				lightray.t = 0;
@@ -91,7 +97,7 @@ static t_u32	render_shade(t_rtv1 *rtv1,
 		specular += light->strength * lightray.t;
 		lst = lst->next;
 	}
-	t_u32 shine = specular * 100;
+	t_u32 shine = specular * 80;
 	t_u32 c_r = color_get_r(color) * result + shine; if (c_r >= 256) c_r = 255;
 	t_u32 c_g = color_get_g(color) * result + shine; if (c_g >= 256) c_g = 255;
 	t_u32 c_b = color_get_b(color) * result + shine; if (c_b >= 256) c_b = 255;
