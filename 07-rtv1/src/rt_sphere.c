@@ -38,20 +38,14 @@ static int	solve_quadratic(t_vector *e, float *t0, float *t1)
 
 int			intersect_sphere(t_object *object, t_ray *ray)
 {
-	t_vector	vector;
 	t_vector	quadratic;
 	float		t0;
 	float		t1;
 
-	vector_set(&vector,
-		object->position.x - ray->orig.x,
-		object->position.y - ray->orig.y,
-		object->position.z - ray->orig.z);
 	quadratic.x = vector_scalar(&ray->dir, &ray->dir);
-	quadratic.y = vector_scalar(&ray->dir, &vector) * 2;
-	quadratic.z = vector_scalar(&vector, &vector);
-	quadratic.z -= (object->scale.x * object->scale.x);
-	if (!solve_quadratic(&quadratic, &t0, &t1))
+	quadratic.y = vector_scalar(&ray->dir, &ray->orig) * 2;
+	quadratic.z = vector_scalar(&ray->orig, &ray->orig) - 1;
+	if (!object || !solve_quadratic(&quadratic, &t0, &t1))
 		return (0);
 	if (t0 > t1)
 		ft_swap(&t0, &t1, sizeof(float)); 

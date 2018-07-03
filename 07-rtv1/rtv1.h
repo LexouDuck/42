@@ -39,6 +39,12 @@ typedef struct	s_parser
 	int			line;
 }				t_parser;
 
+typedef struct	s_range
+{
+	float		min;
+	float		max;
+}				t_range;
+
 typedef struct	s_point
 {
 	int			x;
@@ -71,7 +77,7 @@ typedef struct	s_ray
 typedef enum	e_geom
 {
 	none,
-	plane,
+	cube,
 	triangle,
 	sphere,
 	cylinder,
@@ -84,6 +90,7 @@ typedef struct	s_object
 	t_vector	position;
 	t_vector	rotation;
 	t_vector	scale;
+	t_matrix	matrix;
 	t_u32		color;
 	int			(*intersect)(struct s_object *, t_ray *);
 	void		(*getnormal)(t_vector *, struct s_object *, t_vector *);
@@ -186,7 +193,7 @@ void		camera_update(t_camera *camera);
 /*
 **	====	rt object files
 */
-int			intersect_plane(
+int			intersect_cube(
 	t_object *object, t_ray *ray);
 int			intersect_triangle(
 	t_object *object, t_ray *ray);
@@ -197,7 +204,7 @@ int			intersect_cylinder(
 int			intersect_cone(
 	t_object *object, t_ray *ray);
 
-void		getnormal_plane(
+void		getnormal_cube(
 	t_vector *result, t_object *object, t_vector *hit_pos);
 void		getnormal_triangle(
 	t_vector *result, t_object *object, t_vector *hit_pos);

@@ -33,7 +33,7 @@ SRCS	= 	../../get_next_line.c  \
 			event.c				\
 			render.c			\
 			render_rt.c			\
-			rt_plane.c			\
+			rt_cube.c			\
 			rt_sphere.c			\
 			rt_triangle.c		\
 			rt_cylinder.c		\
@@ -44,8 +44,9 @@ SRCS	= 	../../get_next_line.c  \
 
 OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
-$(NAME): $(OBJS)
-	@make -C $(LFTDIR) all
+all: libraries $(NAME)
+
+$(NAME): $(OBJS) $(HDRS)
 	@printf "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
 	@printf $(GREEN)"OK!"$(RESET)"\n"
@@ -56,10 +57,10 @@ $(OBJDIR)%.o : $(SRCDIR)%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 
-all: $(NAME)
+libraries:
+	@make -C $(LFTDIR) all
 
 clean:
-	@make -C $(LFTDIR) clean
 	@printf "Deleting object files...\n"
 	@rm -f $(OBJS)
 

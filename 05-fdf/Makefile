@@ -44,8 +44,9 @@ SRCS	= 	../../get_next_line.c  \
 
 OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
+all: libraries $(NAME)
+
 $(NAME): $(OBJS)
-	@make -C $(LFTDIR) all
 	@printf "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
 	@printf $(GREEN)"OK!"$(RESET)"\n"
@@ -56,10 +57,10 @@ $(OBJDIR)%.o : $(SRCDIR)%.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 
-all: $(NAME)
+libraries:
+	@make -C $(LFTDIR) all
 
 clean:
-	@make -C $(LFTDIR) clean
 	@printf "Deleting object files...\n"
 	@rm -f $(OBJS)
 

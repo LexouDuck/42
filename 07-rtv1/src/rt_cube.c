@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   rt_plane.c                                         :+:      :+:    :+:   */
+/*   rt_cube.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aduquesn <AlexisDuquesne@outlook.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,76 +12,63 @@
 
 #include "../rtv1.h"
 
-int		intersect_plane(t_object *object, t_ray *ray)
+int			intersect_cube(t_object *object, t_ray *ray)
 {
-	t_vector	hitpos;
-	t_vector	normal;
-	t_vector	tmp;
-	float		d;
+	/*
+	float	tmin;
+	float	tmax;
+	float	tymin;
+	float	tymax;
+	float	tzmin;
+	float	tzmax;
 
-	getnormal_plane(&normal, object, NULL);
-	d = vector_scalar(&normal, &ray->dir);
-	if (d > 0.000001)
-	{
-		vector_set(&hitpos,
-			ray->orig.x - ray->dir.x * ray->t,
-			ray->orig.y - ray->dir.y * ray->t,
-			ray->orig.z - ray->dir.z * ray->t);
-		vector_set(&tmp,
-			hitpos.x - ray->orig.x,
-			hitpos.y - ray->orig.y,
-			hitpos.z - ray->orig.z);
-		ray->t = vector_scalar(&tmp, &normal) / d;
-		return (ray->t >= 0);
-	}
-	return (0);
-}
-/*
-static int	intersect_cube_axis(t_ray *ray, t_vector *vector, t_vector *axis)
-{
-	float	t1;
-	float	t2;
-	float	e;
-	float	f;
+	tmin = (bounds[r.sign[0]].x - r.orig.x) * r.invdir.x;
+	tmax = (bounds[1-r.sign[0]].x - r.orig.x) * r.invdir.x;
+	tymin = (bounds[r.sign[1]].y - r.orig.y) * r.invdir.y;
+	tymax = (bounds[1-r.sign[1]].y - r.orig.y) * r.invdir.y;
 
-	e = vector_scalar(axis, vector);
-	f = vector_scalar(ray->dir, axis);
-	if (fabs(f) > 0.001)
-	{
-		t1 = (e + aabb_min.z) / f;
-		t2 = (e + aabb_max.z) / f;
-		if (t1 > t2)
-			ft_swap(&t1, &t2, sizeof(float));
-		if (t2 < tMax)
-			tMax = t2;
-		if (t1 > tMin)
-			tMin = t1;
-		if (tMin > tMax)
-			return (1);
-	}
-	else if (-e + aabb_min.z > 0 || -e + aabb_max.z < 0)
-		return (1);
+	if ((tmin > tymax) || (tymin > tmax))
+		return (0);
+	if (tymin > tmin)
+		tmin = tymin;
+	if (tymax < tmax)
+		tmax = tymax;
+
+	tzmin = (bounds[r.sign[2]].z - r.orig.z) * r.invdir.z;
+	tzmax = (bounds[1-r.sign[2]].z - r.orig.z) * r.invdir.z;
+
+	if ((tmin > tzmax) || (tzmin > tmax))
+		return (0);
+	if (tzmin > tmin)
+		tmin = tzmin;
+	if (tzmax < tmax)
+		tmax = tzmax;
+*/
+	if (!object ||!ray)
+		return (0);
 	return (0);
 }
 
-int		intersect_cube(t_object *object, t_ray *ray)
+void	getnormal_cube(t_vector *result, t_object *object, t_vector *hit_pos)
 {
-	t_vector *vector;
-	t_vector *axis;
+	t_matrix	matrix;
+	t_vector	vector;
 
 	vector_set(&vector,
-		object->position.x - ray->orig.x,
-		object->position.y - ray->orig.y,
-		object->position.z - ray->orig.z);
-	if (intersect_cube_axis(ray, vector, axis))
-		return (0);
-	if (intersect_cube_axis(ray, vector, axis))
-		return (0);
-	if (intersect_cube_axis(ray, vector, axis))
-		return (0);
-	ray->t = tMin;
+		hit_pos->x - object->position.x,
+		hit_pos->y - object->position.y,
+		hit_pos->z - object->position.z);
+	vector_transform(&vector, &object->matrix);
+	if (vector.x == vector.y && vector.y == vector.z) return ;
+	else if (vector.x >= vector.y && vector.x >= vector.z) {vector.y = 0;vector.z = 0;}
+	else if (vector.y >= vector.x && vector.y >= vector.z) {vector.x = 0;vector.z = 0;}
+	else if (vector.z >= vector.x && vector.z >= vector.y) {vector.x = 0;vector.y = 0;}
+	matrix_transpose(&matrix);
+	vector_transform(&vector, &matrix);
+	vector_normalize(&vector);
+	ft_memcpy(&vector, result, sizeof(t_vector));
 }
-
+/*
 bool TestRayOBBIntersection(
 	glm::vec3 ray_origin,        // Ray origin, in world space
 	glm::vec3 ray_direction,     // Ray direction (NOT target position!), in world space. Must be normalize()'d.
@@ -184,7 +171,31 @@ bool TestRayOBBIntersection(
 	intersection_distance = tMin;
 	return true;
 }
-*/
+
+int		intersect_plane(t_object *object, t_ray *ray)
+{
+	t_vector	hitpos;
+	t_vector	normal;
+	t_vector	tmp;
+	float		d;
+
+	getnormal_plane(&normal, object, NULL);
+	d = vector_scalar(&normal, &ray->dir);
+	if (d > 0.000001)
+	{
+		vector_set(&hitpos,
+			ray->orig.x - ray->dir.x * ray->t,
+			ray->orig.y - ray->dir.y * ray->t,
+			ray->orig.z - ray->dir.z * ray->t);
+		vector_set(&tmp,
+			hitpos.x - ray->orig.x,
+			hitpos.y - ray->orig.y,
+			hitpos.z - ray->orig.z);
+		ray->t = vector_scalar(&tmp, &normal) / d;
+		return (ray->t >= 0);
+	}
+	return (0);
+}
 
 void	getnormal_plane(t_vector *result, t_object *object, t_vector *hit_pos)
 {
@@ -196,3 +207,4 @@ void	getnormal_plane(t_vector *result, t_object *object, t_vector *hit_pos)
 			object->rotation.z);
 	}
 }
+*/

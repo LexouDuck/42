@@ -15,27 +15,33 @@
 t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray)
 {
 	t_object	*result;
-	t_camera	*camera;
 	t_object	*object;
+	t_ray		tmp;
 	t_list		*lst;
-	float		t;
+	float		nearest;
 
 	result = NULL;
-	camera = rtv1->camera;
-	t = camera->range_max;
+	nearest = rtv1->camera->range_max;
 	lst = rtv1->objects;
 	while (lst)
 	{
-		ray->t = camera->range_max;
 		object = (t_object *)lst->content;
-		if (object->intersect(object, ray) && (ray->t < t))
+		ft_memcpy(&tmp, ray, sizeof(t_ray));
+		tmp.t = nearest;
+		vector_set(&tmp.orig,
+			object->position.x - tmp.orig.x,
+			object->position.y - tmp.orig.y,
+			object->position.z - tmp.orig.z);
+		vector_transform(&tmp.orig, &object->matrix);
+		vector_transform(&tmp.dir, &object->matrix);
+		if (object->intersect(object, &tmp) && (tmp.t < nearest))
 		{
 			result = object;
-			t = ray->t;
+			nearest = tmp.t;
 		}
 		lst = lst->next;
 	}
-	ray->t = t;
+	ray->t = nearest;
 	return (result);
 }
 
@@ -53,7 +59,7 @@ static t_u32	render_shade(t_rtv1 *rtv1,
 	t_list		*lst;
 
 	ft_memcpy(&lightray.orig, hit_normal, sizeof(t_vector));
-	//vector_scale(&lightray.orig, 0.00001);
+	vector_scale(&lightray.orig, 0.00001);
 	if (vector_scalar(&ray->dir, hit_normal) < 0)
 		vector_invert(&lightray.orig);
 	lightray.orig.x += hit_pos->x;
@@ -97,10 +103,10 @@ ft_putendl(ft_ftoa(light_distance, 6));
 		specular += light->strength * lightray.t;
 		lst = lst->next;
 	}
-	t_u32 shine = specular * 80;
-	t_u32 c_r = color_get_r(color) * result + shine; if (c_r >= 256) c_r = 255;
-	t_u32 c_g = color_get_g(color) * result + shine; if (c_g >= 256) c_g = 255;
-	t_u32 c_b = color_get_b(color) * result + shine; if (c_b >= 256) c_b = 255;
+	specular *= 50;
+	int c_r = (float)color_get_r(color) * result + specular; if (c_r < 0) c_r = 0; else if (c_r >= 256) c_r = 255;
+	int c_g = (float)color_get_g(color) * result + specular; if (c_g < 0) c_g = 0; else if (c_g >= 256) c_g = 255;
+	int c_b = (float)color_get_b(color) * result + specular; if (c_b < 0) c_b = 0; else if (c_b >= 256) c_b = 255;
 	return (color_new(0, c_r, c_g, c_b));
 }
 

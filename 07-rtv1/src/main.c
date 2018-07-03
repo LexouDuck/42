@@ -89,13 +89,13 @@ static int	rtv1_init_objects(t_list *lst)
 	void		(*getnormal[6])(t_vector *, t_object *, t_vector *);
 
 	intersect[0] = NULL;
-	intersect[1] = intersect_plane;
+	intersect[1] = intersect_cube;
 	intersect[2] = intersect_triangle;
 	intersect[3] = intersect_sphere;
 	intersect[4] = intersect_cylinder;
 	intersect[5] = intersect_cone;
 	getnormal[0] = NULL;
-	getnormal[1] = getnormal_plane;
+	getnormal[1] = getnormal_cube;
 	getnormal[2] = getnormal_triangle;
 	getnormal[3] = getnormal_sphere;
 	getnormal[4] = getnormal_cylinder;
@@ -106,6 +106,7 @@ static int	rtv1_init_objects(t_list *lst)
 			return (ERROR);
 		object->intersect = intersect[(int)object->type];
 		object->getnormal = getnormal[(int)object->type];
+		vector_scale(&object->rotation, M_PI / 180);
 		lst = lst->next;
 	}
 	return (OK);

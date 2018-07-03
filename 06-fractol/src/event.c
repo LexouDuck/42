@@ -69,14 +69,14 @@ static int	event_mouse_move(int x, int y, void *param)
 	t_mlx		*mlx;
 
 	mlx = (t_mlx *)param;
-	d_x = (double)(x - old_x) * 1.0;
-	d_y = (double)(y - old_y) * 1.0;
+	d_x = (double)(x - old_x);
+	d_y = (double)(y - old_y);
 	if (mlx->fractol->mouse.color)
 	{
 		mlx->fractol->mouse.x = x;
 		mlx->fractol->mouse.y = y;
 		if ((mlx->fractol->type == julia || mlx->fractol->type == fatou)
-			&& (d_x || d_y))
+			&& (abs(d_x) > 4 || abs(d_y) > 4))
 			render(mlx);
 	}
 	old_x = x;

@@ -1,0 +1,13 @@
+BG #D3F9BC
+
+LIGHT #FFFFFF 1.0	(0.0, 10.0, 0.0)
+LIGHT #FFFFFF 1.0	(-10, 7.0, 0.0)
+LIGHT #FFFFFF 1.0	( 10, 7.0, 0.0)
+LIGHT #FFFFFF 1.0	(0.0, 7.0, -10)
+LIGHT #FFFFFF 1.0	(0.0, 7.0, 10)
+
+// commentaires
+
+SPHERE #F8A0D8	(0, 3, 0)	{1.0, 1.0, 1.0}	[8, 8, 8]
+SPHERE #F8A0D8	(2, 2, 0)	{1.0, 1.0, 1.0}	[2, 2, 2]
+SPHERE #F8A0D8	(-2, 2, 0)	{1.0, 1.0, 1.0}	[2, 2, 2]

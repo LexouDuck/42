@@ -16,18 +16,34 @@ static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 {
 	char		*error;
 	t_object	*object;
+	t_vector	*rot;
+	float		tmp;
 
 	if (!(object = (t_object *)malloc(sizeof(t_object))))
 		return ("Couldn't create 3D object");
 	object->type = shape;
-	if ((error = read_color_arg(parser, &(object->color))))
+	if ((error = read_color_arg(parser, &object->color)) ||
+		(error = read_vector_arg(parser, &object->position)) ||
+		(error = read_vector_arg(parser, &object->rotation)) ||
+		(error = read_vector_arg(parser, &object->scale)))
 		return (error);
-	if ((error = read_vector_arg(parser, &(object->position))))
-		return (error);
-	if ((error = read_vector_arg(parser, &(object->rotation))))
-		return (error);
-	if ((error = read_vector_arg(parser, &(object->scale))))
-		return (error);
+	rot = &object->rotation;
+	object->matrix.u = vector_new(
+		cosf(rot->y) * cosf(rot->z) * object->scale.x,
+		cosf(rot->y) * sinf(rot->z),
+		-sinf(rot->y));
+	tmp = sinf(rot->x) * sinf(rot->y);
+	object->matrix.v = vector_new(
+		tmp * cosf(rot->z) - cosf(rot->x) * sinf(rot->z),
+		tmp * sinf(rot->z) + cosf(rot->x) * cosf(rot->z) * object->scale.y,
+		sinf(rot->x) * cosf(rot->y));
+	tmp = cosf(rot->x) * sinf(rot->y);
+	object->matrix.w = vector_new(
+		tmp * cosf(rot->z) + sinf(rot->x) * sinf(rot->z),
+		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
+		cosf(rot->x) * cosf(rot->y) * object->scale.z);
+	object->matrix.t = NULL;
+	matrix_inverse(&object->matrix);
 	ft_lstadd(&(rtv1->objects), ft_lstnew(object, sizeof(t_object)));
 	return (NULL);
 }
@@ -65,8 +81,8 @@ static char	*rtv1_read_command(t_rtv1 *rtv1, t_parser *parser, char *label)
 	shape = none;
 	if (ft_strequ(label, "NONE"))
 		return ("'NONE' is not a valid usable label.");
-	else if (ft_strequ(label, "PLANE"))
-		shape = plane;
+	else if (ft_strequ(label, "CUBE"))
+		shape = cube;
 	else if (ft_strequ(label, "TRIANGLE"))
 		shape = triangle;
 	else if (ft_strequ(label, "SPHERE"))

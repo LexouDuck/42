@@ -78,6 +78,9 @@ char		*vector_tostr(t_vector *vector, int precision)
 	ft_memcpy(result + i, x, x_len); i += x_len; result[i++] = ','; result[i++] = ' ';
 	ft_memcpy(result + i, y, y_len); i += y_len; result[i++] = ','; result[i++] = ' ';
 	ft_memcpy(result + i, z, z_len); i += z_len; result[i++] = ')'; result[i++] = '\0';
+	free(x);
+	free(y);
+	free(z);
 	return (result);
 }
 
