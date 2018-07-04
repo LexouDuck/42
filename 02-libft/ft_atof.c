@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-float	ft_atof(const char* str)
+float	ft_atof(const char *str)
 {
 	float	result;
 	float	factor;

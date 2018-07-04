@@ -20,10 +20,11 @@ int	main(int argc, char **argv)
 			ft_putendl("get_next_line: could not open file");
 			return (ERROR);
 		}
+		int result;
 		char *str;
 		char *tmp;
 		line = NULL;
-		while (get_next_line(fd, &line) == GNL_LINE)
+		while ((result = get_next_line(fd, &line)) == GNL_LINE)
 		{
 			tmp = ft_itoa(i);
 			str = ft_strpad_l(tmp, ' ', 4);
@@ -36,6 +37,8 @@ int	main(int argc, char **argv)
 			//line = NULL;
 			++i;
 		}
+		if (result == GNL_ERROR)
+			ft_putendl("get_next_line: error");
 	}
 	else ft_putendl("get_next_line: expecting one filepath argument");
 }

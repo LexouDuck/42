@@ -583,7 +583,7 @@ t_list					*ft_lstnew(
 		void const *content,
 		size_t content_size);
 /*
-** Inserts a new element of a list 'new' at the pointer '*alst',
+** Inserts a new element of a list 'elem' at the pointer '*alst',
 ** chaining this new element with the next element of this list.
 */
 void					ft_lstadd(

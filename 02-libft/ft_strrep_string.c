@@ -14,10 +14,10 @@
 #include <stdio.h>
 
 static char		*ft_strrep_string_getresult(
-	char const		*str,
-	t_list			*matches,
-	const t_uple	*old,
-	const t_uple	*new)
+	char const *str,
+	t_list *matches,
+	const t_uple *old,
+	const t_uple *new)
 {
 	char	*result;
 	t_list	*match;
