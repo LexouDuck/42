@@ -12,21 +12,11 @@
 
 #include "../rtv1.h"
 
-static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
+static void	rtv1_read_object_getmatrix(t_object *object)
 {
-	char		*error;
-	t_object	*object;
 	t_vector	*rot;
 	float		tmp;
 
-	if (!(object = (t_object *)malloc(sizeof(t_object))))
-		return ("Couldn't create 3D object");
-	object->type = shape;
-	if ((error = read_color_arg(parser, &object->color)) ||
-		(error = read_vector_arg(parser, &object->position)) ||
-		(error = read_vector_arg(parser, &object->rotation)) ||
-		(error = read_vector_arg(parser, &object->scale)))
-		return (error);
 	rot = &object->rotation;
 	object->matrix.u = vector_new(
 		cosf(rot->y) * cosf(rot->z) * object->scale.x,
@@ -44,6 +34,22 @@ static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 		cosf(rot->x) * cosf(rot->y) * object->scale.z);
 	object->matrix.t = NULL;
 	matrix_inverse(&object->matrix);
+}
+
+static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
+{
+	char		*error;
+	t_object	*object;
+
+	if (!(object = (t_object *)malloc(sizeof(t_object))))
+		return ("Couldn't create 3D object");
+	object->type = shape;
+	if ((error = read_color_arg(parser, &object->color)) ||
+		(error = read_vector_arg(parser, &object->position)) ||
+		(error = read_vector_arg(parser, &object->rotation)) ||
+		(error = read_vector_arg(parser, &object->scale)))
+		return (error);
+	rtv1_read_object_getmatrix(object);
 	ft_lstadd(&(rtv1->objects), ft_lstnew(object, sizeof(t_object)));
 	return (NULL);
 }
@@ -62,15 +68,6 @@ static char	*rtv1_read_light(t_rtv1 *rtv1, t_parser *parser)
 	if ((error = read_vector_arg(parser, &(light->position))))
 		return (error);
 	ft_lstadd(&(rtv1->lights), ft_lstnew(light, sizeof(t_light)));
-	return (NULL);
-}
-
-static char	*rtv1_read_bgcolor(t_rtv1 *rtv1, t_parser *parser)
-{
-	char	*error;
-
-	if ((error = read_color_arg(parser, &(rtv1->bg_color))))
-		return (error);
 	return (NULL);
 }
 
@@ -96,7 +93,7 @@ static char	*rtv1_read_command(t_rtv1 *rtv1, t_parser *parser, char *label)
 	else if (ft_strequ(label, "LIGHT"))
 		return (rtv1_read_light(rtv1, parser));
 	else if (ft_strequ(label, "BG"))
-		return (rtv1_read_bgcolor(rtv1, parser));
+		return (read_color_arg(parser, &(rtv1->bg_color)));
 	else
 		return (ft_strjoin("Could not resolve label -> ", label));
 }

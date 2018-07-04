@@ -75,9 +75,9 @@ static int	event_mouse_move(int x, int y, void *param)
 			camera_rotate(camera, mouse.x, mouse.y);
 		else if (camera->mode == CAMERA_PAN)
 			camera_pan(camera, mouse.x, mouse.y * 0.5);
-		if (abs(mouse.x) > 0.2 || abs(mouse.y) > 0.2)
-			render(mlx, camera);
 	}
+	if (abs(mouse.x) > 0.1 || abs(mouse.y) > 0.1)
+		render(mlx, camera);
 	old_x = x;
 	old_y = y;
 	return (OK);
