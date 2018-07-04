@@ -12,12 +12,14 @@
 
 #include "../fdf.h"
 
+/*
+**	ft_putstr("MOUSE PRESSED: ");
+**	ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
+**	ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
+**	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
+*/
 static int	event_mouse_press(int button, int x, int y, void *param)
 {
-ft_putstr("MOUSE PRESSED: ");
-ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
-ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
-ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
 	t_camera	*camera;
 
@@ -37,24 +39,35 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	else if (button == MOUSE_R_CLICK)
 		camera->mode = CAMERA_ROTATE;
 	render(mlx, camera);
+	if (x || y)
+		return (OK);
 	return (OK);
 }
 
+/*
+**	ft_putstr("MOUSE RELEASED:");
+**	ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
+**	ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
+**	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
+*/
 static int	event_mouse_release(int button, int x, int y, void *param)
 {
-ft_putstr("MOUSE RELEASED:");
-ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
-ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
-ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
 	t_camera	*camera;
 
 	mlx = (t_mlx *)param;
 	camera = mlx->fdf->camera;
 	camera->mode = CAMERA_NONE;
+	if (button || x || y)
+		return (OK);
 	return (OK);
 }
 
+/*
+**	ft_putstr("MOUSE MOVED:");
+**	ft_putstr( " x:");  ft_putstr(ft_itoa(x));
+**	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
+*/
 static int	event_mouse_move(int x, int y, void *param)
 {
 	static int	old_x = 0;
@@ -82,10 +95,12 @@ static int	event_mouse_move(int x, int y, void *param)
 	return (OK);
 }
 
+/*
+**	ft_putstr("KEY PRESSED: ");
+**	ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
+*/
 static int	event_key(int key, void *param)
 {
-ft_putstr("KEY PRESSED: ");
-ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 	t_mlx		*mlx;
 	t_camera	*camera;
 
