@@ -21,7 +21,7 @@
 # define GNL_LINE	1
 # define GNL_END	0
 
-# define BUFF_SIZE 2048
+# define BUFF_SIZE 9
 
 int get_next_line(const int fd, char **line);
 

@@ -47,15 +47,17 @@ static	int		gnl_read_file(t_list *elem)
 	char	buffer[BUFF_SIZE + 1];
 	char	*temp;
 
+	ft_bzero(buffer, BUFF_SIZE + 1);
 	while (!ft_strchr(elem->content, '\n') &&
 		(result = read((int)elem->content_size, buffer, BUFF_SIZE)) > 0)
 	{
-		buffer[result] = '\0';
 		temp = (char *)elem->content;
 		if (!(elem->content = ft_strjoin(temp, buffer)))
 			return (0);
 		free(temp);
 	}
+	if (result == 0 && buffer[result] == '\0')
+		return (-2147483648);
 	return (result);
 }
 
@@ -87,6 +89,7 @@ int				get_next_line(int const fd, char **line)
 {
 	static t_list	*store = NULL;
 	t_list			*elem;
+	int				result;
 
 	if (line == NULL || BUFF_SIZE < 0 || fd < 0)
 		return (GNL_ERROR);
@@ -99,8 +102,8 @@ int				get_next_line(int const fd, char **line)
 		ft_lstappend(&store, (elem = ft_lstnew(NULL, fd)));
 	if (!elem->content && !(elem->content = ft_strnew(2)))
 		return (GNL_ERROR);
-	if (gnl_read_file(elem) < 0)
-		return (GNL_ERROR);
+	if ((result = gnl_read_file(elem)) < 0)
+		return (result == -2147483648 ? GNL_END : GNL_ERROR);
 	if (*(char *)elem->content == '\0')
 	{
 		gnl_delete_listelem(&store, fd, line);
