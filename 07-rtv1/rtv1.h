@@ -19,6 +19,7 @@
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
+# include <opencl.h>
 
 # include <mlx.h>
 # include "../mlx_events.h"

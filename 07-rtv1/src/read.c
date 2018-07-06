@@ -50,7 +50,7 @@ static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 		(error = read_vector_arg(parser, &object->scale)))
 		return (error);
 	rtv1_read_object_getmatrix(object);
-	ft_lstadd(&(rtv1->objects), ft_lstnew(object, sizeof(t_object)));
+	ft_lstappend(&(rtv1->objects), ft_lstnew(object, sizeof(t_object)));
 	return (NULL);
 }
 

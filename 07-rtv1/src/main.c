@@ -38,18 +38,15 @@ static void	rtv1_printdebug(t_rtv1 *rtv1)
 	{
 		object = (t_object *)lst->content;
 		static const char *types[6] = {
-			"N/A", "PLANE   ", "TRIANGLE", "SPHERE  ", "CYLINDER", "CONE    "};
+			"N/A", "CUBE    ", "TRIANGLE", "SPHERE  ", "CYLINDER", "CONE    "};
 		ft_putstr(types[(int)object->type]);
-		ft_putstr(ft_itoa_hex(object->color, "-> #"));
-		ft_putstr(", (");
+		ft_putstr(ft_itoa_hex(object->color, "-> #")); ft_putstr(",\t(");
 		ft_putstr(ft_ftoa(object->position.x, 3)); ft_putstr(", ");
 		ft_putstr(ft_ftoa(object->position.y, 3)); ft_putstr(", ");
-		ft_putstr(ft_ftoa(object->position.z, 3)); ft_putstr(")");
-		ft_putstr(", {");
+		ft_putstr(ft_ftoa(object->position.z, 3)); ft_putstr(")\t{");
 		ft_putstr(ft_ftoa(object->rotation.x, 3)); ft_putstr(", ");
 		ft_putstr(ft_ftoa(object->rotation.y, 3)); ft_putstr(", ");
-		ft_putstr(ft_ftoa(object->rotation.z, 3)); ft_putstr("}");
-		ft_putstr(", [");
+		ft_putstr(ft_ftoa(object->rotation.z, 3)); ft_putstr("}\t[");
 		ft_putstr(ft_ftoa(object->scale.x, 3)); ft_putstr(", ");
 		ft_putstr(ft_ftoa(object->scale.y, 3)); ft_putstr(", ");
 		ft_putstr(ft_ftoa(object->scale.z, 3)); ft_putstr("]\n");

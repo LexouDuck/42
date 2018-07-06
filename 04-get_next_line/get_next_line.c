@@ -99,7 +99,7 @@ int				get_next_line(int const fd, char **line)
 	while (elem && (int)elem->content_size != fd)
 		elem = elem->next;
 	if (!elem)
-		ft_lstappend(&store, (elem = ft_lstnew(NULL, fd)));
+		ft_lstadd(&store, (elem = ft_lstnew(NULL, fd)));
 	if (!elem->content && !(elem->content = ft_strnew(2)))
 		return (GNL_ERROR);
 	if ((result = gnl_read_file(elem)) < 0)
