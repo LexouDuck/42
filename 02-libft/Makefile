@@ -1,9 +1,17 @@
 NAME	=	libft.a
 
+RESET	=	"\033[0m"
+RED		=	"\033[0;31m"
+GREEN	=	"\033[0;32m"
+
 CC		=	gcc
 CFLAGS	=	-Wall -Wextra -Werror
 
-HDRS	=	libft.h
+SRCDIR	=	./src/
+OBJDIR	=	./obj/
+
+HDRS	=	get_next_line.h		\
+			libft.h
 SRCS	=	ft_memalloc.c		\
 			ft_memdel.c			\
 			ft_bzero.c			\
@@ -85,18 +93,12 @@ SRCS	=	ft_memalloc.c		\
 			ft_lstget.c			\
 			ft_lstsub.c			\
 			ft_array_fixed.c	\
-			ft_array.c
+			ft_array.c			\
+			../get_next_line.c
 
-OBJS	=	$(SRCS:.c=.o)
+OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
-RESET	=	"\033[0m"
-RED		=	"\033[0;31m"
-GREEN	=	"\033[0;32m"
-
-%.o: %.c
-	@printf "Compiling file: "$@" -> "
-	@$(CC) -c $< $(CFLAGS) -o $@
-	@printf $(GREEN)"OK!"$(RESET)"\n"
+all: $(NAME)
 
 $(NAME): $(OBJS)
 	@printf "Compiling library: "$@" -> "
@@ -104,7 +106,11 @@ $(NAME): $(OBJS)
 	@ranlib $(NAME)
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 
-all: $(NAME)
+$(OBJDIR)%.o : $(SRCDIR)%.c
+	@mkdir -p $(OBJDIR)
+	@printf "Compiling file: "$@" -> "
+	@$(CC) -c $< $(CFLAGS) -o $@
+	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 clean:
 	@printf "Deleting object files...\n"

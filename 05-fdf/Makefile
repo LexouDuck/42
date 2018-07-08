@@ -6,16 +6,16 @@ GREEN	=	"\033[0;32m"
 
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
-XWIN_PATH	=	/usr/include/X11/
 LMLX_PATH	=	/usr/lib/
 LMLX_SUFFIX	=	
+XWIN_PATH	=	/usr/include/X11/
 LIBMLX_MAC	=	-lmlx -framework OpenGL -framework AppKit
 LIBMLX_WIN	=	-L$(LMLX_PATH) -I$(XWIN_PATH) -lmlx -lX11.dll -lXext.dll
-LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
+LIBMLX_UNX	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/
@@ -24,8 +24,7 @@ LFTDIR	=	./libft/
 
 HDRS	=	fdf.h				\
 			$(LFTDIR)libft.h
-SRCS	= 	../../get_next_line.c  \
-			space_fdf.c			\
+SRCS	= 	space_fdf.c			\
 			space_add.c			\
 			space_get.c			\
 			draw_line.c			\
@@ -53,7 +52,7 @@ $(NAME): $(OBJS)
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 	@mkdir -p $(OBJDIR)
-	@printf "Compiling file: "$@" -> "$(RED)
+	@printf "Compiling file: "$@" -> "
 	@$(CC) $(CFLAGS) -c $< -o $@
 	@printf $(GREEN)"OK!"$(RESET)"\n"
 

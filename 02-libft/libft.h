@@ -6,7 +6,7 @@
 /*   By: aduquesn <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 18:32:36 by aduquesn          #+#    #+#             */
-/*   Updated: 2017/12/22 04:34:14 by aduquesn         ###   ########.fr       */
+/*   Updated: 2018/07/08 18:35:45 by aduquesn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <string.h>
+
+# include "get_next_line.h"
 
 # define OK		0
 # define ERROR	1

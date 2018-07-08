@@ -18,6 +18,8 @@
 **	if (content && content_size)
 **		free(content);
 **}
+**
+**	ft_lstdel(&file, fdf_readmap_freelist);
 */
 
 static int	fdf_readmap_line(t_list **file, char *line)
@@ -78,7 +80,6 @@ int			fdf_readmap(t_fdf *fdf, int fd)
 	}
 	if (result < 0 || !(fdf->map = (char **)ft_array(&file)))
 		return (ERROR);
-//ft_lstdel(&file, fdf_readmap_freelist);
 	fdf->map_width = x;
 	fdf->map_height = y;
 	return (OK);

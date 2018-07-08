@@ -12,13 +12,13 @@
 
 #include "../fdf.h"
 
-inline int	is_in_window(int x, int y)
+inline int		is_in_window(int x, int y)
 {
 	return (x >= 0 && x < WIDTH &&
 			y >= 0 && y < HEIGHT);
 }
 
-inline void	bring_into_window(t_point *point)
+inline void		bring_into_window(t_point *point)
 {
 	if (point->x < 0)
 		point->x = 0;
@@ -30,7 +30,7 @@ inline void	bring_into_window(t_point *point)
 		point->y = HEIGHT - 1;
 }
 
-inline void	set_pixel(t_image *image, t_point *pos)
+inline void		set_pixel(t_image *image, t_point *pos)
 {
 	t_u8	*buffer;
 	int		bpp;
