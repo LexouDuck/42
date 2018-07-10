@@ -6,20 +6,19 @@ GREEN	=	"\033[0;32m"
 
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
-XWIN_PATH	=	/usr/include/X11/
 LMLX_PATH	=	/usr/lib/
 LMLX_SUFFIX	=	
+XWIN_PATH	=	/usr/include/X11/
 LIBMLX_MAC	=	-lmlx -framework OpenGL -framework AppKit
 LIBMLX_WIN	=	-L$(LMLX_PATH) -I$(XWIN_PATH) -lmlx -lX11.dll -lXext.dll
 LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/
-MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 
 HDRS	=	fractol.h			\
@@ -60,7 +59,3 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
-
-mlx:
-	@make -C $(MLXDIR) all && sh ../mlx.sh
-	@make fclean

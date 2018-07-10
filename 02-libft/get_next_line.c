@@ -67,7 +67,7 @@ static	int		gnl_make_line(t_list *elem, char **line)
 	length = ft_strlen(elem->content);
 	str = elem->content;
 	space = (size_t)ft_strchr(str, '\n');
-	space = space ? ((char *)space - str) : length;
+	space = space ? (size_t)((char *)space - str) : length;
 	*line = ft_strsub(elem->content, 0, space);
 	if (space == length)
 	{

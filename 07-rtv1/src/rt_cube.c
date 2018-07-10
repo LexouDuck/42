@@ -14,13 +14,13 @@
 
 static void	intersect_cube_axis(
 	float *tmin, float *tmax,
-	float scale, float orig, float dir)
+	float orig, float dir)
 {
 	float	invdir;
 	float	coord;
 
 	invdir = (1 / dir);
-	coord = (invdir < 0) ? -scale : scale;
+	coord = (invdir < 0) ? -1 : 1;
 	*tmin = (coord - orig) * invdir;
 	*tmax = (-coord - orig) * invdir;
 	if (*tmin > *tmax)
@@ -36,18 +36,17 @@ int			intersect_cube(t_object *object, t_ray *ray)
 	t_vector	min;
 	t_vector	max;
 
-	intersect_cube_axis(&min.x, &max.x,
-		object->scale.x / 2, ray->orig.x, ray->dir.x);
-	intersect_cube_axis(&min.y, &max.y,
-		object->scale.y / 2, ray->orig.y, ray->dir.y);
+	if (!object)
+		return (0);
+	intersect_cube_axis(&min.x, &max.x, ray->orig.x, ray->dir.x);
+	intersect_cube_axis(&min.y, &max.y, ray->orig.y, ray->dir.y);
 	if ((min.x > max.y) || (min.y > max.x))
 		return (0);
 	if (min.y > min.x)
 		min.x = min.y;
 	if (max.y < max.x)
 		max.x = max.y;
-	intersect_cube_axis(&min.z, &max.z,
-		object->scale.z / 2, ray->orig.z, ray->dir.z);
+	intersect_cube_axis(&min.z, &max.z, ray->orig.z, ray->dir.z);
 	if ((min.x > max.z) || (min.z > max.x))
 		return (0);
 	if (min.z > min.x)
@@ -82,6 +81,7 @@ void	getnormal_cube(t_vector *result, t_object *object, t_vector *hit_pos)
 	ft_memcpy(&u, object->matrix.u, sizeof(t_vector));
 	ft_memcpy(&v, object->matrix.v, sizeof(t_vector));
 	ft_memcpy(&w, object->matrix.w, sizeof(t_vector));
+	matrix.t = NULL;
 	matrix_set(&matrix, &u, &v, &w);
 	matrix_inverse(&matrix);
 	vector_transform(&vector, &matrix);

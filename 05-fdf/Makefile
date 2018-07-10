@@ -19,7 +19,6 @@ LIBMLX_UNX	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/
-MLXDIR	=	../minilibx/
 LFTDIR	=	./libft/
 
 HDRS	=	fdf.h				\
@@ -69,11 +68,6 @@ fclean: clean
 	@rm -f $(NAME)
 
 re: fclean all
-
-mlx:
-	@make -C $(MLXDIR) all && sh ../mlx.sh
-	@make fclean
-	@make test
 
 test: all
 	@printf "Testing $(NAME):\n"
