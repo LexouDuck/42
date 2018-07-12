@@ -24,8 +24,6 @@
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-int				get_next_line(const int fd, char **line);
-
 # define ALT	0.1
 
 # define WIDTH	512

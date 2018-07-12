@@ -1,0 +1,10 @@
+git add ex00/ft_iterative_factorial.c
+git add ex01/ft_recursive_factorial.c
+git add ex02/ft_iterative_power.c
+git add ex03/ft_recursive_power.c
+git add ex04/ft_fibonacci.c
+git add ex05/ft_sqrt.c
+git add ex06/ft_is_prime.c
+git add ex07/ft_find_next_prime.c
+git add ex08/
+git add ex09/

@@ -1,0 +1,11 @@
+git add ex01/testDay00.tar
+git add ex02/exo2.tar     
+git add ex03/klist.txt
+git add ex04/who_am_i.sh
+git add ex05/people.sh
+git add ex06/mobile-phone.ldif
+git add ex07/midLS
+git add ex08/z
+git add ex09/b
+git add ex10/clean
+git add ex11/ft_magic

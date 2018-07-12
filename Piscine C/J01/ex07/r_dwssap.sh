@@ -1,0 +1,1 @@
+cat /etc/passwd | grep -v "^#" | sed "1d;n;d" | cut -d ":" -f 1 | rev | sort -r | awk 'NR >= ENVIRON["FT_LINE1"] && NR <= ENVIRON["FT_LINE2"]' | tr "\n" "," | sed s_","_", "_g | rev | cut -c 3- | rev | sed -e s_"$"_"."_g | tr -d "\n"

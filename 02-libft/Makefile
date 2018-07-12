@@ -100,7 +100,7 @@ OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(HDRS)
 	@printf "Compiling library: "$@" -> "
 	@ar -rc $(NAME) $(OBJS)
 	@ranlib $(NAME)

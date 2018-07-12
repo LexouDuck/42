@@ -35,7 +35,7 @@ OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
 all: libraries $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(HDRS)
 	@printf "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
 	@printf $(GREEN)"OK!"$(RESET)"\n"
@@ -50,6 +50,7 @@ libraries:
 	@make -C $(LFTDIR) all
 
 clean:
+	@make -C $(LFTDIR) clean
 	@printf "Deleting object files...\n"
 	@rm -f $(OBJS)
 

@@ -60,6 +60,7 @@ libraries:
 	@make -C $(LFTDIR) all
 
 clean:
+	@make -C $(LFTDIR) clean
 	@printf "Deleting object files...\n"
 	@rm -f $(OBJS)
 

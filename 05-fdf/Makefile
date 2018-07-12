@@ -6,7 +6,7 @@ GREEN	=	"\033[0;32m"
 
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
@@ -22,6 +22,7 @@ OBJDIR	=	./obj/
 LFTDIR	=	./libft/
 
 HDRS	=	fdf.h				\
+			mlx_events.h		\
 			$(LFTDIR)libft.h
 SRCS	= 	space_fdf.c			\
 			space_add.c			\
@@ -44,7 +45,7 @@ OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 
 all: libraries $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(OBJS) $(HDRS)
 	@printf "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
 	@printf $(GREEN)"OK!"$(RESET)"\n"
@@ -59,6 +60,7 @@ libraries:
 	@make -C $(LFTDIR) all
 
 clean:
+	@make -C $(LFTDIR) clean
 	@printf "Deleting object files...\n"
 	@rm -f $(OBJS)
 
