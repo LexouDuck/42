@@ -115,6 +115,10 @@ static int	event_key(int key, void *param)
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr);
 		exit(OK);
 	}
+	else if (key == KEY_NUMPAD_ADD)
+		camera->fov += 1;
+	else if (key == KEY_NUMPAD_SUB)
+		camera->fov -= 1;
 	else if (key == KEY_DELETE)
 		camera->render += (camera->render & 4) ? -4 : 4;
 	else if (key == KEY_HOME)

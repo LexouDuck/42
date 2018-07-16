@@ -146,7 +146,7 @@ t_face			*get_face(t_space *space, t_edge *e1, t_edge *e2, t_edge *e3);
 /*
 **	====	space_fdf.c
 */
-int				fdf_readmap(t_fdf *fdf, int fd);
+char			*fdf_readmap(t_fdf *fdf, int fd);
 int				fdf_getmap_verts(t_fdf *fdf);
 int				fdf_getmap_edges(t_fdf *fdf);
 

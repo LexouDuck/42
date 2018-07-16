@@ -14,9 +14,12 @@
 
 static int	fdf_init(t_fdf *fdf, int fd)
 {
-	if (fdf_readmap(fdf, fd) == ERROR)
+	char	*error;
+
+	if ((error = fdf_readmap(fdf, fd)))
 	{
-		ft_putendl("Error: the given fdf file is invalid");
+		ft_putendl("Error: the given fdf file is invalid -> returned error:");
+		ft_putendl(error);
 		return (ERROR);
 	}
 	if (!(fdf->camera = camera_new(fdf)) ||
@@ -83,6 +86,7 @@ int			main(int argc, char **argv)
 {
 	t_fdf	fdf;
 	int		fd;
+	t_u32	i;
 
 	if (argc == 2)
 	{
@@ -94,6 +98,11 @@ int			main(int argc, char **argv)
 		}
 		if (fdf_init(&fdf, fd) == ERROR)
 			return (ERROR);
+		i = -1;
+		while (++i < fdf.map_height)
+			free(fdf.map[i]);
+		free(fdf.map);
+		fdf.map = NULL;
 		if (open_window(&fdf, ft_strjoin("FdF - ", argv[1])))
 			return (ERROR);
 		return (OK);

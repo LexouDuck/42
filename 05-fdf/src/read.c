@@ -12,75 +12,116 @@
 
 #include "../fdf.h"
 
-/*
-**static void	fdf_readmap_freelist(void *content, size_t content_size)
-**{
-**	if (content && content_size)
-**		free(content);
-**}
-**
-**	ft_lstdel(&file, fdf_readmap_freelist);
-*/
-
-static int	fdf_readmap_line(t_list **file, char *line)
+static char	*file_read(int fd)
 {
-	char	*result;
-	int		index;
-	int		i;
-	int		x;
-
-	if (!(result = (char *)malloc(ft_strlen(line) / 2 + 2)))
-		return (-1);
-	i = 0;
-	x = 0;
-	while (line[i])
-	{
-		while (line[i] && ft_isspace(line[i]))
-			++i;
-		index = i;
-		if (line[i] == '-')
-			++i;
-		while (line[i] && ft_isdigit(line[i]))
-			++i;
-		if (line[i] == '\0' || index == i)
-			break ;
-		line[i++] = '\0';
-		result[x++] = (char)ft_atoi(line + index);
-	}
-	ft_lstappend(file, ft_lstnew(result, x));
-	return (x);
-}
-
-/*
-** ft_putstr(  "x:"); ft_putstr(ft_strpad_l(ft_itoa(x), ' ', 4));
-** ft_putstr(", y:"); ft_putstr(ft_strpad_l(ft_itoa(y), ' ', 4));
-** ft_putstr(  " |"); ft_putendl(line);
-*/
-
-int			fdf_readmap(t_fdf *fdf, int fd)
-{
-	t_list	*file;
 	int		result;
-	char	*line;
-	int		x;
-	int		y;
+	char	buffer[BUFF_SIZE + 1];
+	char	*file;
+	char	*temp;
 
-	x = -1;
-	y = 0;
-	file = NULL;
-	line = NULL;
-	while ((result = get_next_line(fd, &line)) == 1)
+	file = ft_strnew(1);
+	buffer[BUFF_SIZE] = '\0';
+	while ((result = read(fd, buffer, BUFF_SIZE)) > 0)
 	{
-		if (x == -1)
-			x = fdf_readmap_line(&file, line);
-		else if ((x = fdf_readmap_line(&file, line)) == -1)
-			return (ERROR);
-		free(line);
-		++y;
+		temp = file;
+		if (result < BUFF_SIZE)
+			buffer[result] = '\0';
+		if (!(file = ft_strjoin(temp, buffer)))
+			return (NULL);
+		free(temp);
 	}
-	if (result < 0 || !(fdf->map = (char **)ft_array(&file)))
-		return (ERROR);
-	fdf->map_width = x;
-	fdf->map_height = y;
-	return (OK);
+	if (result < 0)
+		return (NULL);
+	return (file);
 }
+
+static void	fdf_readmap_create(t_fdf *fdf, char *file)
+{
+	t_point	v;
+	int		width;
+	size_t	i;
+
+	width = 0;
+	ft_bzero(&v, sizeof(t_point));
+	i = -1;
+	while (file[++i])
+	{
+		if (ft_isspace(file[i]))
+		{
+			if (v.color || (v.color = 0))
+				++v.x;
+			if (file[i] == '\n' && (v.y += 1))
+			{
+				if (width < v.x)
+					width = v.x;
+				v.x = 0;
+			}
+		}
+		else if (file[i] == '-' || file[i] == '+' || ft_isdigit(file[i]))
+			v.color = 1;
+	}
+	fdf->map_width = width;
+	fdf->map_height = v.y + v.color;
+}
+
+static void	fdf_readmap_file(char **map, char *file)
+{
+	t_point	v;
+	size_t	length;
+	size_t	i;
+
+	v.x = 0;
+	v.y = 0;
+	i = -1;
+	while (file[++i])
+	{
+		if (file[i] == '-' || file[i] == '+' || ft_isdigit(file[i]))
+		{
+			length = 1;
+			while (file[i + length] && !ft_isspace(file[i + length]))
+				++length;
+			v.color = (file[i + length] == '\n') ? '\n' : '\0';
+			file[i + length] = '\0';
+			map[v.y][v.x] = ft_atoi(file + i);
+			i += length;
+			file[i] = (char)v.color;
+			++v.x;
+		}
+		if (file[i] == '\n' && !(v.x = 0))
+			++v.y;
+	}
+}
+
+char		*fdf_readmap(t_fdf *fdf, int fd)
+{
+	char	*file;
+	t_u32	i;
+
+	if (!(file = file_read(fd)))
+		return ("Error while reading file");
+	fdf_readmap_create(fdf, file);
+	if (!(fdf->map = (char **)malloc(fdf->map_height * sizeof(char *))))
+		return ("Could not create fdf map");
+	i = 0;
+	while (i < fdf->map_height)
+	{
+		if (!(fdf->map[i] = (char *)malloc(fdf->map_width * sizeof(char))))
+			return ("Could not create fdf map line");
+		ft_bzero(fdf->map[i], fdf->map_width * sizeof(char));
+		++i;
+	}
+	fdf_readmap_file(fdf->map, file);
+	free(file);
+	return (NULL);
+}
+/*
+** ft_putstr(   "width:"); ft_putstr(ft_itoa(fdf->map_width));
+** ft_putstr(", height:"); ft_putstr(ft_itoa(fdf->map_height));
+** ft_putstr("\n");
+** for (t_u32 y = 0; y < fdf->map_height; ++y)
+** {
+** 	for (t_u32 x = 0; x < fdf->map_width; ++x)
+** 		ft_putstr(ft_strpad_l(ft_itoa(fdf->map[y][x]), ' ', 4));
+** 	ft_putstr("\n");
+** }
+*/
