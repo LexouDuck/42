@@ -6,7 +6,7 @@ GREEN	=	"\033[0;32m"
 
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm

@@ -6,7 +6,7 @@
 /*   By: aduquesn <AlexisDuquesne@outlook.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2006/06/06 06:06:06 by aduquesn          #+#    #+#             */
-/*   Updated: 2006/06/06 06:06:06 by aduquesn         ###   ########.fr       */
+/*   Updated: 2018/07/16 20:38:25 by aduquesn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <sys/stat.h>
 
 # include <mlx.h>
-# include "../mlx_events.h"
+# include "mlx_events.h"
 # include "libft/libft.h"
 
 # define ALT	0.1

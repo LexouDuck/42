@@ -65,7 +65,7 @@ void				render_debug(t_mlx *mlx, t_complex *complex)
 		render_debug_complex(mlx, complex, pos);
 }
 
-static void			render_fractal(t_fractol *fractol,
+void			render_fractal(t_fractol *fractol,
 	t_u32 *buffer,
 	t_complex *c,
 	int (*get_color)(t_fractol *, t_complex *, t_complex *))
@@ -101,7 +101,9 @@ void				render(t_mlx *mlx)
 	t_complex	c;
 
 	mlx->rendering = 1;
-	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
+	//ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
+	ft_memset(mlx->image->buffer, WIN_H * mlx->image->line, (t_u32)-1);
+	/*
 	if (mlx->mouse)
 	{
 		c.x = 0;
@@ -117,6 +119,7 @@ void				render(t_mlx *mlx)
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
+	*/
 	render_debug(mlx, &c);
 	mlx->rendering = 0;
 }

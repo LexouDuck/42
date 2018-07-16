@@ -12,12 +12,15 @@
 
 #include "../fractol.h"
 
+/*
+**	ft_putstr("MOUSE PRESSED: ");
+**	ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
+**	ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
+**	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
+*/
+
 static int	event_mouse_press(int button, int x, int y, void *param)
 {
-ft_putstr("MOUSE PRESSED: ");
-ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
-ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
-ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
 
 	mlx = (t_mlx *)param;
@@ -32,15 +35,20 @@ ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 			mlx->fractol->zoom = MAX_ZOOM;
 		render(mlx);
 	}
+	if (x || y)
+		return (OK);
 	return (OK);
 }
 
+/*
+**	ft_putstr("MOUSE RELEASED:");
+**	ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
+**	ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
+**	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
+*/
+
 static int	event_mouse_release(int button, int x, int y, void *param)
 {
-ft_putstr("MOUSE RELEASED:");
-ft_putstr(ft_itoa_hex((t_u32)button, "0x"));
-ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
-ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 	t_mlx		*mlx;
 	double		scale;
 
@@ -85,8 +93,6 @@ static int	event_mouse_move(int x, int y, void *param)
 
 static int	event_key(int key, void *param)
 {
-ft_putstr("KEY PRESSED: ");
-ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 	t_mlx		*mlx;
 	int			tmp;
 	double		d;
