@@ -21,7 +21,7 @@
 # include <sys/stat.h>
 
 # include <mlx.h>
-# include "mlx_events.h"
+# include "../mlx_events.h"
 # include "libft/libft.h"
 
 # define ALT	0.1

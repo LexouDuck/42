@@ -105,7 +105,7 @@ static int	open_window(t_fractol *fractol, char *title)
 	}
 	if (init_image(&mlx))
 	{
-		ft_putendl("Error: could not create the rendering image buffer");
+		ft_putendl("Error: could not create render image");
 		return (ERROR);
 	}
 	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIN_W, WIN_H, title)))
@@ -113,8 +113,8 @@ static int	open_window(t_fractol *fractol, char *title)
 		ft_putendl("Error: could not open new window");
 		return (ERROR);
 	}
-	setup_events(&mlx);
 	render(&mlx);
+	setup_events(&mlx);
 	mlx_loop(mlx.mlx_ptr);
 	return (OK);
 }

@@ -1,12 +1,13 @@
 NAME	=	fdf
 
+CC		=	gcc
+CFLAGS	=	-Wall -Werror -Wextra -O3
+
 RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
 GREEN	=	"\033[0;32m"
 
-CC		=	gcc
-CFLAGS	=	-Wall -Werror -Wextra -O3
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
@@ -15,7 +16,7 @@ LMLX_SUFFIX	=
 XWIN_PATH	=	/usr/include/X11/
 LIBMLX_MAC	=	-lmlx -framework OpenGL -framework AppKit
 LIBMLX_WIN	=	-L$(LMLX_PATH) -I$(XWIN_PATH) -lmlx -lX11.dll -lXext.dll
-LIBMLX_UNX	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
+LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/
@@ -46,27 +47,27 @@ OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 all: libraries $(NAME)
 
 $(NAME): $(OBJS) $(HDRS)
-	@printf "Compiling program: "$@" -> "
+	@echo -n "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
-	@printf $(GREEN)"OK!"$(RESET)"\n"
+	@echo -e $(GREEN)"OK!"$(RESET)
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 	@mkdir -p $(OBJDIR)
-	@printf "Compiling file: "$@" -> "
+	@echo -n "Compiling file: "$@" -> "
 	@$(CC) $(CFLAGS) -c $< -o $@
-	@printf $(GREEN)"OK!"$(RESET)"\n"
+	@echo -e $(GREEN)"OK!"$(RESET)
 
 libraries:
 	@make -C $(LFTDIR) all
 
 clean:
 	@make -C $(LFTDIR) clean
-	@printf "Deleting object files...\n"
+	@echo "Deleting object files...\n"
 	@rm -f $(OBJS)
 
 fclean: clean
 	@make -C $(LFTDIR) fclean
-	@printf "Deleting program: $(NAME)\n"
+	@echo "Deleting program: $(NAME)\n"
 	@rm -f $(NAME)
 
 re: fclean all

@@ -12,29 +12,6 @@
 
 #include "../fdf.h"
 
-static char	*file_read(int fd)
-{
-	int		result;
-	char	buffer[BUFF_SIZE + 1];
-	char	*file;
-	char	*temp;
-
-	file = ft_strnew(1);
-	buffer[BUFF_SIZE] = '\0';
-	while ((result = read(fd, buffer, BUFF_SIZE)) > 0)
-	{
-		temp = file;
-		if (result < BUFF_SIZE)
-			buffer[result] = '\0';
-		if (!(file = ft_strjoin(temp, buffer)))
-			return (NULL);
-		free(temp);
-	}
-	if (result < 0)
-		return (NULL);
-	return (file);
-}
-
 static void	fdf_readmap_create(t_fdf *fdf, char *file)
 {
 	t_point	v;
@@ -97,8 +74,8 @@ char		*fdf_readmap(t_fdf *fdf, int fd)
 	char	*file;
 	t_u32	i;
 
-	if (!(file = file_read(fd)))
-		return ("Error while reading file");
+	if (!(file = read_file(fd)))
+		return ("Could not read file");
 	fdf_readmap_create(fdf, file);
 	if (!(fdf->map = (char **)malloc(fdf->map_height * sizeof(char *))))
 		return ("Could not create fdf map");

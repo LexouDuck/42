@@ -1,13 +1,17 @@
-# Project subjects and other stuff
-OpenCL/
+# Project subjects, corrections and other stuff
+correc.*
 *.pdf
 *.zip
 *.tar
 *.gif
+OpenCL/
 
-# Executables & object files
+# object files, link files and libraries
 *.o
+*.d
 *.a
+
+# Executables
 *.out
 *.exe
 *.exe.stackdump

@@ -105,7 +105,7 @@ char		*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd)
 
 	parser->line = 1;
 	parser->file = NULL;
-	if (read_file(fd, &(parser->file)))
+	if (!(parser->file = read_file(fd)))
 		return ("Couldn't read rt file");
 	parser->index = 0;
 	while (parser->file[parser->index])

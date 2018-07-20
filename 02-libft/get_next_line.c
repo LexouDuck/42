@@ -111,3 +111,26 @@ int				get_next_line(int const fd, char **line)
 		return (GNL_ERROR);
 	return (GNL_LINE);
 }
+
+char			*read_file(int const fd)
+{
+	int		result;
+	char	buffer[BUFF_SIZE + 1];
+	char	*file;
+	char	*temp;
+
+	file = ft_strnew(1);
+	buffer[BUFF_SIZE] = '\0';
+	while ((result = read(fd, buffer, BUFF_SIZE)) > 0)
+	{
+		temp = file;
+		if (result < BUFF_SIZE)
+			buffer[result] = '\0';
+		if (!(file = ft_strjoin(temp, buffer)))
+			return (NULL);
+		free(temp);
+	}
+	if (result < 0)
+		return (NULL);
+	return (file);
+}

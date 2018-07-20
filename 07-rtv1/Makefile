@@ -1,12 +1,27 @@
 NAME	=	rtv1
 
+CC		=	gcc
+CFLAGS	=	-Wall -Werror -Wextra -O3 -MMD
+
 RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
 GREEN	=	"\033[0;32m"
+RETURN	=	"\033[0;A"
+INSERT	=	"\033[0;K"
 
-CC		=	gcc
-CFLAGS	=	-Wall -Werror -Wextra -O3
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
+ifeq ($(OS),Windows_NT)
+	LIBMLX = $(LIBMLX_WIN)
+else
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		LIBMLX = $(LIBMLX_LIN)
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		LIBMLX = $(LIBMLX_MAC)
+	endif
+endif
+
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
@@ -23,8 +38,7 @@ LFTDIR	=	./libft/
 
 HDRS	=	rtv1.h				\
 			$(LFTDIR)libft.h
-SRCS	= 	../../get_next_line.c  \
-			color.c				\
+SRCS	= 	color.c				\
 			vector.c			\
 			vector_op.c			\
 			matrix.c			\
@@ -42,31 +56,34 @@ SRCS	= 	../../get_next_line.c  \
 			main.c
 
 OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
+DEPENDS	=	${OBJS:.o=.d}
 
 all: libraries $(NAME)
 
 $(NAME): $(OBJS) $(HDRS)
-	@printf "Compiling program: "$@" -> "
+	@echo -n "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
-	@printf $(GREEN)"OK!"$(RESET)"\n"
+	@echo -e $(GREEN)"OK!"$(RESET)
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 	@mkdir -p $(OBJDIR)
-	@printf "Compiling file: "$@" -> "$(RED)
-	@$(CC) $(CFLAGS) -c $< -o $@
-	@printf $(GREEN)"OK!"$(RESET)"\n"
+	@echo -n "Compiling file: "$@" -> "
+	@$(CC) $(CFLAGS) -c $< -o $@ -MF $(OBJDIR)$*.d
+	@echo -e $(GREEN)"OK!"$(RESET)
 
 libraries:
 	@make -C $(LFTDIR) all
 
 clean:
 	@make -C $(LFTDIR) clean
-	@printf "Deleting object files...\n"
+	@echo "Deleting object files..."
 	@rm -f $(OBJS)
 
 fclean: clean
 	@make -C $(LFTDIR) fclean
-	@printf "Deleting program: $(NAME)\n"
+	@echo "Deleting program: "$(NAME)
 	@rm -f $(NAME)
 
 re: fclean all
+
+-include ${DEPENDS}

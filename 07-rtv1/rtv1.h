@@ -19,16 +19,12 @@
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-# include <opencl.h>
-
+/*
+**	# include <opencl.h>
+*/
 # include <mlx.h>
 # include "../mlx_events.h"
 # include "libft/libft.h"
-
-int			get_next_line(int const fd, char **line);
-int			read_file(int const fd, char **file);
-
-# define ALT	0.1
 
 # define WIDTH	512
 # define HEIGHT	512

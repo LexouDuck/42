@@ -101,9 +101,8 @@ void				render(t_mlx *mlx)
 	t_complex	c;
 
 	mlx->rendering = 1;
-	//ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
-	ft_memset(mlx->image->buffer, WIN_H * mlx->image->line, (t_u32)-1);
-	/*
+	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
+	//ft_memset(mlx->image->buffer, WIN_H * mlx->image->line, (t_u32)-1);
 	if (mlx->mouse)
 	{
 		c.x = 0;
@@ -119,7 +118,7 @@ void				render(t_mlx *mlx)
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
-	*/
+	
 	render_debug(mlx, &c);
 	mlx->rendering = 0;
 }
