@@ -131,6 +131,10 @@ char			*read_file(int const fd)
 		free(temp);
 	}
 	if (result < 0)
+	{
+		if (file)
+			free(file);
 		return (NULL);
+	}
 	return (file);
 }

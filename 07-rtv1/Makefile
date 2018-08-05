@@ -6,8 +6,6 @@ CFLAGS	=	-Wall -Werror -Wextra -O3 -MMD
 RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
 GREEN	=	"\033[0;32m"
-RETURN	=	"\033[0;A"
-INSERT	=	"\033[0;K"
 
 ifeq ($(OS),Windows_NT)
 	LIBMLX = $(LIBMLX_WIN)

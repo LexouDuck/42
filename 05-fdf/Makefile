@@ -23,7 +23,6 @@ OBJDIR	=	./obj/
 LFTDIR	=	./libft/
 
 HDRS	=	fdf.h				\
-			mlx_events.h		\
 			$(LFTDIR)libft.h
 SRCS	= 	space_fdf.c			\
 			space_add.c			\
