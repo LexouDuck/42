@@ -6,7 +6,7 @@ GREEN	=	"\033[0;32m"
 
 CC		=	gcc
 CFLAGS	=	-Wall -Werror -Wextra -O3 -MMD
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
@@ -37,27 +37,27 @@ DEPENDS	=	${OBJS:.o=.d}
 all: libraries $(NAME)
 
 $(NAME): $(OBJS) $(HDRS)
-	@echo -n "Compiling program: "$@" -> "
+	@printf "Compiling program: "$@" -> "
 	@$(CC) $(OBJS) $(CFLAGS) -o $@ $(LIBS)
-	@echo -e $(GREEN)"OK!"$(RESET)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 	@mkdir -p $(OBJDIR)
-	@echo -n "Compiling file: "$@" -> "
+	@printf "Compiling file: "$@" -> "
 	@$(CC) $(CFLAGS) -c $< -o $@ -MF $(OBJDIR)$*.d
-	@echo -e $(GREEN)"OK!"$(RESET)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 libraries:
 	@make -C $(LFTDIR) all
 
 clean:
 	@make -C $(LFTDIR) clean
-	@echo "Deleting object files..."
+	@printf "Deleting object files...\n"
 	@rm -f $(OBJS)
 
 fclean: clean
 	@make -C $(LFTDIR) fclean
-	@echo "Deleting program: "$(NAME)
+	@printf "Deleting program: "$(NAME)"\n"
 	@rm -f $(NAME)
 
 re: fclean all
