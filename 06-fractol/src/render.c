@@ -66,19 +66,16 @@ void				render_debug(t_mlx *mlx, t_complex *complex)
 }
 
 void			render_fractal(t_fractol *fractol,
-	t_u32 *buffer,
+	t_image *image,
 	t_complex *c,
 	int (*get_color)(t_fractol *, t_complex *, t_complex *))
 {
 	t_complex	anchor;
 	double		scale;
 	t_point		pixel;
+	int 		index;
 	t_complex	z;
 
-	fractol->max =
-		(fractol->type == julia || fractol->type == fatou) ? 32 : 64;
-	fractol->radius2 = (fractol->type == newton) ?
-		0.00001 : fractol->radius * fractol->radius;
 	scale = fractol->radius * fractol->zoom;
 	anchor = fractol->anchor;
 	pixel.color = 0;
@@ -90,8 +87,11 @@ void			render_fractal(t_fractol *fractol,
 		{
 			z.x = scale * (double)(pixel.x - WIN_W / 2) / WIN_H + anchor.x;
 			z.y = scale * (double)(pixel.y - WIN_H / 2) / WIN_H + anchor.y;
-			buffer[pixel.color] = (*get_color)(fractol, &z, c);
-			++pixel.color;
+			index = (pixel.x * image->bpp / 8) + (pixel.y * image->line);
+			pixel.color = (*get_color)(fractol, &z, c);
+			image->buffer[index++] = color_get_b(pixel.color);
+			image->buffer[index++] = color_get_g(pixel.color);
+			image->buffer[index++] = color_get_r(pixel.color);
 		}
 	}
 }
@@ -102,7 +102,6 @@ void				render(t_mlx *mlx)
 
 	mlx->rendering = 1;
 	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
-	//ft_memset(mlx->image->buffer, WIN_H * mlx->image->line, (t_u32)-1);
 	if (mlx->mouse)
 	{
 		c.x = 0;
@@ -113,12 +112,15 @@ void				render(t_mlx *mlx)
 		c.x = ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
 		c.y = ((double)mlx->fractol->mouse.y / (double)WIN_H);
 	}
-	render_fractal(mlx->fractol, (t_u32 *)mlx->image->buffer, &c, mlx->render);
+	mlx->fractol->max =
+		(mlx->fractol->type == julia ||mlx->fractol->type == fatou) ? 32 : 64;
+	mlx->fractol->radius2 = (mlx->fractol->type == newton) ?
+		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
+	render_fractal(mlx->fractol, mlx->image, &c, mlx->render);
 	mlx_put_image_to_window(
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
-	
 	render_debug(mlx, &c);
 	mlx->rendering = 0;
 }
