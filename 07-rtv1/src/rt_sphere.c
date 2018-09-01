@@ -39,6 +39,7 @@ static int	solve_quadratic(t_vector *e, float *t0, float *t1)
 int			intersect_sphere(t_object *object, t_ray *ray)
 {
 	t_vector	quadratic;
+	float		tmp;
 	float		t0;
 	float		t1;
 
@@ -48,7 +49,11 @@ int			intersect_sphere(t_object *object, t_ray *ray)
 	if (!object || !solve_quadratic(&quadratic, &t0, &t1))
 		return (0);
 	if (t0 > t1)
-		ft_swap(&t0, &t1, sizeof(float)); 
+	{
+		tmp = t0;
+		t0 = t1;
+		t1 = tmp;
+	}
 	if (t0 < 0)
 	{
 		t0 = t1;

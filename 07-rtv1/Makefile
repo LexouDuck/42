@@ -19,7 +19,7 @@ else
 	endif
 endif
 
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX) $(OPENCL)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
@@ -29,6 +29,7 @@ XWIN_PATH	=	/usr/include/X11/
 LIBMLX_MAC	=	-lmlx -framework OpenGL -framework AppKit
 LIBMLX_WIN	=	-L$(LMLX_PATH) -I$(XWIN_PATH) -lmlx -lX11.dll -lXext.dll
 LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
+OPENCL		=	-lopencl
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/
@@ -42,8 +43,9 @@ SRCS	= 	color.c				\
 			matrix.c			\
 			camera.c			\
 			event.c				\
+			shader.c			\
 			render.c			\
-			render_rt.c			\
+			render_util.c		\
 			rt_cube.c			\
 			rt_sphere.c			\
 			rt_triangle.c		\

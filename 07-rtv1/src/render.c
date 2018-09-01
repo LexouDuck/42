@@ -12,61 +12,54 @@
 
 #include "../rtv1.h"
 
-void				get_camera_matrix(t_camera *camera)
+t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray)
 {
-	t_vector	*vector;
-	t_vector	*axis_forward;
-	t_vector	*axis_right;
-	t_vector	*axis_up;
+	t_object	*result;
+	t_object	*object;
+	t_ray		tmp;
+	t_list		*lst;
+	float		nearest;
 
-	axis_forward = vector_new(camera->pos.x, camera->pos.y, camera->pos.z);
-	vector_normalize(axis_forward);
-	if (axis_forward->x == 0 && axis_forward->z == 0 &&
-		(axis_forward->y == 1 || axis_forward->y == -1))
-		axis_forward->z = 0.00001;
-	axis_right = vector_multiply(&camera->tilt, axis_forward);
-	vector_normalize(axis_right);
-	axis_up = vector_multiply(axis_forward, axis_right);
-	matrix_set(&camera->matrix, axis_right, axis_up, axis_forward);
-	vector = vector_new(
-		camera->anchor.x + camera->pos.x,
-		camera->anchor.y + camera->pos.y,
-		camera->anchor.z + camera->pos.z);
-	/*matrix_transpose(&camera->matrix);
-	vector_set(vector,
-		-vector_scalar(vector, axis_right),
-		-vector_scalar(vector, axis_up),
-		-vector_scalar(vector, axis_forward));
-	*/
-	camera->matrix.t = vector;
+	result = NULL;
+	nearest = rtv1->camera->range_max;
+	lst = rtv1->objects;
+	while (lst)
+	{
+		object = (t_object *)lst->content;
+		ft_memcpy(&tmp, ray, sizeof(t_ray));
+		tmp.t = nearest;
+		set_ray_to_object_space(&tmp, object);
+		if (object->intersect(object, &tmp) && (tmp.t < nearest))
+		{
+			result = object;
+			nearest = tmp.t;
+		}
+		lst = lst->next;
+	}
+	ray->t = nearest;
+	return (result);
 }
 
-static void		render_debug(void *mlx, void *win, t_camera *camera)
+static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 {
-	char	*str;
-	t_u32	color;
+	t_u32		result;
+	t_shader	shader;
+	t_object	*object;
 
-	color = 0xFFFFFF;
-	str = vector_tostr(&camera->anchor, 3);
-	mlx_string_put(mlx, win, 10, 20, color, "Anchor:");
-	mlx_string_put(mlx, win, 60, 20, color, str);
-	free(str);
-	str = vector_tostr(&camera->pos, 3);
-	mlx_string_put(mlx, win, 10, 40, color, "Vector:");
-	mlx_string_put(mlx, win, 60, 40, color, str);
-	free(str);
-	str = ft_ftoa(camera->lat, 8);
-	mlx_string_put(mlx, win, 10, 60, color, "Lat:");
-	mlx_string_put(mlx, win, 50, 60, color, str);
-	free(str);
-	str = ft_ftoa(camera->lon, 8);
-	mlx_string_put(mlx, win, 10, 80, color, "Lon:");
-	mlx_string_put(mlx, win, 50, 80, color, str);
-	free(str);
-	str = ft_ftoa(camera->zoom, 8);
-	mlx_string_put(mlx, win, 10, 99, color, "Zoom:");
-	mlx_string_put(mlx, win, 50, 99, color, str);
-	free(str);
+	result = rtv1->bg_color;
+	object = NULL;
+	if ((object = render_trace(rtv1, ray)))
+	{
+		vector_invert(&ray->dir);
+		vector_set(&shader.hit_pos,
+			ray->orig.x + ray->dir.x * ray->t,
+			ray->orig.y + ray->dir.y * ray->t,
+			ray->orig.z + ray->dir.z * ray->t);
+		object->getnormal(&shader.hit_normal, object, &shader.hit_pos);
+		shader.object_color = object->color;
+		result = render_shade(rtv1, ray, &shader);
+	}
+	return (result);
 }
 
 static void		render_pixels(t_rtv1 *rtv1, t_u32 *buffer,

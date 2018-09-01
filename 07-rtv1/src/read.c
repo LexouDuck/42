@@ -19,20 +19,21 @@ static void	rtv1_read_object_getmatrix(t_object *object)
 
 	rot = &object->rotation;
 	object->matrix.u = vector_new(
-		cosf(rot->y) * cosf(rot->z) * object->scale.x,
+		cosf(rot->y) * cosf(rot->z),
 		cosf(rot->y) * sinf(rot->z),
 		-sinf(rot->y));
 	tmp = sinf(rot->x) * sinf(rot->y);
 	object->matrix.v = vector_new(
 		tmp * cosf(rot->z) - cosf(rot->x) * sinf(rot->z),
-		tmp * sinf(rot->z) + cosf(rot->x) * cosf(rot->z) * object->scale.y,
+		tmp * sinf(rot->z) + cosf(rot->x) * cosf(rot->z),
 		sinf(rot->x) * cosf(rot->y));
 	tmp = cosf(rot->x) * sinf(rot->y);
 	object->matrix.w = vector_new(
 		tmp * cosf(rot->z) + sinf(rot->x) * sinf(rot->z),
 		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
-		cosf(rot->x) * cosf(rot->y) * object->scale.z);
+		cosf(rot->x) * cosf(rot->y));
 	object->matrix.t = NULL;
+	ft_memcpy(&object->matrix_toworld, &object->matrix, sizeof(t_matrix));
 	matrix_inverse(&object->matrix);
 }
 

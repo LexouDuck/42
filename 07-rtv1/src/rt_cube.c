@@ -59,32 +59,28 @@ int			intersect_cube(t_object *object, t_ray *ray)
 
 void	getnormal_cube(t_vector *result, t_object *object, t_vector *hit_pos)
 {
-	t_matrix	matrix;
-	t_vector	u;
-	t_vector	v;
-	t_vector	w;
 	t_vector	vector;
+	t_vector	tmp;
 
 	vector_set(&vector,
 		hit_pos->x - object->position.x,
 		hit_pos->y - object->position.y,
 		hit_pos->z - object->position.z);
+	vector_normalize(&vector);
 	vector_transform(&vector, &object->matrix);
-	if (vector.x == vector.y && vector.y == vector.z)
+	vector_set(&tmp, abs(vector.x), abs(vector.y), abs(vector.z));
+	if (tmp.x == tmp.y && tmp.y == tmp.z)
 	{
 		vector_set(result, vector.x, vector.y, vector.z);
 		return ;
 	}
-	else if (vector.x >= vector.y && vector.x >= vector.z) {vector.y = 0;vector.z = 0;}
-	else if (vector.y >= vector.x && vector.y >= vector.z) {vector.x = 0;vector.z = 0;}
-	else if (vector.z >= vector.x && vector.z >= vector.y) {vector.x = 0;vector.y = 0;}
-	ft_memcpy(&u, object->matrix.u, sizeof(t_vector));
-	ft_memcpy(&v, object->matrix.v, sizeof(t_vector));
-	ft_memcpy(&w, object->matrix.w, sizeof(t_vector));
-	matrix.t = NULL;
-	matrix_set(&matrix, &u, &v, &w);
-	matrix_inverse(&matrix);
-	vector_transform(&vector, &matrix);
+	else if (tmp.x >= tmp.y && tmp.x >= tmp.z)
+		vector_set(&vector, object->scale.x, 0, 0);
+	else if (tmp.y >= tmp.x && tmp.y >= tmp.z)
+		vector_set(&vector, 0, object->scale.y, 0);
+	else if (tmp.z >= tmp.x && tmp.z >= tmp.y)
+		vector_set(&vector, 0, 0, object->scale.z);
+	vector_transform(&vector, &object->matrix_toworld);
 	vector_normalize(&vector);
 	vector_set(result, vector.x, vector.y, vector.z);
 }

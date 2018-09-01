@@ -20,7 +20,8 @@ static void	rtv1_printdebug(t_rtv1 *rtv1)
 
 	ft_putendl("RTV1 File successfully read:");
 	ft_putstr("BG Color: "); ft_putendl(ft_itoa_hex(rtv1->bg_color, "#"));
-	ft_putendl("Lights:"); lst = rtv1->lights;
+	ft_putendl("Lights:");
+	lst = rtv1->lights;
 	while (lst)
 	{
 		light = (t_light *)lst->content;
@@ -33,7 +34,8 @@ static void	rtv1_printdebug(t_rtv1 *rtv1)
 		ft_putstr(ft_ftoa(light->position.z, 6)); ft_putstr(")\n");
 		lst = lst->next;
 	}
-	ft_putendl("Objects:"); lst = rtv1->objects;
+	ft_putendl("Objects:");
+	lst = rtv1->objects;
 	while (lst)
 	{
 		object = (t_object *)lst->content;

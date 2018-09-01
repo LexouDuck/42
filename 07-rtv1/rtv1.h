@@ -19,15 +19,13 @@
 # include <fcntl.h>
 # include <sys/types.h>
 # include <sys/stat.h>
-/*
-**	# include <opencl.h>
-*/
+
 # include <mlx.h>
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-# define WIDTH	512
-# define HEIGHT	512
+# define WIDTH	320
+# define HEIGHT	240
 
 typedef struct	s_parser
 {
@@ -88,6 +86,7 @@ typedef struct	s_object
 	t_vector	rotation;
 	t_vector	scale;
 	t_matrix	matrix;
+	t_matrix	matrix_toworld;
 	t_u32		color;
 	int			(*intersect)(struct s_object *, t_ray *);
 	void		(*getnormal)(t_vector *, struct s_object *, t_vector *);
@@ -99,6 +98,14 @@ typedef struct	s_light
 	float		strength;
 	t_u32		color;
 }				t_light;
+
+typedef struct	s_shader
+{
+	t_u32		object_color;
+	t_vector	hit_pos;
+	t_vector	hit_normal;
+	t_ray		ray;
+}				t_shader;
 
 typedef struct	s_camera
 {
@@ -223,10 +230,19 @@ char		*read_number_arg(t_parser *parser, float *result);
 char		*read_color_arg(t_parser *parser, t_u32 *result);
 
 /*
-**	====	render.c & render_rt.c
+**	====	render.c & render_util.c
 */
 void		render(t_mlx *mlx, t_camera *camera);
-t_u32		render_cast_ray(t_rtv1 *rtv1, t_ray *ray);
+t_object	*render_trace(t_rtv1 *rtv1, t_ray *ray);
+
+void		render_debug(void *mlx, void *win, t_camera *camera);
+void		get_camera_matrix(t_camera *camera);
+void		set_ray_to_object_space(t_ray *ray, t_object *object);
+
+/*
+**	====	shader.c
+*/
+t_u32		render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader);
 
 /*
 **	====	event.c
