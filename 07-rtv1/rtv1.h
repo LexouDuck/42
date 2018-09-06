@@ -102,9 +102,12 @@ typedef struct	s_light
 typedef struct	s_shader
 {
 	t_u32		object_color;
+	t_vector	light;
 	t_vector	hit_pos;
 	t_vector	hit_normal;
 	t_ray		ray;
+	t_vector	diffuse;
+	t_vector	specular;
 }				t_shader;
 
 typedef struct	s_camera
@@ -123,6 +126,12 @@ typedef struct	s_camera
 	float		range_max;
 	t_matrix	matrix;
 }				t_camera;
+
+#define RENDER_DIFFUSE	0b001
+#define RENDER_SHADOWS	0b010
+#define RENDER_SPECULAR	0b100
+
+#define LIGHT_BIAS	0.0001
 
 typedef struct	s_rtv1
 {

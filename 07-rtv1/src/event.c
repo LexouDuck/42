@@ -97,12 +97,12 @@ ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 		mlx_destroy_window(mlx->mlx_ptr, mlx->win_ptr);
 		exit(OK);
 	}
-	else if (key == KEY_DELETE)
-		camera->render += (camera->render & 4) ? -4 : 4;
 	else if (key == KEY_HOME)
-		camera->render += (camera->render & 2) ? -2 : 2;
+		camera->render += (camera->render & 0b100) ? -0b100 : 0b100;
 	else if (key == KEY_END)
-		camera->render += (camera->render & 1) ? -1 : 1;
+		camera->render += (camera->render & 0b010) ? -0b010 : 0b010;
+	else if (key == KEY_DELETE)
+		camera->render += (camera->render & 0b001) ? -0b001 : 0b001;
 	else if (key == KEY_LEFT || key == KEY_RIGHT)
 		camera->anchor.x += (key == KEY_LEFT) ? -1 : 1;
 	else if (key == KEY_DOWN || key == KEY_UP)

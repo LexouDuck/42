@@ -54,7 +54,7 @@ int			intersect_cube(t_object *object, t_ray *ray)
 	if (max.z < max.x)
 		max.x = max.z;
 	ray->t = (min.x < max.x) ? min.x : max.x;
-	return (1);
+	return (ray->t >= 0);
 }
 
 void	getnormal_cube(t_vector *result, t_object *object, t_vector *hit_pos)

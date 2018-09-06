@@ -12,78 +12,107 @@
 
 #include "../rtv1.h"
 
-static void	shader_diffuse(float *result,
-	t_shader *shader, t_light *light, t_rtv1 *rtv1)
+static void		shader_diffuse(t_vector *result, t_shader *shader, t_light *light)
 {
-	t_object	*object;
-	float		light_distance;
-
-	shader->ray.dir.x = light->position.x - shader->hit_pos.x;
-	shader->ray.dir.y = light->position.y - shader->hit_pos.y;
-	shader->ray.dir.z = light->position.z - shader->hit_pos.z;
-	light_distance = vector_scalar(&shader->ray.dir, &shader->ray.dir);
-	vector_normalize(&shader->ray.dir);
-	object = NULL;
-	if (!(object = render_trace(rtv1, &shader->ray)) ||
-		(shader->ray.t * shader->ray.t < light_distance))
-	{
-/*
-ft_putstr("t: ");
-ft_putstr(ft_ftoa(shader->ray.t, 6));
-ft_putstr(", distance: ");
-ft_putendl(ft_ftoa(light_distance, 6));
-*/
-		shader->ray.t = vector_scalar(&shader->ray.dir, &shader->hit_normal);
-		if (shader->ray.t < 0)
-			shader->ray.t = 0;
-		*result += light->strength * shader->ray.t;
-	}
-}
-
-static void	shader_specular(float *result,
-	t_shader *shader, t_light *light, t_ray *ray)
-{
-	t_vector	reflection;
-
-	ft_memcpy(&reflection, &shader->ray.dir, sizeof(t_vector));
-	vector_invert(&reflection);
-	shader->ray.t = 2 * vector_scalar(&reflection, &shader->hit_normal);
-	reflection.x -= shader->hit_normal.x * shader->ray.t;
-	reflection.y -= shader->hit_normal.y * shader->ray.t;
-	reflection.z -= shader->hit_normal.z * shader->ray.t;
-	shader->ray.t = -vector_scalar(&reflection, &ray->dir);
+	light = light;
+	vector_invert(&shader->ray.dir);
+	shader->ray.t = vector_scalar(&shader->ray.dir, &shader->hit_normal);
 	if (shader->ray.t < 0)
 		shader->ray.t = 0;
-	*result += light->strength * shader->ray.t;
+	vector_set(result,
+		result->x + shader->light.x * shader->ray.t,
+		result->y + shader->light.y * shader->ray.t,
+		result->z + shader->light.z * shader->ray.t);
 }
 
-t_u32		render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
+static void		shader_specular(t_vector *result, t_shader *shader, t_ray *ray)
 {
-	t_light		*light;
-	float		diffuse;
-	float		specular;
-	t_list		*lst;
+	vector_invert(&shader->ray.dir);
+	shader->ray.t = 2 * vector_scalar(&shader->ray.dir, &shader->hit_normal);
+	shader->ray.dir.x -= shader->hit_normal.x * shader->ray.t;
+	shader->ray.dir.y -= shader->hit_normal.y * shader->ray.t;
+	shader->ray.dir.z -= shader->hit_normal.z * shader->ray.t;
+	shader->ray.t = -vector_scalar(&shader->ray.dir, &ray->dir);
+	if (shader->ray.t < 0)
+		shader->ray.t = 0;
+	vector_set(result,
+		result->x + shader->light.x * shader->ray.t,
+		result->y + shader->light.y * shader->ray.t,
+		result->z + shader->light.z * shader->ray.t);
+}
 
-	ft_memcpy(&shader->ray.orig, &shader->hit_normal, sizeof(t_vector));
-	vector_scale(&shader->ray.orig, 0.00001);
-	if (vector_scalar(&ray->dir, &shader->hit_normal) < 0)
-		vector_invert(&shader->ray.orig);
-	shader->ray.orig.x += shader->hit_pos.x;
-	shader->ray.orig.y += shader->hit_pos.y;
-	shader->ray.orig.z += shader->hit_pos.z;
-	diffuse = 0.2;
-	specular = 0;
+static t_u32	shader_getcolor(t_u32 color,
+	t_vector *diffuse,
+	t_vector *specular)
+{
+	int	r;
+	int	g;
+	int	b;
+
+	r = (float)color_get_r(color) * diffuse->x + specular->x;
+	g = (float)color_get_g(color) * diffuse->y + specular->y;
+	b = (float)color_get_b(color) * diffuse->z + specular->z;
+	if (r < 0)
+		r = 0;
+	else if (r >= 256)
+		r = 255;
+	if (g < 0)
+		g = 0;
+	else if (g >= 256)
+		g = 255;
+	if (b < 0)
+		b = 0;
+	else if (b >= 256)
+		b = 255;
+	return (color_new(0, r, g, b));
+}
+
+void			shader_init(t_shader *shader)
+{
+	ft_memcpy(&shader->ray.orig, &shader->hit_pos, sizeof(t_vector));
+	shader->ray.orig.x += shader->hit_normal.x * LIGHT_BIAS;
+	shader->ray.orig.y += shader->hit_normal.y * LIGHT_BIAS;
+	shader->ray.orig.z += shader->hit_normal.z * LIGHT_BIAS;
+}
+
+void			shader_setupray(t_shader *shader, t_light *light)
+{
+	vector_set(&shader->ray.dir,
+		shader->hit_pos.x - light->position.x,
+		shader->hit_pos.y - light->position.y,
+		shader->hit_pos.z - light->position.z);
+	vector_set(&shader->light,
+		(float)color_get_r(light->color) * light->strength,
+		(float)color_get_g(light->color) * light->strength,
+		(float)color_get_b(light->color) * light->strength);
+	vector_scale(&shader->light, 5 / vector_length(&shader->ray.dir));
+	vector_normalize(&shader->ray.dir);
+}
+
+t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
+{
+	int			render;
+	t_list		*lst;
+	float		tmp;
+
+	render = rtv1->camera->render;
+	tmp = (render & RENDER_DIFFUSE) ? 0.2 : 1;
+	vector_set(&shader->diffuse, tmp, tmp, tmp);
+	vector_set(&shader->specular, 0, 0, 0);
+	shader_init(shader);
 	lst = rtv1->lights;
 	while (lst)
 	{
-		light = (t_light *)lst->content;
-		shader_diffuse(&diffuse, shader, light, rtv1);
-		shader_specular(&specular, shader, light, ray);
+		shader_setupray(shader, (t_light *)lst->content);
+		if (!(render & RENDER_SHADOWS) || !(render_trace(rtv1, &shader->ray)))
+		{
+			if (render & RENDER_DIFFUSE)
+				shader_diffuse(&shader->diffuse, shader, (t_light *)lst->content);
+			if (render & RENDER_SPECULAR)
+				shader_specular(&shader->specular, shader, ray);
+		}
 		lst = lst->next;
 	}
-	specular *= 50;
-	int c_r = (float)color_get_r(shader->object_color) * diffuse + specular; if (c_r < 0) c_r = 0; else if (c_r >= 256) c_r = 255;
-	int c_g = (float)color_get_g(shader->object_color) * diffuse + specular; if (c_g < 0) c_g = 0; else if (c_g >= 256) c_g = 255;
-	int c_b = (float)color_get_b(shader->object_color) * diffuse + specular; if (c_b < 0) c_b = 0; else if (c_b >= 256) c_b = 255;
-	return (color_new(0, c_r, c_g, c_b));
+	return (shader_getcolor(shader->object_color,
+		&shader->diffuse, &shader->specular));
 }

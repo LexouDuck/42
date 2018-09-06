@@ -20,7 +20,7 @@ t_camera	*camera_new()
 		return (NULL);
 	result->mode = CAMERA_NONE;
 	result->zoom = 50.0;
-	result->render = 0;
+	result->render = 0b111;
 	result->fov = 80;
 	vector_set(&result->anchor, 0, 0, 0);
 	vector_set(&result->pos, 0, 0, 0);
