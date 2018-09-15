@@ -6,7 +6,7 @@
 /*   By: aduquesn <AlexisDuquesne@outlook.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2006/06/06 06:06:06 by aduquesn          #+#    #+#             */
-/*   Updated: 2006/06/06 06:06:06 by aduquesn         ###   ########.fr       */
+/*   Updated: 2018/09/15 19:45:11 by aduquesn         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-# define WIDTH	320
-# define HEIGHT	240
+# define WIDTH	500
+# define HEIGHT	380
 
 typedef struct	s_parser
 {

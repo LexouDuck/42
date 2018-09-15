@@ -19,7 +19,7 @@ else
 	endif
 endif
 
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX) $(OPENCL)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm

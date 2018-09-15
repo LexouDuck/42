@@ -68,18 +68,17 @@ void	getnormal_cube(t_vector *result, t_object *object, t_vector *hit_pos)
 		hit_pos->z - object->position.z);
 	vector_normalize(&vector);
 	vector_transform(&vector, &object->matrix);
-	vector_set(&tmp, abs(vector.x), abs(vector.y), abs(vector.z));
+	vector_set(&tmp, fabs(vector.x), fabs(vector.y), fabs(vector.z));
 	if (tmp.x == tmp.y && tmp.y == tmp.z)
 	{
 		vector_set(result, vector.x, vector.y, vector.z);
-		return ;
 	}
 	else if (tmp.x >= tmp.y && tmp.x >= tmp.z)
-		vector_set(&vector, object->scale.x, 0, 0);
+		vector_set(&vector, 1, 0, 0);
 	else if (tmp.y >= tmp.x && tmp.y >= tmp.z)
-		vector_set(&vector, 0, object->scale.y, 0);
+		vector_set(&vector, 0, 1, 0);
 	else if (tmp.z >= tmp.x && tmp.z >= tmp.y)
-		vector_set(&vector, 0, 0, object->scale.z);
+		vector_set(&vector, 0, 0, 1);
 	vector_transform(&vector, &object->matrix_toworld);
 	vector_normalize(&vector);
 	vector_set(result, vector.x, vector.y, vector.z);
