@@ -39,7 +39,9 @@ int		intersect_cone(t_object *object, t_ray *ray)
 	t_vector	v;
 	t_vector	t;
 	float		tmp;
+	int			intersect;
 
+	intersect = intersect_cone_base(ray, 0, &ray->t);
 	t.x = ray->orig.x - object->position.x;
 	t.y = ray->orig.z - object->position.z;
 	t.z = 1 - ray->orig.y + object->position.y;
@@ -49,17 +51,17 @@ int		intersect_cone(t_object *object, t_ray *ray)
 		(2 * t.z * ray->dir.y);
 	v.z = (t.x * t.x) + (t.y * t.y) - (t.z * t.z);
 	tmp = v.y * v.y - 4 * (v.x * v.z);
-	if (tmp <= 0)
-		return (0);
+	if (tmp < 0)
+		return (intersect);
 	t.x = (-v.y - sqrt(tmp)) / (2 * v.x);
 	t.y = (-v.y + sqrt(tmp)) / (2 * v.x);
-	ray->t = (t.x <= t.y) ? t.x : t.y;
+	tmp = (t.x <= t.y) ? t.x : t.y;
+	if (tmp < ray->t)
+		ray->t = tmp;
 	tmp = ray->orig.y + ray->t * ray->dir.y;
 	if (object->position.y < tmp && tmp < object->position.y + 1)
 		return (1);
-	if (intersect_cone_base(ray, 0, &ray->t))
-		return (1);
-	return (0);
+	return (intersect);
 }
 
 void	getnormal_cone(t_vector *result, t_object *object, t_vector *hit_pos)
@@ -68,25 +70,22 @@ void	getnormal_cone(t_vector *result, t_object *object, t_vector *hit_pos)
     float		tmp;
 
 	vector_set(&vector,
-		hit_pos->x - object->position.x,
-		hit_pos->y - object->position.y,
-		hit_pos->z - object->position.z);
-	vector_normalize(&vector);
+		(hit_pos->x - object->position.x) / object->scale.x,
+		(hit_pos->y - object->position.y) / object->scale.y,
+		(hit_pos->z - object->position.z) / object->scale.z);
 	vector_transform(&vector, &object->matrix);
-    if (vector.y <= 0.0)
+    if (vector.y <= 0)
     {
     	vector_set(&vector, 0, -1, 0);
 		vector_transform(&vector, &object->matrix_toworld);
 		vector_normalize(&vector);
 		vector_set(result, vector.x, vector.y, vector.z);
+		return ;
     }
-    else
-    {
-	    tmp = sqrt(
-	    	(hit_pos->x - object->position.x) * (hit_pos->x - object->position.x) +
-	    	(hit_pos->z - object->position.z) * (hit_pos->z - object->position.z));
-	    vector_set(result,
-	    	hit_pos->x - object->position.x, tmp, hit_pos->z - object->position.z);
-	    vector_normalize(result);
-    }
+    tmp = sqrt(
+    	(hit_pos->x - object->position.x) * (hit_pos->x - object->position.x) +
+    	(hit_pos->z - object->position.z) * (hit_pos->z - object->position.z));
+    vector_set(result,
+    	hit_pos->x - object->position.x, tmp, hit_pos->z - object->position.z);
+    vector_normalize(result);
 }
