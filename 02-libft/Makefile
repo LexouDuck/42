@@ -101,23 +101,23 @@ OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 all: $(NAME)
 
 $(NAME): $(OBJS) $(HDRS)
-	@echo -n "Compiling library: "$@" -> "
+	@printf "Compiling library: "$@" -> "
 	@ar -rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
-	@echo -e $(GREEN)"OK!"$(RESET)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 $(OBJDIR)%.o : $(SRCDIR)%.c
 	@mkdir -p $(OBJDIR)
-	@echo -n "Compiling file: "$@" -> "
+	@printf "Compiling file: "$@" -> "
 	@$(CC) -c $< $(CFLAGS) -o $@
-	@echo -e $(GREEN)"OK!"$(RESET)
+	@printf $(GREEN)"OK!"$(RESET)"\n"
 
 clean:
-	@echo "Deleting object files..."
+	@echo "Deleting object files...\n"
 	@rm -f $(OBJS)
 
 fclean: clean
-	@echo "Deleting library file: "$(NAME)
+	@echo "Deleting library file: "$(NAME)"\n"
 	@rm -f $(NAME)
 
 re: fclean all

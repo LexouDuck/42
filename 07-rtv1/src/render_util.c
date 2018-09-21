@@ -71,16 +71,21 @@ void	get_camera_matrix(t_camera *camera)
 
 void	set_ray_to_object_space(t_ray *ray, t_object *object)
 {
+	t_vector	scale;
+
 	vector_set(&ray->orig,
 		object->position.x - ray->orig.x,
 		object->position.y - ray->orig.y,
 		object->position.z - ray->orig.z);
 	vector_transform(&ray->orig, &object->matrix);
-	ray->orig.x /= object->scale.x;
-	ray->orig.y /= object->scale.y;
-	ray->orig.z /= object->scale.z;
+	scale.x = 1 / object->scale.x;
+	scale.y = 1 / object->scale.y;
+	scale.z = 1 / object->scale.z;
+	ray->orig.x *= scale.x;s
+	ray->orig.y *= scale.y;
+	ray->orig.z *= scale.z;
 	vector_transform(&ray->dir, &object->matrix);
-	ray->dir.x /= object->scale.x;
-	ray->dir.y /= object->scale.y;
-	ray->dir.z /= object->scale.z;
+	ray->dir.x *= scale.x;
+	ray->dir.y *= scale.y;
+	ray->dir.z *= scale.z;
 }
