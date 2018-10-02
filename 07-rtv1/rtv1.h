@@ -24,8 +24,8 @@
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-# define WIDTH	500
-# define HEIGHT	380
+# define WIDTH	320
+# define HEIGHT	240
 
 typedef struct	s_parser
 {
@@ -102,6 +102,7 @@ typedef struct	s_light
 typedef struct	s_shader
 {
 	t_u32		object_color;
+	float		norm;
 	t_vector	light;
 	t_vector	hit_pos;
 	t_vector	hit_normal;
@@ -241,8 +242,9 @@ char		*read_color_arg(t_parser *parser, t_u32 *result);
 /*
 **	====	render.c & render_util.c
 */
+int			handle_expose(void *param);
 void		render(t_mlx *mlx, t_camera *camera);
-t_object	*render_trace(t_rtv1 *rtv1, t_ray *ray);
+t_object	*render_trace(t_rtv1 *rtv1, t_ray *ray, float nearest);
 
 void		render_debug(void *mlx, void *win, t_camera *camera);
 void		get_camera_matrix(t_camera *camera);

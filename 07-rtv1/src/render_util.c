@@ -81,7 +81,7 @@ void	set_ray_to_object_space(t_ray *ray, t_object *object)
 	scale.x = 1 / object->scale.x;
 	scale.y = 1 / object->scale.y;
 	scale.z = 1 / object->scale.z;
-	ray->orig.x *= scale.x;s
+	ray->orig.x *= scale.x;
 	ray->orig.y *= scale.y;
 	ray->orig.z *= scale.z;
 	vector_transform(&ray->dir, &object->matrix);

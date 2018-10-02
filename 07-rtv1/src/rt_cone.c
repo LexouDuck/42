@@ -56,8 +56,10 @@ int		intersect_cone(t_object *object, t_ray *ray)
 	t.x = (-v.y - sqrt(tmp)) / (2 * v.x);
 	t.y = (-v.y + sqrt(tmp)) / (2 * v.x);
 	tmp = (t.x <= t.y) ? t.x : t.y;
-	if (tmp < ray->t)
+	if (tmp <= ray->t)
 		ray->t = tmp;
+	else if (tmp <= 0)
+		return (intersect);
 	tmp = ray->orig.y + ray->t * ray->dir.y;
 	if (object->position.y < tmp && tmp < object->position.y + 1)
 		return (1);

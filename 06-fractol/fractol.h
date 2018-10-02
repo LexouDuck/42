@@ -120,6 +120,8 @@ t_u8		color_get_b(t_u32 color);
 /*
 **	====	render.c
 */
+
+int				handle_expose(void *param);
 void		render(t_mlx *mlx);
 
 /*

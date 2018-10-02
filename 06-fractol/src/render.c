@@ -124,3 +124,15 @@ void				render(t_mlx *mlx)
 	render_debug(mlx, &c);
 	mlx->rendering = 0;
 }
+
+int					handle_expose(void *param)
+{
+	t_mlx		*mlx;
+
+	mlx = (t_mlx *)param;
+	mlx_put_image_to_window(
+		mlx->mlx_ptr,
+		mlx->win_ptr,
+		mlx->img_ptr, 0, 0);
+	return (0);
+}

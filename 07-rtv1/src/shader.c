@@ -12,38 +12,47 @@
 
 #include "../rtv1.h"
 
-static void		shader_diffuse(t_vector *result, t_shader *shader)
+static void		shader_diffuse(
+	t_vector *result,
+	t_shader *shader,
+	t_light *light)
 {
-	vector_scale(&shader->light, 2);
-	vector_invert(&shader->ray.dir);
-	shader->ray.t = vector_scalar(&shader->ray.dir, &shader->hit_normal);
-	if (shader->ray.t < 0)
-		shader->ray.t = 0;
+	float	tmp;
+
+	tmp = vector_scalar(&shader->ray.dir, &shader->hit_normal) / shader->norm;
+	if (tmp < 0)
+		tmp = 0;
+	tmp *= 1 / M_PI;
+	tmp *= light->strength;
 	vector_set(result,
-		result->x + shader->light.x * shader->ray.t,
-		result->y + shader->light.y * shader->ray.t,
-		result->z + shader->light.z * shader->ray.t);
-	vector_invert(&shader->ray.dir);
+		result->x + shader->light.x * tmp,
+		result->y + shader->light.y * tmp,
+		result->z + shader->light.z * tmp);
 }
 
-static void		shader_specular(t_vector *result, t_shader *shader, t_ray *ray)
+static void		shader_specular(
+	t_vector *result,
+	t_shader *shader,
+	t_ray *ray)
 {
-	vector_normalize(&shader->light);
-	vector_scale(&shader->light, 200);
-	shader->ray.t = 2 * vector_scalar(&shader->ray.dir, &shader->hit_normal);
-	shader->ray.dir.x -= shader->hit_normal.x * shader->ray.t;
-	shader->ray.dir.y -= shader->hit_normal.y * shader->ray.t;
-	shader->ray.dir.z -= shader->hit_normal.z * shader->ray.t;
-	shader->ray.t = -vector_scalar(&shader->ray.dir, &ray->dir);
-	if (shader->ray.t < 0)
-		shader->ray.t = 0;
+	float	tmp;
+
+	tmp = 2 * vector_scalar(&shader->ray.dir, &shader->hit_normal);
+	shader->ray.dir.x += shader->hit_normal.x * tmp;
+	shader->ray.dir.y += shader->hit_normal.y * tmp;
+	shader->ray.dir.z += shader->hit_normal.z * tmp;
+	tmp = -vector_scalar(&shader->ray.dir, &ray->dir);
+	if (tmp < 0)
+		tmp = 0;
+	tmp /= shader->ray.t;
 	vector_set(result,
-		result->x + shader->light.x * shader->ray.t,
-		result->y + shader->light.y * shader->ray.t,
-		result->z + shader->light.z * shader->ray.t);
+		result->x + shader->light.x * tmp,
+		result->y + shader->light.y * tmp,
+		result->z + shader->light.z * tmp);
 }
 
-static t_u32	shader_getcolor(t_u32 color,
+static t_u32	shader_getcolor(
+	t_u32 color,
 	t_vector *diffuse,
 	t_vector *specular)
 {
@@ -69,14 +78,6 @@ static t_u32	shader_getcolor(t_u32 color,
 	return (color_new(0, r, g, b));
 }
 
-void			shader_init(t_shader *shader)
-{
-	ft_memcpy(&shader->ray.orig, &shader->hit_pos, sizeof(t_vector));
-	shader->ray.orig.x += shader->hit_normal.x * LIGHT_BIAS;
-	shader->ray.orig.y += shader->hit_normal.y * LIGHT_BIAS;
-	shader->ray.orig.z += shader->hit_normal.z * LIGHT_BIAS;
-}
-
 void			shader_setupray(t_shader *shader, t_light *light)
 {
 	vector_set(&shader->ray.dir,
@@ -84,11 +85,12 @@ void			shader_setupray(t_shader *shader, t_light *light)
 		shader->hit_pos.y - light->position.y,
 		shader->hit_pos.z - light->position.z);
 	vector_set(&shader->light,
-		(float)color_get_r(light->color) * light->strength,
-		(float)color_get_g(light->color) * light->strength,
-		(float)color_get_b(light->color) * light->strength);
-	vector_scale(&shader->light, 1 / (4 * M_PI * vector_length(&shader->ray.dir)));
-	vector_normalize(&shader->ray.dir);
+		(float)color_get_r(light->color),
+		(float)color_get_g(light->color),
+		(float)color_get_b(light->color));
+	shader->norm = vector_length(&shader->ray.dir);
+	shader->ray.t = sqrt(shader->norm);
+	vector_scale(&shader->ray.dir, 1 / shader->ray.t);
 }
 
 t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
@@ -101,15 +103,17 @@ t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
 	tmp = (render & RENDER_DIFFUSE) ? 0.2 : 1;
 	vector_set(&shader->diffuse, tmp, tmp, tmp);
 	vector_set(&shader->specular, 0, 0, 0);
-	shader_init(shader);
+	ft_memcpy(&shader->ray.orig, &shader->hit_pos, sizeof(t_vector));
 	lst = rtv1->lights;
 	while (lst)
 	{
 		shader_setupray(shader, (t_light *)lst->content);
-		if (!(render & RENDER_SHADOWS) || !(render_trace(rtv1, &shader->ray)))
+		if (!(render & RENDER_SHADOWS) ||
+			!(render_trace(rtv1, &shader->ray, shader->ray.t)))
 		{
+			vector_invert(&shader->ray.dir);
 			if (render & RENDER_DIFFUSE)
-				shader_diffuse(&shader->diffuse, shader);
+				shader_diffuse(&shader->diffuse, shader, (t_light *)lst->content);
 			if (render & RENDER_SPECULAR)
 				shader_specular(&shader->specular, shader, ray);
 		}

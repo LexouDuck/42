@@ -118,6 +118,7 @@ int			setup_events(t_mlx *mlx)
 	int event;
 	int	mask;
 
+	mlx_expose_hook(mlx->win_ptr, handle_expose, mlx);
 	mlx_key_hook(mlx->win_ptr, event_key, mlx);
 	mask = 0;
 	mask |= MASK_POINTERMOTION;

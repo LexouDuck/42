@@ -12,16 +12,14 @@
 
 #include "../rtv1.h"
 
-t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray)
+t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray, float nearest)
 {
 	t_object	*result;
 	t_object	*object;
 	t_ray		tmp;
 	t_list		*lst;
-	float		nearest;
 
 	result = NULL;
-	nearest = rtv1->camera->range_max;
 	lst = rtv1->objects;
 	while (lst)
 	{
@@ -48,7 +46,7 @@ static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 
 	result = rtv1->bg_color;
 	object = NULL;
-	if ((object = render_trace(rtv1, ray)))
+	if ((object = render_trace(rtv1, ray, rtv1->camera->range_max)))
 	{
 		vector_invert(&ray->dir);
 		vector_set(&shader.hit_pos,
@@ -56,14 +54,21 @@ static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 			ray->orig.y + ray->dir.y * ray->t,
 			ray->orig.z + ray->dir.z * ray->t);
 		object->getnormal(&shader.hit_normal, object, &shader.hit_pos);
+		vector_set(&shader.hit_pos,
+			shader.hit_pos.x + shader.hit_normal.x * LIGHT_BIAS,
+			shader.hit_pos.y + shader.hit_normal.y * LIGHT_BIAS,
+			shader.hit_pos.z + shader.hit_normal.z * LIGHT_BIAS);
 		shader.object_color = object->color;
 		result = render_shade(rtv1, ray, &shader);
 	}
 	return (result);
 }
 
-static void		render_pixels(t_rtv1 *rtv1, t_u32 *buffer,
-	float scale, float ratio)
+static void		render_pixels(
+	t_rtv1 *rtv1,
+	t_u32 *buffer,
+	float scale,
+	float ratio)
 {
 	t_vector	*tmp;
 	t_matrix	*matrix;
@@ -81,9 +86,8 @@ static void		render_pixels(t_rtv1 *rtv1, t_u32 *buffer,
 		pixel.x = -1;
 		while (++pixel.x < WIDTH)
 		{
-			vector_set(&ray.dir,
-				(2 * ((pixel.x + 0.5) / (float)WIDTH) - 1) * scale * ratio,
-				(1 - 2 * ((pixel.y + 0.5) / (float)HEIGHT)) * scale, 1);
+			vector_set(&ray.dir, (2 * ((pixel.x + 0.5) / WIDTH) - 1) * scale
+				* ratio, (1 - 2 * ((pixel.y + 0.5) / HEIGHT)) * scale, 1);
 			matrix->t = NULL;
 			vector_transform(&ray.dir, matrix);
 			vector_normalize(&ray.dir);
@@ -95,8 +99,9 @@ static void		render_pixels(t_rtv1 *rtv1, t_u32 *buffer,
 
 void			render(t_mlx *mlx, t_camera *camera)
 {
-	t_u32		*buffer = (t_u32 *)mlx->image->buffer;
+	t_u32		*buffer;
 
+	buffer = (t_u32 *)mlx->image->buffer;
 	ft_bzero(buffer, HEIGHT * mlx->image->line);
 	camera_update(camera);
 	get_camera_matrix(camera);
@@ -112,4 +117,17 @@ void			render(t_mlx *mlx, t_camera *camera)
 	free(camera->matrix.v);
 	free(camera->matrix.w);
 	free(camera->matrix.t);
+}
+
+int				handle_expose(void *param)
+{
+	t_mlx		*mlx;
+
+	mlx = (t_mlx *)param;
+	mlx_put_image_to_window(
+		mlx->mlx_ptr,
+		mlx->win_ptr,
+		mlx->img_ptr, 0, 0);
+	render_debug(mlx->mlx_ptr, mlx->win_ptr, mlx->rtv1->camera);
+	return (0);
 }
