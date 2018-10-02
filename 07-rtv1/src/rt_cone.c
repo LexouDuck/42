@@ -69,25 +69,25 @@ int		intersect_cone(t_object *object, t_ray *ray)
 void	getnormal_cone(t_vector *result, t_object *object, t_vector *hit_pos)
 {
 	t_vector	vector;
-    float		tmp;
+	float		tmp;
 
 	vector_set(&vector,
 		(hit_pos->x - object->position.x) / object->scale.x,
 		(hit_pos->y - object->position.y) / object->scale.y,
 		(hit_pos->z - object->position.z) / object->scale.z);
 	vector_transform(&vector, &object->matrix);
-    if (vector.y <= 0)
-    {
-    	vector_set(&vector, 0, -1, 0);
+	if (vector.y <= 0)
+	{
+		vector_set(&vector, 0, -1, 0);
 		vector_transform(&vector, &object->matrix_toworld);
 		vector_normalize(&vector);
 		vector_set(result, vector.x, vector.y, vector.z);
 		return ;
-    }
-    tmp = sqrt(
-    	(hit_pos->x - object->position.x) * (hit_pos->x - object->position.x) +
-    	(hit_pos->z - object->position.z) * (hit_pos->z - object->position.z));
-    vector_set(result,
-    	hit_pos->x - object->position.x, tmp, hit_pos->z - object->position.z);
-    vector_normalize(result);
+	}
+	tmp = sqrt(
+		(hit_pos->x - object->position.x) * (hit_pos->x - object->position.x) +
+		(hit_pos->z - object->position.z) * (hit_pos->z - object->position.z));
+	vector_set(result,
+		hit_pos->x - object->position.x, tmp, hit_pos->z - object->position.z);
+	vector_normalize(result);
 }

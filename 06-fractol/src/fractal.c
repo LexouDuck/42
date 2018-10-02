@@ -12,7 +12,9 @@
 
 #include "../fractol.h"
 
-t_u32	render_julia(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
+t_u32	render_julia(t_fractol *fractol,
+	t_complex *z_ptr,
+	t_complex *c_ptr)
 {
 	t_complex	tmp;
 	t_complex	z;
@@ -38,7 +40,9 @@ t_u32	render_julia(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 	return (0);
 }
 
-t_u32	render_fatou(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
+t_u32	render_fatou(t_fractol *fractol,
+	t_complex *z_ptr,
+	t_complex *c_ptr)
 {
 	t_complex	tmp;
 	t_complex	z;
@@ -67,7 +71,9 @@ t_u32	render_fatou(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 		fractol->palette.b.center + i * fractol->palette.b.amplitude));
 }
 
-t_u32	render_mandelbrot(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
+t_u32	render_mandelbrot(t_fractol *fractol,
+	t_complex *z_ptr,
+	t_complex *c_ptr)
 {
 	t_complex	tmp;
 	t_complex	z;
@@ -92,7 +98,9 @@ t_u32	render_mandelbrot(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 	return (0);
 }
 
-t_u32	render_burningship(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
+t_u32	render_burningship(t_fractol *fractol,
+	t_complex *z_ptr,
+	t_complex *c_ptr)
 {
 	t_complex	tmp;
 	t_complex	z;
@@ -117,7 +125,9 @@ t_u32	render_burningship(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
 	return (0);
 }
 
-t_u32	render_newton(t_fractol *fractol, t_complex *z_ptr, t_complex *c_ptr)
+t_u32	render_newton(t_fractol *fractol,
+	t_complex *z_ptr,
+	t_complex *c_ptr)
 {
 	t_complex	z;
 	t_complex	c;

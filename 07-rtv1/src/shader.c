@@ -99,8 +99,7 @@ t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
 	t_list		*lst;
 	float		tmp;
 
-	render = rtv1->camera->render;
-	tmp = (render & RENDER_DIFFUSE) ? 0.2 : 1;
+	tmp = ((render = rtv1->camera->render) & RENDER_DIFFUSE) ? 0.2 : 1;
 	vector_set(&shader->diffuse, tmp, tmp, tmp);
 	vector_set(&shader->specular, 0, 0, 0);
 	ft_memcpy(&shader->ray.orig, &shader->hit_pos, sizeof(t_vector));

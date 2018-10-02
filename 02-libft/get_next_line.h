@@ -24,7 +24,7 @@
 
 # define BUFF_SIZE 2048
 
-int 	get_next_line(int const fd, char **line);
+int		get_next_line(int const fd, char **line);
 char	*read_file(int const fd);
 
 #endif

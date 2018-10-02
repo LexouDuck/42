@@ -69,15 +69,14 @@ static void	init_palette(t_fractol *fractol)
 
 static int	init_image(t_mlx *mlx)
 {
-	t_image		*image;
-	static void	*functions[5] =
-	{
+	static void	*functions[5] = {
 		&render_julia,
 		&render_fatou,
 		&render_mandelbrot,
 		&render_burningship,
 		&render_newton
 	};
+	t_image		*image;
 
 	if (!(image = (t_image *)malloc(sizeof(t_image))))
 		return (ERROR);

@@ -56,8 +56,10 @@ static int	event_mouse_release(int button, int x, int y, void *param)
 	if (button == MOUSE_L_CLICK)
 	{
 		scale = (mlx->fractol->zoom * mlx->fractol->radius);
-		mlx->fractol->anchor.x += scale * (double)(x - WIN_W / 2) / (double)WIN_H;
-		mlx->fractol->anchor.y += scale * (double)(y - WIN_H / 2) / (double)WIN_H;
+		mlx->fractol->anchor.x +=
+			scale * (double)(x - WIN_W / 2) / (double)WIN_H;
+		mlx->fractol->anchor.y +=
+			scale * (double)(y - WIN_H / 2) / (double)WIN_H;
 		render(mlx);
 	}
 	else if (button == MOUSE_R_CLICK)
@@ -74,7 +76,7 @@ static int	event_mouse_move(int x, int y, void *param)
 	static int	old_y = 0;
 	double		d_x;
 	double		d_y;
-	t_fractol		*fractol;
+	t_fractol	*fractol;
 
 	fractol = ((t_mlx *)param)->fractol;
 	d_x = (double)(x - old_x);
@@ -109,7 +111,11 @@ static int	event_key(int key, void *param)
 	else if ((tmp = key == KEY_UP) || key == KEY_DOWN)
 		mlx->fractol->anchor.y += tmp ? -d : d;
 	else if ((tmp = key == KEY_PAGE_UP) || key == KEY_PAGE_DN)
-		mlx->fractol->radius *= tmp ? 0.9 : 1.1;
+	{
+		mlx->fractol->zoom *= tmp ? 0.7 : 1.3;
+		if (mlx->fractol->zoom > MAX_ZOOM)
+			mlx->fractol->zoom = MAX_ZOOM;
+	}
 	else if (event_key_palette(mlx, key))
 		return (OK);
 	render(mlx);

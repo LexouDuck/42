@@ -1,0 +1,10 @@
+git add auteur
+git add Makefile
+git add fractol.h
+git add mlx_events.h
+git add src/*.c
+git add libft/Makefile
+git add libft/libft.h
+git add libft/src/ft_*.c
+git add libft/get_next_line.c
+git add libft/get_next_line.h

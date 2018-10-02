@@ -65,7 +65,7 @@ void				render_debug(t_mlx *mlx, t_complex *complex)
 		render_debug_complex(mlx, complex, pos);
 }
 
-void			render_fractal(t_fractol *fractol,
+void				render_fractal(t_fractol *fractol,
 	t_image *image,
 	t_complex *c,
 	int (*get_color)(t_fractol *, t_complex *, t_complex *))
@@ -73,7 +73,7 @@ void			render_fractal(t_fractol *fractol,
 	t_complex	anchor;
 	double		scale;
 	t_point		pixel;
-	int 		index;
+	int			index;
 	t_complex	z;
 
 	scale = fractol->radius * fractol->zoom;
@@ -113,7 +113,7 @@ void				render(t_mlx *mlx)
 		c.y = ((double)mlx->fractol->mouse.y / (double)WIN_H);
 	}
 	mlx->fractol->max =
-		(mlx->fractol->type == julia ||mlx->fractol->type == fatou) ? 32 : 64;
+		(mlx->fractol->type == julia || mlx->fractol->type == fatou) ? 32 : 64;
 	mlx->fractol->radius2 = (mlx->fractol->type == newton) ?
 		0.00001 : mlx->fractol->radius * mlx->fractol->radius;
 	render_fractal(mlx->fractol, mlx->image, &c, mlx->render);
@@ -127,12 +127,26 @@ void				render(t_mlx *mlx)
 
 int					handle_expose(void *param)
 {
+	t_complex	c;
 	t_mlx		*mlx;
 
 	mlx = (t_mlx *)param;
+	mlx->rendering = 1;
+	if (mlx->mouse)
+	{
+		c.x = 0;
+		c.y = 0;
+	}
+	else
+	{
+		c.x = ((double)mlx->fractol->mouse.x / (double)WIN_W) * 2 - 1;
+		c.y = ((double)mlx->fractol->mouse.y / (double)WIN_H);
+	}
 	mlx_put_image_to_window(
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
+	render_debug(mlx, &c);
+	mlx->rendering = 0;
 	return (0);
 }
