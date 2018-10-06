@@ -67,9 +67,9 @@ void	getnormal_cube(
 	if (!object)
 		return ;
 	vector_set(&tmp,
-		(int)(hit_pos->x < 0 ? -hit_pos->x : hit_pos->x),
-		(int)(hit_pos->y < 0 ? -hit_pos->y : hit_pos->y),
-		(int)(hit_pos->z < 0 ? -hit_pos->z : hit_pos->z));
+		(hit_pos->x < 0 ? -hit_pos->x : hit_pos->x),
+		(hit_pos->y < 0 ? -hit_pos->y : hit_pos->y),
+		(hit_pos->z < 0 ? -hit_pos->z : hit_pos->z));
 	if (tmp.x == tmp.y && tmp.y == tmp.z)
 	{
 		vector_set(result, hit_pos->x, hit_pos->y, hit_pos->z);

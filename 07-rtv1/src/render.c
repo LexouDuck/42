@@ -74,7 +74,7 @@ static void		render_pixels(
 	float scale,
 	float ratio)
 {
-	t_vector	*tmp;
+	t_vector	tmp;
 	t_matrix	*matrix;
 	t_ray		ray;
 	t_point		pixel;
@@ -88,10 +88,10 @@ static void		render_pixels(
 		pixel.x = -1;
 		while (++pixel.x < WIDTH)
 		{
-			ray.pos = *tmp;
+			ray.pos = tmp;
 			vector_set(&ray.dir, (2 * ((pixel.x + 0.5) / WIDTH) - 1) * scale
 				* ratio, (1 - 2 * ((pixel.y + 0.5) / HEIGHT)) * scale, 1);
-			matrix->t = NULL;
+			matrix->t = (t_vector){0};
 			vector_transform(&ray.dir, matrix);
 			vector_normalize(&ray.dir);
 			matrix->t = tmp;
@@ -116,10 +116,6 @@ void			render(t_mlx *mlx, t_camera *camera)
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
 	render_debug(mlx->mlx_ptr, mlx->win_ptr, camera);
-	free(camera->matrix.u);
-	free(camera->matrix.v);
-	free(camera->matrix.w);
-	free(camera->matrix.t);
 }
 
 int				handle_expose(void *param)

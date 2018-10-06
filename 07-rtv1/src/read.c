@@ -14,38 +14,33 @@
 
 static void	rtv1_read_object_getmatrix(t_object *object)
 {
-	t_matrix	m;
 	t_vector	*rot;
 	float		tmp;
 
-	m.u = vector_new(object->scale.x, 0, 0);
-	m.v = vector_new(0, object->scale.y, 0);
-	m.w = vector_new(0, 0, object->scale.z);
-	m.t = NULL;
 	rot = &object->rotation;
-	object->matrix.u = vector_new(
+	vector_set(&object->matrix.u,
 		cosf(rot->y) * cosf(rot->z),
 		cosf(rot->y) * sinf(rot->z),
 		-sinf(rot->y));
 	tmp = sinf(rot->x) * sinf(rot->y);
-	object->matrix.v = vector_new(
+	vector_set(&object->matrix.v,
 		tmp * cosf(rot->z) - cosf(rot->x) * sinf(rot->z),
 		tmp * sinf(rot->z) + cosf(rot->x) * cosf(rot->z),
 		sinf(rot->x) * cosf(rot->y));
 	tmp = cosf(rot->x) * sinf(rot->y);
-	object->matrix.w = vector_new(
+	vector_set(&object->matrix.w,
 		tmp * cosf(rot->z) + sinf(rot->x) * sinf(rot->z),
 		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
 		cosf(rot->x) * cosf(rot->y));
-	object->matrix.t = NULL;
-	matrix_multiply(&object->matrix, &m);
-	object->matrix_toworld = object->matrix;
+	object->matrix.t = (t_vector){0};
+	object->matrix_toworld.u = (t_vector){object->matrix.u.x, object->matrix.u.y, object->matrix.u.z};
+	object->matrix_toworld.v = (t_vector){object->matrix.v.x, object->matrix.v.y, object->matrix.v.z};
+	object->matrix_toworld.w = (t_vector){object->matrix.w.x, object->matrix.w.y, object->matrix.w.z};
 	matrix_inverse(&object->matrix);
-	object->matrix_normal = object->matrix;
+	object->matrix_normal.u = (t_vector){object->matrix.u.x, object->matrix.u.y, object->matrix.u.z};
+	object->matrix_normal.v = (t_vector){object->matrix.v.x, object->matrix.v.y, object->matrix.v.z};
+	object->matrix_normal.w = (t_vector){object->matrix.w.x, object->matrix.w.y, object->matrix.w.z};
 	matrix_transpose(&object->matrix_normal);
-	free(m.u);
-	free(m.v);
-	free(m.w);
 }
 
 static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)

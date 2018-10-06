@@ -56,10 +56,10 @@ typedef struct	s_vector
 
 typedef struct	s_matrix
 {
-	t_vector	*u;
-	t_vector	*v;
-	t_vector	*w;
-	t_vector	*t;
+	t_vector	u;
+	t_vector	v;
+	t_vector	w;
+	t_vector	t;
 }				t_matrix;
 
 typedef struct	s_ray
@@ -184,7 +184,7 @@ char		*vector_tostr(t_vector *vector, int precision);
 void		vector_invert(t_vector *vector);
 void		vector_normalize(t_vector *vector);
 float		vector_scalar(t_vector *v1, t_vector *v2);
-t_vector	*vector_multiply(t_vector *v1, t_vector *v2);
+void		vector_multiply(t_vector *result, t_vector *v1, t_vector *v2);
 void		vector_transform(t_vector *vector, t_matrix *matrix);
 
 /*

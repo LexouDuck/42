@@ -44,16 +44,11 @@ float		vector_scalar(t_vector *v1, t_vector *v2)
 	return (result);
 }
 
-t_vector	*vector_multiply(t_vector *v1, t_vector *v2)
+inline void	vector_multiply(t_vector *result, t_vector *v1, t_vector *v2)
 {
-	t_vector *result;
-
-	if (!(result = (t_vector *)malloc(sizeof(t_vector))))
-		return (NULL);
 	result->x = (v1->y * v2->z) - (v1->z * v2->y);
 	result->y = (v1->z * v2->x) - (v1->x * v2->z);
 	result->z = (v1->x * v2->y) - (v1->y * v2->x);
-	return (result);
 }
 
 void		vector_transform(t_vector *vector, t_matrix *matrix)
@@ -66,20 +61,20 @@ void		vector_transform(t_vector *vector, t_matrix *matrix)
 	x = vector->x;
 	y = vector->y;
 	z = vector->z;
-	tmp = matrix->t;
-	if (tmp)
+	tmp = &matrix->t;
+	if (tmp->x || tmp->y || tmp->z)
 		vector_set(vector, tmp->x, tmp->y, tmp->z);
 	else
 		vector_set(vector, 0, 0, 0);
-	tmp = matrix->u;
+	tmp = &matrix->u;
 	vector->x += (x * tmp->x);
 	vector->y += (x * tmp->y);
 	vector->z += (x * tmp->z);
-	tmp = matrix->v;
+	tmp = &matrix->v;
 	vector->x += (y * tmp->x);
 	vector->y += (y * tmp->y);
 	vector->z += (y * tmp->z);
-	tmp = matrix->w;
+	tmp = &matrix->w;
 	vector->x += (z * tmp->x);
 	vector->y += (z * tmp->y);
 	vector->z += (z * tmp->z);

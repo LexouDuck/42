@@ -101,7 +101,7 @@ int			intersect_cylinder(t_object *object, t_ray *ray)
 	tmp = *ray;
 	if (intersect_infinite_cylinder(&tmp))
 	{
-		if (abs(tmp.pos.y + tmp.t * tmp.dir.y) < 1)
+		if (fabsf(tmp.pos.y + tmp.t * tmp.dir.y) < 1)
 			t = tmp.t;
 	}
 	tmp.t = ray->t;
