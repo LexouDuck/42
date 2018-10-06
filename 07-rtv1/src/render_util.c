@@ -71,23 +71,22 @@ void	get_camera_matrix(t_camera *camera)
 
 void	set_ray_to_object_space(t_ray *ray, t_object *object)
 {
-	t_vector	scale;
+	//t_vector	scale;
 
-	vector_set(&ray->pos,
-		ray->pos.x - object->position.x,
-		ray->pos.y - object->position.y,
-		ray->pos.z - object->position.z);
+	//scale.x = 1 / object->scale.x;
+	//scale.y = 1 / object->scale.y;
+	//scale.z = 1 / object->scale.z;
+	ray->pos.x -= object->position.x;
+	ray->pos.y -= object->position.y;
+	ray->pos.z -= object->position.z;
 	vector_transform(&ray->pos, &object->matrix);
-	scale.x = 1 / object->scale.x;
-	scale.y = 1 / object->scale.y;
-	scale.z = 1 / object->scale.z;
-	ray->pos.x *= scale.x;
-	ray->pos.y *= scale.y;
-	ray->pos.z *= scale.z;
+	//ray->pos.x *= scale.x;
+	//ray->pos.y *= scale.y;
+	//ray->pos.z *= scale.z;
 	vector_transform(&ray->dir, &object->matrix);
-	ray->dir.x *= scale.x;
-	ray->dir.y *= scale.y;
-	ray->dir.z *= scale.z;
+	//ray->dir.x *= scale.x;
+	//ray->dir.y *= scale.y;
+	//ray->dir.z *= scale.z;
 }
 
 void	set_hitposnormal_toworld(t_object *object, t_shader *shader)
@@ -95,13 +94,13 @@ void	set_hitposnormal_toworld(t_object *object, t_shader *shader)
 	shader->hit_pos.x += shader->hit_normal.x * LIGHT_BIAS;
 	shader->hit_pos.y += shader->hit_normal.y * LIGHT_BIAS;
 	shader->hit_pos.z += shader->hit_normal.z * LIGHT_BIAS;
-	shader->hit_pos.x *= object->scale.x;
-	shader->hit_pos.y *= object->scale.y;
-	shader->hit_pos.z *= object->scale.z;
+	//shader->hit_pos.x *= object->scale.x;
+	//shader->hit_pos.y *= object->scale.y;
+	//shader->hit_pos.z *= object->scale.z;
 	vector_transform(&shader->hit_pos, &object->matrix_toworld);
 	shader->hit_pos.x += object->position.x;
 	shader->hit_pos.y += object->position.y;
 	shader->hit_pos.z += object->position.z;
-	vector_transform(&shader->hit_normal, &object->matrix_normal);
+	vector_transform(&shader->hit_normal, &object->matrix);
 	vector_normalize(&shader->hit_normal);
 }

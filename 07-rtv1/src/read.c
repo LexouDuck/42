@@ -14,9 +14,14 @@
 
 static void	rtv1_read_object_getmatrix(t_object *object)
 {
+	t_matrix	m;
 	t_vector	*rot;
 	float		tmp;
 
+	m.u = vector_new(object->scale.x, 0, 0);
+	m.v = vector_new(0, object->scale.y, 0);
+	m.w = vector_new(0, 0, object->scale.z);
+	m.t = NULL;
 	rot = &object->rotation;
 	object->matrix.u = vector_new(
 		cosf(rot->y) * cosf(rot->z),
@@ -33,10 +38,14 @@ static void	rtv1_read_object_getmatrix(t_object *object)
 		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
 		cosf(rot->x) * cosf(rot->y));
 	object->matrix.t = NULL;
+	matrix_multiply(&object->matrix, &m);
 	object->matrix_toworld = object->matrix;
 	matrix_inverse(&object->matrix);
 	object->matrix_normal = object->matrix;
 	matrix_transpose(&object->matrix_normal);
+	free(m.u);
+	free(m.v);
+	free(m.w);
 }
 
 static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)

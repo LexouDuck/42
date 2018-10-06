@@ -81,8 +81,6 @@ static void		render_pixels(
 
 	matrix = &rtv1->camera->matrix;
 	tmp = matrix->t;
-	vector_set(&ray.pos, 0, 0, 0);
-	vector_transform(&ray.pos, matrix);
 	pixel.color = WIDTH * HEIGHT;
 	pixel.y = -1;
 	while (++pixel.y < HEIGHT)
@@ -90,6 +88,7 @@ static void		render_pixels(
 		pixel.x = -1;
 		while (++pixel.x < WIDTH)
 		{
+			ray.pos = *tmp;
 			vector_set(&ray.dir, (2 * ((pixel.x + 0.5) / WIDTH) - 1) * scale
 				* ratio, (1 - 2 * ((pixel.y + 0.5) / HEIGHT)) * scale, 1);
 			matrix->t = NULL;

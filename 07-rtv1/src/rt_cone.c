@@ -165,13 +165,14 @@ void			getnormal_cone(
 		return ;
 	else if (hit_pos->y <= LIGHT_BIAS)
 	{
-		vector_set(result, 0, -1, 0);
+		vector_set(result, 0, 1, 0);
 	}
 	else
 	{
 		vector_set(result,
 			hit_pos->x,
-			sqrt(hit_pos->x * hit_pos->x + hit_pos->z * hit_pos->z),
+			-hit_pos->y,
 			hit_pos->z);
+		vector_normalize(result);
 	}
 }

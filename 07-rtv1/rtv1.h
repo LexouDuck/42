@@ -196,7 +196,7 @@ void		matrix_set(t_matrix *result,
 	t_vector *u, t_vector *v, t_vector *w);
 void		matrix_transpose(t_matrix *matrix);
 void		matrix_inverse(t_matrix *matrix);
-t_matrix	*matrix_multiply(t_matrix *m1, t_matrix *m2);
+void		matrix_multiply(t_matrix *m1, t_matrix *m2);
 
 /*
 **	====	camera.c

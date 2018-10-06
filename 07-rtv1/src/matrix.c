@@ -72,27 +72,23 @@ void		matrix_inverse(t_matrix *matrix)
 	matrix->w->z = (u.x * v.y - v.x * u.y) * determinant;
 }
 
-t_matrix	*matrix_multiply(t_matrix *m1, t_matrix *m2)
+void		matrix_multiply(t_matrix *m1, t_matrix *m2)
 {
-	t_matrix	*result;
 	t_vector	*vector;
 
-	if (!(result = (t_matrix *)malloc(sizeof(t_matrix))))
-		return (NULL);
 	vector = m1->u;
-	result->u = vector_new(
+	m1->u = vector_new(
 		vector->x * m2->u->x + vector->y * m2->v->x + vector->z * m2->w->x,
 		vector->x * m2->u->y + vector->y * m2->v->y + vector->z * m2->w->y,
 		vector->x * m2->u->z + vector->y * m2->v->z + vector->z * m2->w->z);
 	vector = m1->v;
-	result->v = vector_new(
+	m1->v = vector_new(
 		vector->x * m2->u->x + vector->y * m2->v->x + vector->z * m2->w->x,
 		vector->x * m2->u->y + vector->y * m2->v->y + vector->z * m2->w->y,
 		vector->x * m2->u->z + vector->y * m2->v->z + vector->z * m2->w->z);
 	vector = m1->w;
-	result->w = vector_new(
+	m1->w = vector_new(
 		vector->x * m2->u->x + vector->y * m2->v->x + vector->z * m2->w->x,
 		vector->x * m2->u->y + vector->y * m2->v->y + vector->z * m2->w->y,
 		vector->x * m2->u->z + vector->y * m2->v->z + vector->z * m2->w->z);
-	return (result);
 }

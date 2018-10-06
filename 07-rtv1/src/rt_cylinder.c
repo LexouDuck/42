@@ -113,35 +113,7 @@ int			intersect_cylinder(t_object *object, t_ray *ray)
 	ray->t = (t < ray->t) ? t : ray->t;
 	return (ray->t == t);
 }
-/*
-int			intersect_cylinder(t_object *object, t_ray *ray)
-{
-	t_vector	v;
-	float		tmp;
-	int			intersect;
 
-	if (!object)
-		return (0);
-	tmp = 1 / 0.;
-	intersect = 0;
-	if ((intersect += intersect_disk(ray, 1, &tmp)))
-		ray->t = (tmp < ray->t) ? tmp : ray->t;
-	if ((intersect += intersect_disk(ray, -1, &tmp)))
-		ray->t = (tmp < ray->t) ? tmp : ray->t;
-	v.x = (ray->dir.x * ray->dir.x + ray->dir.z * ray->dir.z);
-	v.y = (ray->dir.x * ray->pos.x + ray->dir.z * ray->pos.z) * 2;
-	v.z = (ray->pos.x * ray->pos.x + ray->pos.z * ray->pos.z) - 1;
-	if ((tmp = v.y * v.y - 4 * v.x * v.z) < 0)
-		return (intersect ? 1 : 0);
-	if ((tmp = (-v.y - sqrt(tmp)) / (2 * v.x)) <= 0)
-		return (intersect ? 1 : 0);
-	if (tmp >= ray->t)
-		return (intersect ? 1 : 0);
-	ray->t = tmp;
-	tmp = ray->pos.y + ray->dir.y * ray->t;
-	return ((-1 <= tmp && tmp <= 1) ? 1 : intersect);
-}
-*/
 void		getnormal_cylinder(
 	t_vector *result,
 	t_object *object,
