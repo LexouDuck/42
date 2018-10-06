@@ -64,7 +64,7 @@ typedef struct	s_matrix
 
 typedef struct	s_ray
 {
-	t_vector	orig;
+	t_vector	pos;
 	t_vector	dir;
 	float		t;
 }				t_ray;
@@ -87,6 +87,7 @@ typedef struct	s_object
 	t_vector	scale;
 	t_matrix	matrix;
 	t_matrix	matrix_toworld;
+	t_matrix	matrix_normal;
 	t_u32		color;
 	int			(*intersect)(struct s_object *, t_ray *);
 	void		(*getnormal)(t_vector *, struct s_object *, t_vector *);
@@ -189,8 +190,10 @@ void		vector_transform(t_vector *vector, t_matrix *matrix);
 /*
 **	====	matrix.c
 */
-t_matrix	*matrix_new(t_vector *u, t_vector *v, t_vector *w, t_vector *t);
-void		matrix_set(t_matrix *result, t_vector *u, t_vector *v, t_vector *w);
+t_matrix	*matrix_new(
+	t_vector *u, t_vector *v, t_vector *w, t_vector *t);
+void		matrix_set(t_matrix *result,
+	t_vector *u, t_vector *v, t_vector *w);
 void		matrix_transpose(t_matrix *matrix);
 void		matrix_inverse(t_matrix *matrix);
 t_matrix	*matrix_multiply(t_matrix *m1, t_matrix *m2);
@@ -207,6 +210,8 @@ void		camera_update(t_camera *camera);
 /*
 **	====	rt object files
 */
+int			intersect_disk(t_ray *ray, float base, float *t);
+
 int			intersect_cube(
 	t_object *object, t_ray *ray);
 int			intersect_triangle(
@@ -244,11 +249,16 @@ char		*read_color_arg(t_parser *parser, t_u32 *result);
 */
 int			handle_expose(void *param);
 void		render(t_mlx *mlx, t_camera *camera);
-t_object	*render_trace(t_rtv1 *rtv1, t_ray *ray, float nearest);
+t_object	*render_trace(
+	t_rtv1 *rtv1,
+	t_ray *ray,
+	float nearest,
+	t_ray *object_ray);
 
 void		render_debug(void *mlx, void *win, t_camera *camera);
 void		get_camera_matrix(t_camera *camera);
 void		set_ray_to_object_space(t_ray *ray, t_object *object);
+void		set_hitposnormal_toworld(t_object *object, t_shader *shader);
 
 /*
 **	====	shader.c

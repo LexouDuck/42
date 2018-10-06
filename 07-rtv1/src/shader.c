@@ -19,7 +19,7 @@ static void		shader_diffuse(
 {
 	float	tmp;
 
-	tmp = vector_scalar(&shader->ray.dir, &shader->hit_normal) / shader->norm;
+	tmp = vector_scalar(&shader->ray.dir, &shader->hit_normal) * shader->norm;
 	if (tmp < 0)
 		tmp = 0;
 	tmp *= 1 / M_PI;
@@ -60,20 +60,20 @@ static t_u32	shader_getcolor(
 	int	g;
 	int	b;
 
-	r = (float)color_get_r(color) * diffuse->x + specular->x;
-	g = (float)color_get_g(color) * diffuse->y + specular->y;
-	b = (float)color_get_b(color) * diffuse->z + specular->z;
+	r = (int)((float)color_get_r(color) * diffuse->x + specular->x);
+	g = (int)((float)color_get_g(color) * diffuse->y + specular->y);
+	b = (int)((float)color_get_b(color) * diffuse->z + specular->z);
 	if (r < 0)
 		r = 0;
-	else if (r >= 256)
+	else if (r > 255)
 		r = 255;
 	if (g < 0)
 		g = 0;
-	else if (g >= 256)
+	else if (g > 255)
 		g = 255;
 	if (b < 0)
 		b = 0;
-	else if (b >= 256)
+	else if (b > 255)
 		b = 255;
 	return (color_new(0, r, g, b));
 }
@@ -81,15 +81,16 @@ static t_u32	shader_getcolor(
 void			shader_setupray(t_shader *shader, t_light *light)
 {
 	vector_set(&shader->ray.dir,
-		shader->hit_pos.x - light->position.x,
-		shader->hit_pos.y - light->position.y,
-		shader->hit_pos.z - light->position.z);
+		light->position.x - shader->hit_pos.x,
+		light->position.y - shader->hit_pos.y,
+		light->position.z - shader->hit_pos.z);
 	vector_set(&shader->light,
-		(float)color_get_r(light->color),
-		(float)color_get_g(light->color),
-		(float)color_get_b(light->color));
+		(float)color_get_r(light->color)/* / 255*/,
+		(float)color_get_g(light->color)/* / 255*/,
+		(float)color_get_b(light->color)/* / 255*/);
 	shader->norm = vector_length(&shader->ray.dir);
 	shader->ray.t = sqrt(shader->norm);
+	shader->norm = 1 / shader->norm;
 	vector_scale(&shader->ray.dir, 1 / shader->ray.t);
 }
 
@@ -102,15 +103,14 @@ t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
 	tmp = ((render = rtv1->camera->render) & RENDER_DIFFUSE) ? 0.2 : 1;
 	vector_set(&shader->diffuse, tmp, tmp, tmp);
 	vector_set(&shader->specular, 0, 0, 0);
-	ft_memcpy(&shader->ray.orig, &shader->hit_pos, sizeof(t_vector));
+	shader->ray.pos = shader->hit_pos;
 	lst = rtv1->lights;
 	while (lst)
 	{
 		shader_setupray(shader, (t_light *)lst->content);
 		if (!(render & RENDER_SHADOWS) ||
-			!(render_trace(rtv1, &shader->ray, shader->ray.t)))
+			!(render_trace(rtv1, &shader->ray, shader->ray.t, NULL)))
 		{
-			vector_invert(&shader->ray.dir);
 			if (render & RENDER_DIFFUSE)
 				shader_diffuse(&shader->diffuse, shader, (t_light *)lst->content);
 			if (render & RENDER_SPECULAR)

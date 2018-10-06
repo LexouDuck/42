@@ -33,8 +33,10 @@ static void	rtv1_read_object_getmatrix(t_object *object)
 		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
 		cosf(rot->x) * cosf(rot->y));
 	object->matrix.t = NULL;
-	ft_memcpy(&object->matrix_toworld, &object->matrix, sizeof(t_matrix));
+	object->matrix_toworld = object->matrix;
 	matrix_inverse(&object->matrix);
+	object->matrix_normal = object->matrix;
+	matrix_transpose(&object->matrix_normal);
 }
 
 static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)

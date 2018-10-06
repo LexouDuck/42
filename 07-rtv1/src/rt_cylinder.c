@@ -12,28 +12,108 @@
 
 #include "../rtv1.h"
 
-static int	intersect_cylinder_base(t_ray *ray, float base, float *t)
+int			intersect_disk(t_ray *ray, float altitude, float *t)
 {
 	t_vector	v;
 	float		tmp;
 	float		distance;
 
-	tmp = -(base * base);
-	if (base * ray->dir.y == 0)
+	tmp = -(altitude * altitude);
+	if (altitude * ray->dir.y == 0)
 		return (0);
-	distance = -(base * ray->orig.y + tmp);
-	distance /= (base * ray->dir.y);
+	distance = -(altitude * ray->pos.y + tmp);
+	distance /= (altitude * ray->dir.y);
 	if (distance < 0)
 		return (0);
-	v.x = ray->orig.x + distance * ray->dir.x;
-	v.y = ray->orig.y + distance * ray->dir.y;
-	v.z = ray->orig.z + distance * ray->dir.z;
+	v.x = ray->pos.x + distance * ray->dir.x;
+	v.y = ray->pos.y + distance * ray->dir.y;
+	v.z = ray->pos.z + distance * ray->dir.z;
 	if (v.x * v.x + v.z * v.z - 1 > 0)
 		return (0);
 	*t = distance;
 	return (1);
 }
+/*
+int			intersect_disk(t_ray *ray, float altitude, float *t)
+{
+	int			plane;
+	t_ray		tmp_ray;
+	float		tmp_x;
+	float		tmp_z;
+	float		tmp;
+	
+	tmp_ray = *ray;
+	plane = 1;
+	if (ray->pos.y * ray->dir.y >= -altitude)
+		plane = 0;
+	if ((tmp = -ray->pos.y / ray->dir.y) >= ray->t)
+		plane = 0;
+	*t = tmp;
+	if (plane)
+	{
+		tmp_x = tmp_ray.pos.x + tmp_ray.t * tmp_ray.dir.x;
+		tmp_z = tmp_ray.pos.z + tmp_ray.t * tmp_ray.dir.z;
+		if (tmp_x * tmp_x + tmp_z * tmp_z <= 1)
+		{
+			*t = tmp_ray.t;
+			return (1);
+		}
+	}
+	return (0);
+}
+*/
+int			intersect_infinite_cylinder(t_ray *ray)
+{
+	t_vector	v;
+	float		root1;
+	float		root2;
+	float		delta;
+	float		tmp;
 
+	v.x = (ray->dir.x * ray->dir.x + ray->dir.z * ray->dir.z);
+	v.y = (ray->dir.x * ray->pos.x + ray->dir.z * ray->pos.z) * 2;
+	v.z = (ray->pos.x * ray->pos.x + ray->pos.z * ray->pos.z) - 1;
+	delta = v.y * v.y - 4 * v.x * v.z;
+	if (delta < 0)
+		return (0);
+	tmp = 0.5 / v.x;
+	delta = sqrt(delta);
+	root1 = (-v.y + delta) * tmp;
+	root2 = (-v.y - delta) * tmp;
+	if (root1 <= 0 || root2 <= 0 || (root1 > ray->t && root2 > ray->t))
+		return (0);
+	ray->t = (root1 < root2) ? root1 : root2;
+	return (1);
+}
+
+int			intersect_cylinder(t_object *object, t_ray *ray)
+{
+	t_ray		tmp;
+	float		t;
+	int			inside_h;
+	int			inside_v;
+
+	if (!object || (
+	(inside_h = (-1 <= ray->pos.y && ray->pos.y <= 1)) &&
+	(inside_v = ((ray->pos.x * ray->pos.x + ray->pos.z * ray->pos.z) <= 1))))
+		return (0);
+	t = 1. / 0.;
+	tmp = *ray;
+	if (intersect_infinite_cylinder(&tmp))
+	{
+		if (abs(tmp.pos.y + tmp.t * tmp.dir.y) < 1)
+			t = tmp.t;
+	}
+	tmp.t = ray->t;
+	if (!inside_h && intersect_disk(&tmp, 1, &tmp.t))
+		t = (t < tmp.t) ? t : tmp.t;
+	tmp.t = ray->t;
+	if (!inside_h && intersect_disk(&tmp, -1, &tmp.t))
+		t = (t < tmp.t) ? t : tmp.t;
+	ray->t = (t < ray->t) ? t : ray->t;
+	return (ray->t == t);
+}
+/*
 int			intersect_cylinder(t_object *object, t_ray *ray)
 {
 	t_vector	v;
@@ -42,40 +122,37 @@ int			intersect_cylinder(t_object *object, t_ray *ray)
 
 	if (!object)
 		return (0);
+	tmp = 1 / 0.;
 	intersect = 0;
-	if ((intersect += intersect_cylinder_base(ray, 1, &tmp)))
+	if ((intersect += intersect_disk(ray, 1, &tmp)))
 		ray->t = (tmp < ray->t) ? tmp : ray->t;
-	if ((intersect += intersect_cylinder_base(ray, -1, &tmp)))
+	if ((intersect += intersect_disk(ray, -1, &tmp)))
 		ray->t = (tmp < ray->t) ? tmp : ray->t;
-	v.x = ray->dir.x * ray->dir.x + ray->dir.z * ray->dir.z;
-	v.y = ray->dir.x * ray->orig.x + ray->dir.z * ray->orig.z;
-	v.z = ray->orig.x * ray->orig.x + ray->orig.z * ray->orig.z - 1;
-	if ((tmp = v.y * v.y - v.x * v.z) < 0)
+	v.x = (ray->dir.x * ray->dir.x + ray->dir.z * ray->dir.z);
+	v.y = (ray->dir.x * ray->pos.x + ray->dir.z * ray->pos.z) * 2;
+	v.z = (ray->pos.x * ray->pos.x + ray->pos.z * ray->pos.z) - 1;
+	if ((tmp = v.y * v.y - 4 * v.x * v.z) < 0)
 		return (intersect ? 1 : 0);
-	if ((tmp = (-v.y - sqrt(tmp)) / v.x) <= 0)
+	if ((tmp = (-v.y - sqrt(tmp)) / (2 * v.x)) <= 0)
 		return (intersect ? 1 : 0);
 	if (tmp >= ray->t)
 		return (intersect ? 1 : 0);
 	ray->t = tmp;
-	tmp = ray->orig.y + ray->dir.y * ray->t;
+	tmp = ray->pos.y + ray->dir.y * ray->t;
 	return ((-1 <= tmp && tmp <= 1) ? 1 : intersect);
 }
-
-void		getnormal_cylinder(t_vector *result, t_object *object, t_vector *hit_pos)
+*/
+void		getnormal_cylinder(
+	t_vector *result,
+	t_object *object,
+	t_vector *hit_pos)
 {
-	t_vector	vector;
-
-	vector_set(&vector,
-		(hit_pos->x - object->position.x) / object->scale.x,
-		(hit_pos->y - object->position.y) / object->scale.y,
-		(hit_pos->z - object->position.z) / object->scale.z);
-	vector_transform(&vector, &object->matrix);
-	if (vector.y >= 1)
+	if (!object)
+		return ;
+	else if (hit_pos->y >= 1 - LIGHT_BIAS)
 		vector_set(result, 0, 1, 0);
-	else if (vector.y <= -1)
+	else if (hit_pos->y <= -1 + LIGHT_BIAS)
 		vector_set(result, 0, -1, 0);
 	else
- 		vector_set(result, vector.x, 0, vector.z);
-	vector_transform(result, &object->matrix_toworld);
- 	vector_normalize(result);
+ 		vector_set(result, hit_pos->x, 0, hit_pos->z);
 }

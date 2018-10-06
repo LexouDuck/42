@@ -12,7 +12,11 @@
 
 #include "../rtv1.h"
 
-t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray, float nearest)
+t_object		*render_trace(
+	t_rtv1 *rtv1,
+	t_ray *ray,
+	float nearest,
+	t_ray *object_ray)
 {
 	t_object	*result;
 	t_object	*object;
@@ -30,6 +34,8 @@ t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray, float nearest)
 		if (object->intersect(object, &tmp) && (tmp.t < nearest))
 		{
 			result = object;
+			if (object_ray)
+				*object_ray = tmp;
 			nearest = tmp.t;
 		}
 		lst = lst->next;
@@ -40,24 +46,22 @@ t_object		*render_trace(t_rtv1 *rtv1, t_ray *ray, float nearest)
 
 static t_u32	render_cast_ray(t_rtv1 *rtv1, t_ray *ray)
 {
+	t_ray		tmp;
 	t_u32		result;
 	t_shader	shader;
 	t_object	*object;
 
+	vector_invert(&ray->dir);
 	result = rtv1->bg_color;
 	object = NULL;
-	if ((object = render_trace(rtv1, ray, rtv1->camera->range_max)))
+	if ((object = render_trace(rtv1, ray, rtv1->camera->range_max, &tmp)))
 	{
-		vector_invert(&ray->dir);
 		vector_set(&shader.hit_pos,
-			ray->orig.x + ray->dir.x * ray->t,
-			ray->orig.y + ray->dir.y * ray->t,
-			ray->orig.z + ray->dir.z * ray->t);
+			tmp.pos.x + tmp.dir.x * tmp.t,
+			tmp.pos.y + tmp.dir.y * tmp.t,
+			tmp.pos.z + tmp.dir.z * tmp.t);
 		object->getnormal(&shader.hit_normal, object, &shader.hit_pos);
-		vector_set(&shader.hit_pos,
-			shader.hit_pos.x + shader.hit_normal.x * LIGHT_BIAS,
-			shader.hit_pos.y + shader.hit_normal.y * LIGHT_BIAS,
-			shader.hit_pos.z + shader.hit_normal.z * LIGHT_BIAS);
+		set_hitposnormal_toworld(object, &shader);
 		shader.object_color = object->color;
 		result = render_shade(rtv1, ray, &shader);
 	}
@@ -77,8 +81,8 @@ static void		render_pixels(
 
 	matrix = &rtv1->camera->matrix;
 	tmp = matrix->t;
-	vector_set(&ray.orig, 0, 0, 0);
-	vector_transform(&ray.orig, matrix);
+	vector_set(&ray.pos, 0, 0, 0);
+	vector_transform(&ray.pos, matrix);
 	pixel.color = WIDTH * HEIGHT;
 	pixel.y = -1;
 	while (++pixel.y < HEIGHT)
