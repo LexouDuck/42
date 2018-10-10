@@ -40,7 +40,7 @@ void		render_debug(void *mlx, void *win, t_camera *camera)
 	free(str);
 }
 
-void	get_camera_matrix(t_camera *camera)
+void		get_camera_matrix(t_camera *camera)
 {
 	t_vector	axis_forward;
 	t_vector	axis_right;
@@ -59,15 +59,9 @@ void	get_camera_matrix(t_camera *camera)
 		camera->anchor.x + camera->pos.x,
 		camera->anchor.y + camera->pos.y,
 		camera->anchor.z + camera->pos.z);
-	/*matrix_transpose(&camera->matrix);
-	vector_set(vector,
-		-vector_scalar(vector, axis_right),
-		-vector_scalar(vector, axis_up),
-		-vector_scalar(vector, axis_forward));
-	*/
 }
 
-void	set_ray_to_object_space(t_ray *ray, t_object *object)
+void		set_ray_to_object_space(t_ray *ray, t_object *object)
 {
 	t_vector	scale;
 
@@ -87,7 +81,7 @@ void	set_ray_to_object_space(t_ray *ray, t_object *object)
 	ray->dir.z *= scale.z;
 }
 
-void	set_hitposnormal_toworld(t_object *object, t_shader *shader)
+void		set_hitposnormal_toworld(t_object *object, t_shader *shader)
 {
 	shader->hit_pos.x += shader->hit_normal.x * LIGHT_BIAS;
 	shader->hit_pos.y += shader->hit_normal.y * LIGHT_BIAS;

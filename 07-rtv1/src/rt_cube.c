@@ -13,8 +13,10 @@
 #include "../rtv1.h"
 
 static void	intersect_cube_axis(
-	float *tmin, float *tmax,
-	float orig, float dir)
+	float *tmin,
+	float *tmax,
+	float orig,
+	float dir)
 {
 	float	invdir;
 	float	coord;
@@ -57,7 +59,7 @@ int			intersect_cube(t_object *object, t_ray *ray)
 	return (ray->t >= 0);
 }
 
-void	getnormal_cube(
+void		getnormal_cube(
 	t_vector *result,
 	t_object *object,
 	t_vector *hit_pos)

@@ -19,7 +19,10 @@ int		intersect_triangle(t_object *object, t_ray *ray)
 	return (1);
 }
 
-void	getnormal_triangle(t_vector *result, t_object *object, t_vector *hit_pos)
+void	getnormal_triangle(
+	t_vector *result,
+	t_object *object,
+	t_vector *hit_pos)
 {
 	if (result && object && hit_pos)
 		return ;

@@ -13,7 +13,6 @@
 #include "../rtv1.h"
 
 static void		shader_diffuse(
-	t_vector *result,
 	t_shader *shader,
 	t_light *light)
 {
@@ -24,14 +23,13 @@ static void		shader_diffuse(
 		tmp = 0;
 	tmp *= 1 / M_PI;
 	tmp *= light->strength;
-	vector_set(result,
-		result->x + shader->light.x * tmp,
-		result->y + shader->light.y * tmp,
-		result->z + shader->light.z * tmp);
+	vector_set(&shader->diffuse,
+		shader->diffuse.x + shader->light.x * tmp,
+		shader->diffuse.y + shader->light.y * tmp,
+		shader->diffuse.z + shader->light.z * tmp);
 }
 
 static void		shader_specular(
-	t_vector *result,
 	t_shader *shader,
 	t_ray *ray)
 {
@@ -45,10 +43,10 @@ static void		shader_specular(
 	if (tmp < 0)
 		tmp = 0;
 	tmp /= shader->ray.t;
-	vector_set(result,
-		result->x + shader->light.x * tmp,
-		result->y + shader->light.y * tmp,
-		result->z + shader->light.z * tmp);
+	vector_set(&shader->specular,
+		shader->specular.x + shader->light.x * tmp,
+		shader->specular.y + shader->light.y * tmp,
+		shader->specular.z + shader->light.z * tmp);
 }
 
 static t_u32	shader_getcolor(
@@ -100,7 +98,8 @@ t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
 	t_list		*lst;
 	float		tmp;
 
-	tmp = ((render = rtv1->camera->render) & RENDER_DIFFUSE) ? 0.2 : 1;
+	render = rtv1->camera->render;
+	tmp = (render & RENDER_DIFFUSE) ? 0.2 : 1;
 	vector_set(&shader->diffuse, tmp, tmp, tmp);
 	vector_set(&shader->specular, 0, 0, 0);
 	shader->ray.pos = shader->hit_pos;
@@ -112,9 +111,9 @@ t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
 			!(render_trace(rtv1, &shader->ray, shader->ray.t, NULL)))
 		{
 			if (render & RENDER_DIFFUSE)
-				shader_diffuse(&shader->diffuse, shader, (t_light *)lst->content);
+				shader_diffuse(shader, (t_light *)lst->content);
 			if (render & RENDER_SPECULAR)
-				shader_specular(&shader->specular, shader, ray);
+				shader_specular(shader, ray);
 		}
 		lst = lst->next;
 	}

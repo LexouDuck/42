@@ -129,11 +129,11 @@ typedef struct	s_camera
 	t_matrix	matrix;
 }				t_camera;
 
-#define RENDER_DIFFUSE	0b001
-#define RENDER_SHADOWS	0b010
-#define RENDER_SPECULAR	0b100
+# define RENDER_DIFFUSE		0b001
+# define RENDER_SHADOWS		0b010
+# define RENDER_SPECULAR	0b100
 
-#define LIGHT_BIAS	0.0001
+# define LIGHT_BIAS	0.0001
 
 typedef struct	s_rtv1
 {
@@ -163,112 +163,112 @@ typedef struct	s_mlx
 /*
 **	====	color.c
 */
-t_u32		color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
-t_u8		color_get_a(t_u32 color);
-t_u8		color_get_r(t_u32 color);
-t_u8		color_get_g(t_u32 color);
-t_u8		color_get_b(t_u32 color);
+t_u32			color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
+t_u8			color_get_a(t_u32 color);
+t_u8			color_get_r(t_u32 color);
+t_u8			color_get_g(t_u32 color);
+t_u8			color_get_b(t_u32 color);
 
 /*
 **	====	vector.c
 */
-t_vector	*vector_new(float x, float y, float z);
-void		vector_set(t_vector *vector, float x, float y, float z);
-float		vector_length(t_vector const *vector);
-void		vector_scale(t_vector *vector, float scale);
-char		*vector_tostr(t_vector *vector, int precision);
+t_vector		*vector_new(float x, float y, float z);
+void			vector_set(t_vector *vector, float x, float y, float z);
+float			vector_length(t_vector const *vector);
+void			vector_scale(t_vector *vector, float scale);
+char			*vector_tostr(t_vector *vector, int precision);
 
 /*
 **	====	vector_op.c
 */
-void		vector_invert(t_vector *vector);
-void		vector_normalize(t_vector *vector);
-float		vector_scalar(t_vector *v1, t_vector *v2);
-void		vector_multiply(t_vector *result, t_vector *v1, t_vector *v2);
-void		vector_transform(t_vector *vector, t_matrix *matrix);
+void			vector_invert(t_vector *vector);
+void			vector_normalize(t_vector *vector);
+float			vector_scalar(t_vector *v1, t_vector *v2);
+void			vector_multiply(t_vector *result, t_vector *v1, t_vector *v2);
+void			vector_transform(t_vector *vector, t_matrix *matrix);
 
 /*
 **	====	matrix.c
 */
-t_matrix	*matrix_new(
+t_matrix		*matrix_new(
 	t_vector *u, t_vector *v, t_vector *w, t_vector *t);
-void		matrix_set(t_matrix *result,
+void			matrix_set(t_matrix *result,
 	t_vector *u, t_vector *v, t_vector *w);
-void		matrix_transpose(t_matrix *matrix);
-void		matrix_inverse(t_matrix *matrix);
-void		matrix_multiply(t_matrix *m1, t_matrix *m2);
+void			matrix_transpose(t_matrix *matrix);
+void			matrix_inverse(t_matrix *matrix);
+void			matrix_multiply(t_matrix *m1, t_matrix *m2);
 
 /*
 **	====	camera.c
 */
-t_camera	*camera_new();
-void		camera_pan(t_camera *camera, float x, float y);
-void		camera_rotate(t_camera *camera, float x, float y);
-void		camera_zoom_tilt(t_camera *camera, float x, float y);
-void		camera_update(t_camera *camera);
+t_camera		*camera_new();
+void			camera_pan(t_camera *camera, float x, float y);
+void			camera_rotate(t_camera *camera, float x, float y);
+void			camera_zoom_tilt(t_camera *camera, float x, float y);
+void			camera_update(t_camera *camera);
 
 /*
 **	====	rt object files
 */
-int			intersect_disk(t_ray *ray, float base, float *t);
+int				intersect_disk(t_ray *ray, float base, float *t);
 
-int			intersect_cube(
+int				intersect_cube(
 	t_object *object, t_ray *ray);
-int			intersect_triangle(
+int				intersect_triangle(
 	t_object *object, t_ray *ray);
-int			intersect_sphere(
+int				intersect_sphere(
 	t_object *object, t_ray *ray);
-int			intersect_cylinder(
+int				intersect_cylinder(
 	t_object *object, t_ray *ray);
-int			intersect_cone(
+int				intersect_cone(
 	t_object *object, t_ray *ray);
 
-void		getnormal_cube(
+void			getnormal_cube(
 	t_vector *result, t_object *object, t_vector *hit_pos);
-void		getnormal_triangle(
+void			getnormal_triangle(
 	t_vector *result, t_object *object, t_vector *hit_pos);
-void		getnormal_sphere(
+void			getnormal_sphere(
 	t_vector *result, t_object *object, t_vector *hit_pos);
-void		getnormal_cylinder(
+void			getnormal_cylinder(
 	t_vector *result, t_object *object, t_vector *hit_pos);
-void		getnormal_cone(
+void			getnormal_cone(
 	t_vector *result, t_object *object, t_vector *hit_pos);
 
 /*
 **	====	read.c & read_util.c
 */
-char		*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd);
+char			*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd);
 
-void		read_whitespace(t_parser *parser);
-char		*read_vector_arg(t_parser *parser, t_vector *result);
-char		*read_number_arg(t_parser *parser, float *result);
-char		*read_color_arg(t_parser *parser, t_u32 *result);
+void			read_whitespace(t_parser *parser);
+char			*read_vector_arg(t_parser *parser, t_vector *result);
+char			*read_number_arg(t_parser *parser, float *result);
+char			*read_color_arg(t_parser *parser, t_u32 *result);
 
 /*
 **	====	render.c & render_util.c
 */
-int			handle_expose(void *param);
-void		render(t_mlx *mlx, t_camera *camera);
-t_object	*render_trace(
+int				handle_expose(void *param);
+void			render(t_mlx *mlx, t_camera *camera);
+t_object		*render_trace(
 	t_rtv1 *rtv1,
 	t_ray *ray,
 	float nearest,
 	t_ray *object_ray);
 
-void		render_debug(void *mlx, void *win, t_camera *camera);
-void		get_camera_matrix(t_camera *camera);
-void		set_ray_to_object_space(t_ray *ray, t_object *object);
-void		set_hitposnormal_toworld(t_object *object, t_shader *shader);
+void			render_debug(void *mlx, void *win, t_camera *camera);
+void			get_camera_matrix(t_camera *camera);
+void			set_ray_to_object_space(t_ray *ray, t_object *object);
+void			set_hitposnormal_toworld(t_object *object, t_shader *shader);
 
 /*
 **	====	shader.c
 */
-t_u32		render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader);
+t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader);
 
 /*
 **	====	event.c
 */
-int			setup_events(t_mlx *mlx);
+int				setup_events(t_mlx *mlx);
 
 /*
 ** === CAMERA MODES ===

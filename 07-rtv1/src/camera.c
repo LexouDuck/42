@@ -12,7 +12,7 @@
 
 #include "../rtv1.h"
 
-t_camera	*camera_new()
+t_camera	*camera_new(void)
 {
 	t_camera	*result;
 

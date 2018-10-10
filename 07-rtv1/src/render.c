@@ -91,7 +91,7 @@ static void		render_pixels(
 			ray.pos = tmp;
 			vector_set(&ray.dir, (2 * ((pixel.x + 0.5) / WIDTH) - 1) * scale
 				* ratio, (1 - 2 * ((pixel.y + 0.5) / HEIGHT)) * scale, 1);
-			matrix->t = (t_vector){0};
+			matrix->t = (t_vector){0, 0, 0};
 			vector_transform(&ray.dir, matrix);
 			vector_normalize(&ray.dir);
 			matrix->t = tmp;

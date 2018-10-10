@@ -51,8 +51,8 @@ static char	*read_vector_arg_number(t_parser *parser, float *result, char sep)
 	read_whitespace(parser);
 	if (file[parser->index] != sep)
 		return (ft_strrep_char(ft_strrep_char(
-			"Expected '@' separator char, but read: '_'", '@', sep),
-			'_', file[parser->index]));
+	"Expected '@' separator char, but read: '_'", '@', sep),
+	'_', file[parser->index]));
 	file[parser->index] = '\0';
 	++(parser->index);
 	*result = ft_atof(number);
@@ -72,7 +72,7 @@ char		*read_vector_arg(t_parser *parser, t_vector *result)
 		++(parser->index);
 	else
 		return (ft_strrep_char(
-		"Expected vector arg '(', '{' or '[', but read: '_'", '_', symbol));
+	"Expected vector arg '(', '{' or '[', but read: '_'", '_', symbol));
 	symbol += (symbol == '(') ? 1 : 2;
 	if ((error = read_vector_arg_number(parser, &(result->x), ',')))
 		return (error);
@@ -137,7 +137,6 @@ char		*read_color_arg(t_parser *parser, t_u32 *result)
 		*result = ft_atoi_hex(color);
 		return (NULL);
 	}
-	else
-		return (ft_strrep_char(
-		"Expected '#' char for color arg, but read: '_'", '_', c));
+	return (ft_strrep_char(
+	"Expected '#' char for color arg, but read: '_'", '_', c));
 }

@@ -33,35 +33,7 @@ int			intersect_disk(t_ray *ray, float altitude, float *t)
 	*t = distance;
 	return (1);
 }
-/*
-int			intersect_disk(t_ray *ray, float altitude, float *t)
-{
-	int			plane;
-	t_ray		tmp_ray;
-	float		tmp_x;
-	float		tmp_z;
-	float		tmp;
-	
-	tmp_ray = *ray;
-	plane = 1;
-	if (ray->pos.y * ray->dir.y >= -altitude)
-		plane = 0;
-	if ((tmp = -ray->pos.y / ray->dir.y) >= ray->t)
-		plane = 0;
-	*t = tmp;
-	if (plane)
-	{
-		tmp_x = tmp_ray.pos.x + tmp_ray.t * tmp_ray.dir.x;
-		tmp_z = tmp_ray.pos.z + tmp_ray.t * tmp_ray.dir.z;
-		if (tmp_x * tmp_x + tmp_z * tmp_z <= 1)
-		{
-			*t = tmp_ray.t;
-			return (1);
-		}
-	}
-	return (0);
-}
-*/
+
 int			intersect_infinite_cylinder(t_ray *ray)
 {
 	t_vector	v;
@@ -126,5 +98,5 @@ void		getnormal_cylinder(
 	else if (hit_pos->y <= -1 + LIGHT_BIAS)
 		vector_set(result, 0, -1, 0);
 	else
- 		vector_set(result, hit_pos->x, 0, hit_pos->z);
+		vector_set(result, hit_pos->x, 0, hit_pos->z);
 }
