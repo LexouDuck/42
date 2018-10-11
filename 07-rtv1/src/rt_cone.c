@@ -83,7 +83,7 @@ int				intersect_cone(t_object *object, t_ray *ray)
 	int		is_in_hrz_area;
 
 	if ((is_in_infcone = (vector_dot_neg(&ray->pos, &ray->pos) <= 0) &&
-		(is_in_hrz_area = (0 <= ray->pos.y && ray->pos.y <= 1))) || !object)
+		(is_in_hrz_area = (-1 <= ray->pos.y && ray->pos.y <= 1))) || !object)
 		return (0);
 	t = 1. / 0.;
 	tmp = *ray;
@@ -117,7 +117,7 @@ void			getnormal_cone(
 	{
 		vector_set(result,
 			hit_pos->x,
-			-hit_pos->y,
+			hit_pos->y,
 			hit_pos->z);
 		vector_normalize(result);
 	}
