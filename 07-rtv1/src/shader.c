@@ -83,9 +83,9 @@ void			shader_setupray(t_shader *shader, t_light *light)
 		light->position.y - shader->hit_pos.y,
 		light->position.z - shader->hit_pos.z);
 	vector_set(&shader->light,
-		(float)color_get_r(light->color)/* / 255*/,
-		(float)color_get_g(light->color)/* / 255*/,
-		(float)color_get_b(light->color)/* / 255*/);
+		(float)color_get_r(light->color),
+		(float)color_get_g(light->color),
+		(float)color_get_b(light->color));
 	shader->norm = vector_length(&shader->ray.dir);
 	shader->ray.t = sqrt(shader->norm);
 	shader->norm = 1 / shader->norm;

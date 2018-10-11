@@ -12,67 +12,54 @@
 
 #include "../rtv1.h"
 
-static void	rtv1_read_object_getmatrix(t_object *object)
+void		read_whitespace(t_parser *parser)
 {
-	t_vector	*rot;
-	float		tmp;
+	char	*file;
 
-	rot = &object->rotation;
-	vector_set(&object->matrix.u, cosf(rot->y) * cosf(rot->z),
-		cosf(rot->y) * sinf(rot->z), -sinf(rot->y));
-	tmp = sinf(rot->x) * sinf(rot->y);
-	vector_set(&object->matrix.v,
-		tmp * cosf(rot->z) - cosf(rot->x) * sinf(rot->z),
-		tmp * sinf(rot->z) + cosf(rot->x) * cosf(rot->z),
-		sinf(rot->x) * cosf(rot->y));
-	tmp = cosf(rot->x) * sinf(rot->y);
-	vector_set(&object->matrix.w,
-		tmp * cosf(rot->z) + sinf(rot->x) * sinf(rot->z),
-		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
-		cosf(rot->x) * cosf(rot->y));
-	object->matrix.t = (t_vector){0, 0, 0};
-	object->matrix_toworld.u = object->matrix.u;
-	object->matrix_toworld.v = object->matrix.v;
-	object->matrix_toworld.w = object->matrix.w;
-	matrix_inverse(&object->matrix);
-	object->matrix_normal.u = object->matrix.u;
-	object->matrix_normal.v = object->matrix.v;
-	object->matrix_normal.w = object->matrix.w;
-	matrix_transpose(&object->matrix_normal);
+	file = parser->file;
+	while (file[parser->index] &&
+		(ft_isspace(file[parser->index]) || file[parser->index] == '/'))
+	{
+		if (file[parser->index] == '\n')
+			++(parser->line);
+		else if (file[parser->index] == '/' && file[parser->index + 1] == '/')
+		{
+			while (file[parser->index] && file[parser->index] != '\n')
+				++(parser->index);
+			++(parser->line);
+		}
+		++(parser->index);
+	}
 }
 
 static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 {
 	char		*error;
-	t_object	*object;
+	t_object	object;
 
-	if (!(object = (t_object *)malloc(sizeof(t_object))))
-		return ("Couldn't create 3D object");
-	object->type = shape;
-	if ((error = read_color_arg(parser, &object->color)) ||
-		(error = read_vector_arg(parser, &object->position)) ||
-		(error = read_vector_arg(parser, &object->rotation)) ||
-		(error = read_vector_arg(parser, &object->scale)))
+	object.type = shape;
+	if ((error = read_color_arg(parser, &object.color)) ||
+		(error = read_vector_arg(parser, &object.position)) ||
+		(error = read_vector_arg(parser, &object.rotation)) ||
+		(error = read_vector_arg(parser, &object.scale)))
 		return (error);
-	rtv1_read_object_getmatrix(object);
-	ft_lstappend(&(rtv1->objects), ft_lstnew(object, sizeof(t_object)));
+	rtv1_read_object_getmatrix(&object);
+	ft_lstappend(&(rtv1->objects), ft_lstnew(&object, sizeof(t_object)));
 	return (NULL);
 }
 
 static char	*rtv1_read_light(t_rtv1 *rtv1, t_parser *parser)
 {
 	char		*error;
-	t_light		*light;
+	t_light		light;
 
-	if (!(light = (t_light *)malloc(sizeof(t_light))))
-		return ("Couldn't create 3D light");
-	if ((error = read_color_arg(parser, &(light->color))))
+	if ((error = read_color_arg(parser, &(light.color))))
 		return (error);
-	if ((error = read_number_arg(parser, &(light->strength))))
+	if ((error = read_number_arg(parser, &(light.strength))))
 		return (error);
-	if ((error = read_vector_arg(parser, &(light->position))))
+	if ((error = read_vector_arg(parser, &(light.position))))
 		return (error);
-	ft_lstadd(&(rtv1->lights), ft_lstnew(light, sizeof(t_light)));
+	ft_lstadd(&(rtv1->lights), ft_lstnew(&light, sizeof(t_light)));
 	return (NULL);
 }
 
@@ -85,8 +72,6 @@ static char	*rtv1_read_command(t_rtv1 *rtv1, t_parser *parser, char *label)
 		return ("'NONE' is not a valid usable label.");
 	else if (ft_strequ(label, "CUBE"))
 		shape = cube;
-	else if (ft_strequ(label, "TRIANGLE"))
-		shape = triangle;
 	else if (ft_strequ(label, "SPHERE"))
 		shape = sphere;
 	else if (ft_strequ(label, "CYLINDER"))

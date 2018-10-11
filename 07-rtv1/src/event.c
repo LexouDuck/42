@@ -18,6 +18,7 @@
 **	ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
 **	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 */
+
 static int	event_mouse_press(int button, int x, int y, void *param)
 {
 	t_mlx		*mlx;
@@ -48,6 +49,7 @@ static int	event_mouse_press(int button, int x, int y, void *param)
 **	ft_putstr(" | x:"); ft_putstr(ft_itoa(x));
 **	ft_putstr(", y:"); ft_putendl(ft_itoa(y));
 */
+
 static int	event_mouse_release(int button, int x, int y, void *param)
 {
 	t_mlx		*mlx;
@@ -91,6 +93,7 @@ static int	event_mouse_move(int x, int y, void *param)
 **	ft_putstr("KEY PRESSED: ");
 **	ft_putendl(ft_itoa_hex((t_u32)key, "0x"));
 */
+
 static int	event_key(int key, void *param)
 {
 	t_mlx		*mlx;

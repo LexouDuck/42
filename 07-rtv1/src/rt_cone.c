@@ -109,7 +109,7 @@ void			getnormal_cone(
 {
 	if (!object)
 		return ;
-	else if (hit_pos->y <= LIGHT_BIAS)
+	else if (hit_pos->y >= -LIGHT_BIAS)
 	{
 		vector_set(result, 0, 1, 0);
 	}

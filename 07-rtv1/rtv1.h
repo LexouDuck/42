@@ -72,10 +72,9 @@ typedef struct	s_ray
 typedef enum	e_geom
 {
 	none,
-	cube,
-	triangle,
 	sphere,
 	cylinder,
+	cube,
 	cone,
 }				t_geom;
 
@@ -212,24 +211,20 @@ void			camera_update(t_camera *camera);
 */
 int				intersect_disk(t_ray *ray, float base, float *t);
 
-int				intersect_cube(
-	t_object *object, t_ray *ray);
-int				intersect_triangle(
-	t_object *object, t_ray *ray);
 int				intersect_sphere(
 	t_object *object, t_ray *ray);
 int				intersect_cylinder(
 	t_object *object, t_ray *ray);
+int				intersect_cube(
+	t_object *object, t_ray *ray);
 int				intersect_cone(
 	t_object *object, t_ray *ray);
 
-void			getnormal_cube(
-	t_vector *result, t_object *object, t_vector *hit_pos);
-void			getnormal_triangle(
-	t_vector *result, t_object *object, t_vector *hit_pos);
 void			getnormal_sphere(
 	t_vector *result, t_object *object, t_vector *hit_pos);
 void			getnormal_cylinder(
+	t_vector *result, t_object *object, t_vector *hit_pos);
+void			getnormal_cube(
 	t_vector *result, t_object *object, t_vector *hit_pos);
 void			getnormal_cone(
 	t_vector *result, t_object *object, t_vector *hit_pos);
@@ -238,8 +233,8 @@ void			getnormal_cone(
 **	====	read.c & read_util.c
 */
 char			*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd);
-
 void			read_whitespace(t_parser *parser);
+
 char			*read_vector_arg(t_parser *parser, t_vector *result);
 char			*read_number_arg(t_parser *parser, float *result);
 char			*read_color_arg(t_parser *parser, t_u32 *result);
@@ -247,16 +242,18 @@ char			*read_color_arg(t_parser *parser, t_u32 *result);
 /*
 **	====	render.c & render_util.c
 */
+void			rtv1_read_object_getmatrix(t_object *object);
+void			get_camera_matrix(t_camera *camera);
+
 int				handle_expose(void *param);
 void			render(t_mlx *mlx, t_camera *camera);
+void			render_debug(void *mlx, void *win, t_camera *camera);
 t_object		*render_trace(
 	t_rtv1 *rtv1,
 	t_ray *ray,
 	float nearest,
 	t_ray *object_ray);
 
-void			render_debug(void *mlx, void *win, t_camera *camera);
-void			get_camera_matrix(t_camera *camera);
 void			set_ray_to_object_space(t_ray *ray, t_object *object);
 void			set_hitposnormal_toworld(t_object *object, t_shader *shader);
 

@@ -12,24 +12,27 @@
 
 #include "../rtv1.h"
 
-void		read_whitespace(t_parser *parser)
+static char	*read_error(char expected, char *description, char instead)
 {
-	char	*file;
+	char	*result;
+	size_t	length;
+	size_t	i;
 
-	file = parser->file;
-	while (file[parser->index] &&
-		(ft_isspace(file[parser->index]) || file[parser->index] == '/'))
-	{
-		if (file[parser->index] == '\n')
-			++(parser->line);
-		else if (file[parser->index] == '/' && file[parser->index + 1] == '/')
-		{
-			while (file[parser->index] && file[parser->index] != '\n')
-				++(parser->index);
-			++(parser->line);
-		}
-		++(parser->index);
-	}
+	length = ft_strlen(description);
+	if (!(result = malloc((64 + length) * sizeof(char))))
+		return (NULL);
+	i = 0;
+	ft_strcpy(result, "Expected \'");
+	i += 10;
+	result[i++] = expected;
+	ft_strcpy(result + i, "\' (");
+	i += 3;
+	ft_strcpy(result + i, description);
+	i += length;
+	ft_strcpy(result + i, "), but instead found: \'");
+	i += 21;
+	result[i++] = instead;
+	return (result);
 }
 
 static char	*read_vector_arg_number(t_parser *parser, float *result, char sep)
@@ -50,9 +53,7 @@ static char	*read_vector_arg_number(t_parser *parser, float *result, char sep)
 		return ("Unexpected end of file inside vector argument");
 	read_whitespace(parser);
 	if (file[parser->index] != sep)
-		return (ft_strrep_char(ft_strrep_char(
-	"Expected '@' separator char, but read: '_'", '@', sep),
-	'_', file[parser->index]));
+		return (read_error(sep, "separator char", file[parser->index]));
 	file[parser->index] = '\0';
 	++(parser->index);
 	*result = ft_atof(number);
@@ -71,8 +72,7 @@ char		*read_vector_arg(t_parser *parser, t_vector *result)
 	if (symbol == '(' || symbol == '{' || symbol == '[')
 		++(parser->index);
 	else
-		return (ft_strrep_char(
-	"Expected vector arg '(', '{' or '[', but read: '_'", '_', symbol));
+		return (read_error('(', "or '{' or '[' => vector argument", symbol));
 	symbol += (symbol == '(') ? 1 : 2;
 	if ((error = read_vector_arg_number(parser, &(result->x), ',')))
 		return (error);
@@ -107,9 +107,7 @@ char		*read_number_arg(t_parser *parser, float *result)
 		*result = ft_atof(number);
 		return (NULL);
 	}
-	else
-		return (ft_strrep_char(
-		"Expected number argument digit, but read: '_'", '_', c));
+	return (read_error('0', "or any other digit, for a number argument", c));
 }
 
 char		*read_color_arg(t_parser *parser, t_u32 *result)
@@ -137,6 +135,5 @@ char		*read_color_arg(t_parser *parser, t_u32 *result)
 		*result = ft_atoi_hex(color);
 		return (NULL);
 	}
-	return (ft_strrep_char(
-	"Expected '#' char for color arg, but read: '_'", '_', c));
+	return (read_error('#', "starting char for color arg", c));
 }

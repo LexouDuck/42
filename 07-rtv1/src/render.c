@@ -100,6 +100,10 @@ static void		render_pixels(
 	}
 }
 
+/*
+**	render_debug(mlx->mlx_ptr, mlx->win_ptr, camera);
+*/
+
 void			render(t_mlx *mlx, t_camera *camera)
 {
 	t_u32		*buffer;
@@ -115,7 +119,6 @@ void			render(t_mlx *mlx, t_camera *camera)
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
-	render_debug(mlx->mlx_ptr, mlx->win_ptr, camera);
 }
 
 int				handle_expose(void *param)
@@ -127,6 +130,5 @@ int				handle_expose(void *param)
 		mlx->mlx_ptr,
 		mlx->win_ptr,
 		mlx->img_ptr, 0, 0);
-	render_debug(mlx->mlx_ptr, mlx->win_ptr, mlx->rtv1->camera);
 	return (0);
 }

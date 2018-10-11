@@ -40,6 +40,35 @@ void		render_debug(void *mlx, void *win, t_camera *camera)
 	free(str);
 }
 
+void		rtv1_read_object_getmatrix(t_object *object)
+{
+	t_vector	*rot;
+	float		tmp;
+
+	rot = &object->rotation;
+	vector_set(&object->matrix.u, cosf(rot->y) * cosf(rot->z),
+		cosf(rot->y) * sinf(rot->z), -sinf(rot->y));
+	tmp = sinf(rot->x) * sinf(rot->y);
+	vector_set(&object->matrix.v,
+		tmp * cosf(rot->z) - cosf(rot->x) * sinf(rot->z),
+		tmp * sinf(rot->z) + cosf(rot->x) * cosf(rot->z),
+		sinf(rot->x) * cosf(rot->y));
+	tmp = cosf(rot->x) * sinf(rot->y);
+	vector_set(&object->matrix.w,
+		tmp * cosf(rot->z) + sinf(rot->x) * sinf(rot->z),
+		tmp * sinf(rot->z) - sinf(rot->x) * cosf(rot->z),
+		cosf(rot->x) * cosf(rot->y));
+	object->matrix.t = (t_vector){0, 0, 0};
+	object->matrix_toworld.u = object->matrix.u;
+	object->matrix_toworld.v = object->matrix.v;
+	object->matrix_toworld.w = object->matrix.w;
+	matrix_inverse(&object->matrix);
+	object->matrix_normal.u = object->matrix.u;
+	object->matrix_normal.v = object->matrix.v;
+	object->matrix_normal.w = object->matrix.w;
+	matrix_transpose(&object->matrix_normal);
+}
+
 void		get_camera_matrix(t_camera *camera)
 {
 	t_vector	axis_forward;

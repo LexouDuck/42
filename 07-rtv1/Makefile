@@ -1,7 +1,7 @@
 NAME	=	rtv1
 
 CC		=	gcc
-CFLAGS	=	-Wall -Werror -Wextra -O3 -MMD
+CFLAGS	=	-Wall -Wextra -O3 -MMD
 
 RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
@@ -46,10 +46,9 @@ SRCS	= 	color.c				\
 			shader.c			\
 			render.c			\
 			render_util.c		\
-			rt_cube.c			\
 			rt_sphere.c			\
-			rt_triangle.c		\
 			rt_cylinder.c		\
+			rt_cube.c			\
 			rt_cone.c			\
 			read_util.c			\
 			read.c				\
