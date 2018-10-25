@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   fractol.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aduquesn <AlexisDuquesne@outlook.com>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2006/06/06 06:06:06 by aduquesn          #+#    #+#             */
-/*   Updated: 2018/10/02 12:06:20 by aduquesn         ###   ########.fr       */
+/*   Updated: 2018/10/18 17:44:48 by Lexou            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include "../mlx_events.h"
 # include "libft/libft.h"
 
-# define WIN_W	640
-# define WIN_H	480
+# define WIN_W	1280
+# define WIN_H	800
 
 # define MAX_ZOOM	200
 
