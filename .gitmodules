@@ -1,3 +1,6 @@
 [submodule "libft"]
 	path = libft
 	url = https://github.com/LexouDuck/libft.git
+[submodule "08-rt"]
+	path = 08-rt
+	url = https://github.com/LexouDuck/RT.git
