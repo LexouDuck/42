@@ -3,17 +3,31 @@ correc.*
 *.pdf
 *.zip
 *.tar
-*.gif
+*.c-e
+*.h-e
+*.cl-e
+
+# Program
+libft/test
+RT
+RT.exe
+RT.EXE
+log.txt
+log.TXT
+config.ini
+config.INI
+concat.cl
+concat.CL
+src/random_scene
 
 # Macintosh files
 *.DS_Store
 *._*
 
-# Prerequisites
-*.d
-
-# Object files
+# Object files & Dependency files
+obj/*
 *.o
+*.d
 *.ko
 *.obj
 *.elf
@@ -27,14 +41,15 @@ correc.*
 *.gch
 *.pch
 
-# Libraries
+# Vim swp
+*.swp
+
+# Compiled libraries
 *.lib
 *.a
 *.la
 *.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
+# Shared objects
 *.so
 *.so.*
 *.dylib

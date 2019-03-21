@@ -13,8 +13,9 @@ alias git_check="git ls-tree --full-tree -r HEAD"
 # Compiling with flags in a fast and easy way
 alias compile="gcc -o main -Wall -Wextra -Werror"
 
+alias open="cygstart"
+
 # 42 program aliases for windows
 alias fdf="startxwin ./fdf"
 alias fractol="startxwin ./fractol"
 alias rtv1="startxwin ./rtv1"
-alias rt="startxwin ./rt"
