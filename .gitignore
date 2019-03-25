@@ -4,8 +4,6 @@ correc.*
 *.zip
 *.tar
 *.gif
-OpenCL/
-08-rt/*
 
 # object files, link files and libraries
 *.o
