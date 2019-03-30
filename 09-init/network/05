@@ -1,0 +1,1 @@
+dig slash16.org | grep SERVER | cut -d "#" -f 1 | cut -d " " -f 3

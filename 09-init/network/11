@@ -1,0 +1,5 @@
+La machine qui fait le lien entre le réseau local et l'extérieur se situe
+sur la ligne '2' du traceroute: il s'agit du serveur nat-1 (ca s'appelle
+nat-1 pour "network address translation").
+A 42, l'adresse IP de ce serveur est (10.60.1.11).
+
