@@ -1,0 +1,3 @@
+# Le programme de gestion des tâches régulières 'cron' s'opère en éditant le fichier '/etc/crontab' selon une syntaxe spécifique.
+# On peut aussi définir des tâches régulières en ajoutant un autre fichier crontab au registre des fichiers appelés par 'cron' en utilisant la commande:
+crontab /filepath/file.ext

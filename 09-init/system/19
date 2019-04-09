@@ -1,0 +1,4 @@
+# Les services lancés au départ s'appellent des "startup/init scripts", le premier des 2 à être executé c'est toujours le "init".
+# Ces services sont des "daemon", c'est-à-dire un programme fait pour tourner continuellement en arrière-plan.
+# On peut voir quels sont les programmes lancés à l'initialisation de la machine en utilisant la commande:
+ls /etc/init.d/

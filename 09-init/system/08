@@ -1,0 +1,3 @@
+~/.ssh/authorized_keys
+# Sur une machine unix, les clefs RSA acceptées par le protocole SSH du système se trouvent normalement dans ce fichier.
+# Quoique, cela dépend parfois de la criticalité (et donc des besoins en sécurité) du système en question.

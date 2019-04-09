@@ -1,0 +1,10 @@
+# Pour se connecter en tant qu'un autre utilisateur, il faut faire la commande:
+login username
+# Ou, si ça ne marche pas, on peut faire:
+su - username
+# puis entrer directement le mot de passe de 'username'.
+
+# Pour se connecter en SSH, la commande a faire est:
+ssh username@hostname
+# Où 'hostname' est une adresse IP ou un domain name reconnu.
+# Il faut mettre en place des clefs SSH avec ssh-keygen pour que ca marche
