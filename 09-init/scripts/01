@@ -1,0 +1,3 @@
+cat /etc/passwd | cut -d ":" -f 1,3,6
+# The format for the /etc/passwd file is:
+# login:password:uid:gid:uid_info:path_to_home:shell_or_service

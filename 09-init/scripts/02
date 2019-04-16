@@ -1,0 +1,2 @@
+sudo pkill -KILL -u $1
+# usage: ./02 username

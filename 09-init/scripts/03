@@ -1,0 +1,14 @@
+# Ce script va renvoyer sur stdout les noms des fichier donnés en argument
+# Le nom de fichier est affiché sans le chemin de dossier, avec l'extension de fichier isolée
+for f in $*
+do
+	EXT=$(echo $f | rev | cut -d '.' -f 1 | rev)
+	FILE=$(basename -s .$EXT $f)
+	if [ "$(echo $f | rev | cut -d '/' -f 1 | rev)" == "$FILE" ]
+	then
+		printf "folder\t:\t"
+	else
+		printf $EXT"\t:\t"
+	fi
+	printf $FILE"\n"
+done
