@@ -39,9 +39,10 @@ Select that `FREE SPACE` to set up each new partition, as follows:
 - _Partition 2_: 1.0 GB -> Primary -> Beginning -> Use as: Swap Area
 - _Partition 3_: Remaining Space -> Primary -> Use as: ext4 -> Mount Point: `/home`
 
+**Package Mangager**
+
 - _Additionnal CDs to scan_: No
 
-**Package Mangager**
 - _Country_: France
 - _Mirror_: ftp.fr.debian.org
 - _HTTP Proxy_: None
@@ -57,14 +58,22 @@ Select that `FREE SPACE` to set up each new partition, as follows:
 
 **Installing packages**
 
-Connect as the non-root user
+Input the previously-set root password, as requested.
+
+Then, install the following packages:
 ```sh
-user@roger$> apt-get update -y && apt-get upgrade -y
-user@roger$> apt-get install sudo
-user@roger$> apt-get install vim
-user@roger$> apt-get install iptables-persistent
-user@roger$> apt-get install fail2ban
-user@roger$> apt-get install sendmail
-user@roger$> apt-get install portsentry
-adduser
+root@roger:> apt-get update -y
+root@roger:> apt-get upgrade -y
+root@roger:> apt-get install sudo
+root@roger:> apt-get install vim
+root@roger:> apt-get install iptables-persistent
+root@roger:> apt-get install fail2ban
+root@roger:> apt-get install sendmail
+root@roger:> apt-get install portsentry
+```
+Setup the non-root user and login:
+```sh
+root@roger:> adduser [user] sudo
+root@roger:> su - [user]
+user@roger:> 
 ```
