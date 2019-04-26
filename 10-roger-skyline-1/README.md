@@ -114,18 +114,40 @@ iface [2nd_interface] inet static address 192.168.56.3 netmask 255.255.255.252
 
 ### Setting up SSH
 
-You need to modify the `etc/ssh/sshd_config` file, by either uncommenting the following lines in the file, or by manually adding those lines yourself:
+To set up SSH connections, we need to modify the `/etc/ssh/sshd_config` file:
+```sh
+user@roger:> sudo vim /etc/ssh/sshd_config
+```
+The following 4 lines must be present in the file, by either uncommenting these lines in the file, or by manually adding these lines yourself:
 ```sh
 Port [anything except 22]
 PasswordAuthentification yes
 PermitRootLogin no
 PubkeyAuthentication yes
 ```
-You must generate a **public key** from your host machine by doing
+
+After this, you must generate a **public key** from your host machine by doing this command:
 ```sh
 $> ssh-keygen
 ```
 After which, you can copy the generated **key** from the file `~/.ssh/id_rsa.pub` on the host machine, and write that same **key** into the file `~/.ssh/authorized_keys` inside the VM, so as to allow SSH connections.
+```sh
+user@roger:> mkdir ~/.ssh
+user@roger:> echo '[RSA public key file contents]' > ~/.ssh/authorized_keys
+```
 
 With this done, your VM should have internet access and SSH set up.
 All you need to do for these to work is reboot the VM.
+
+To access the VM from the host with SSH, do the following command in a host terminal:
+```sh
+$> ssh [user]@[IP] -p [VM_SSH_PORTNUMBER]
+# example:
+$> ssh user@192.168.56.3 -p 23
+```
+
+---
+
+### Setting up Firewall
+
+**Configuring iptables**
