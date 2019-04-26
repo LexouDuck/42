@@ -54,9 +54,7 @@ Select that `FREE SPACE` to set up each new partition, as follows:
 
 ---
 
-### Setting up networks
-
-**Installing packages**
+### Installing packages
 
 Input the previously-set root password, as requested.
 
@@ -78,7 +76,9 @@ root@roger:> su - [user]
 user@roger:> 
 ```
 
-**Configuring network interfaces**
+---
+
+### Configuring network interfaces
 
 We need to know the name of the 2nd network interface, you can see its name by doing:
 ```sh
@@ -98,10 +98,7 @@ iface [other_interface] inet dhcp
 auto enp0s3
 iface enp0s3 inet static
 ```
-With this, your VM should have internet access, you just need to reboot:
-```sh
-user@roger:> sudo shutdown -r 0
-```
+With this, your VM should have internet access, you just need to reboot it.
 
 ---
 
