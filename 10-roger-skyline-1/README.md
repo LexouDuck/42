@@ -54,7 +54,7 @@ Select that `FREE SPACE` to set up each new partition, as follows:
 
 ---
 
-### Setting up SSH
+### Setting up networks
 
 **Installing packages**
 
@@ -77,3 +77,32 @@ root@roger:> adduser [user] sudo
 root@roger:> su - [user]
 user@roger:> 
 ```
+
+**Configuring network interfaces**
+
+We need to know the name of the 2nd network interface, you can see its name by doing:
+```sh
+user@roger:> ip a
+```
+To setup a static IP, we need to modify the `/etc/network/interfaces` file:
+```sh
+user@roger:> sudo vim /etc/network/interfaces
+```
+Edit the last two lines of this file -> after your edit it should look like this:
+```ini
+# Primary network interfaces
+
+auto [other_interface]
+iface [other_interface] inet dhcp
+
+auto enp0s3
+iface enp0s3 inet static
+```
+With this, your VM should have internet access, you just need to reboot:
+```sh
+user@roger:> sudo shutdown -r 0
+```
+
+---
+
+### Setting up SSH
