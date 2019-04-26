@@ -64,12 +64,14 @@ root@roger:> apt-get update -y
 root@roger:> apt-get upgrade -y
 root@roger:> apt-get install sudo
 root@roger:> apt-get install vim
+root@roger:> apt-get install crontab
 root@roger:> apt-get install iptables-persistent
 root@roger:> apt-get install fail2ban
 root@roger:> apt-get install sendmail
 root@roger:> apt-get install portsentry
+root@roger:> apt-get install apache2
 ```
-Setup the non-root user and login:
+Setup the non-root user as sudoer and login:
 ```sh
 root@roger:> adduser [user] sudo
 root@roger:> su - [user]
@@ -84,22 +86,46 @@ We need to know the name of the 2nd network interface, you can see its name by d
 ```sh
 user@roger:> ip a
 ```
+Usually, it should be something like `enp0s8`
+
 To setup a static IP, we need to modify the `/etc/network/interfaces` file:
 ```sh
 user@roger:> sudo vim /etc/network/interfaces
 ```
-Edit the last two lines of this file -> after your edit it should look like this:
-```ini
+You need to modify this file, such that it should look like this:
+```sh
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+
+auto lo
+iface lo inet loopback
+
 # Primary network interfaces
 
-auto [other_interface]
-iface [other_interface] inet dhcp
+allow-hotplug enp0s3
+iface enp0s3 inet dhcp
 
-auto enp0s3
-iface enp0s3 inet static
+allow-hotplug [2nd_interface]
+iface [2nd_interface] inet static address 192.168.56.3 netmask 255.255.255.252
 ```
-With this, your VM should have internet access, you just need to reboot it.
 
 ---
 
 ### Setting up SSH
+
+You need to modify the `etc/ssh/sshd_config` file, by either uncommenting the following lines in the file, or by manually adding those lines yourself:
+```sh
+Port [anything except 22]
+PasswordAuthentification yes
+PermitRootLogin no
+PubkeyAuthentication yes
+```
+You must generate a **public key** from your host machine by doing
+```sh
+$> ssh-keygen
+```
+After which, you can copy the generated **key** from the file `~/.ssh/id_rsa.pub` on the host machine, and write that same **key** into the file `~/.ssh/authorized_keys` inside the VM, so as to allow SSH connections.
+
+With this done, your VM should have internet access and SSH set up.
+All you need to do for these to work is reboot the VM.
