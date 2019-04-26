@@ -29,8 +29,12 @@
 
 **Disk partitions**
 
-Manual setup - select `SCSI1 (0,0,0) (sda) - etc`, that's the HDD.
-Then confirm, and right under that HDD, there will be the `FREE SPACE` partition under it.
+Manual setup - select `SCSI1 (0,0,0) (sda) - etc` (that's the HDD), and confirm.
+
+Now, right under that HDD, there should be the `FREE SPACE` partition under it.
+
+Select that `FREE SPACE` to set up each new partition, as follows:
+
 - _Partition 1_: 4.2 GB -> Primary -> Beginning -> Use as: ext4 -> Mount Point: `/`
 - _Partition 2_: 1.0 GB -> Primary -> Beginning -> Use as: Swap Area
 - _Partition 3_: Remaining Space -> Primary -> Use as: ext4 -> Mount Point: `/home`
