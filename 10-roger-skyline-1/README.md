@@ -241,6 +241,7 @@ First you must create the following file: `/etc/fail2ban/jail.local`:
 user@roger:> cat /etc/fail2ban/jail.local 
 [sshd]
 enable = true
+banaction = iptables-multiport
 port = [port_ssh]
 filter = sshd
 logpath = %(sshd_log)s
@@ -278,14 +279,19 @@ findtime = 30
 bantime = 6000
 ```
 
+You must next create the http DOS attack log file that is referenced from the `jail.local` file:
+```sh
+user@roger:> sudo touch /var/log/http_dos.log
+```
+
 Then, we need to create two files (`http-get-dos.conf` and `http-post-dos.conf`) to configure fail2ban properly:
-##### http-get-dos.conf
+- `/etc/fail2ban/filter.d/http-get-dos.conf`
 ```sh
 [Definition]
 failregex = \[[^]]+\] \[.*\] \[client <HOST>\] "GET .*
 ignoreregex =
 ```
-##### http-post-dos.conf
+- `/etc/fail2ban/filter.d/http-post-dos.conf`
 ```sh
 [Definition]
 failregex = \[[^]]+\] \[.*\] \[client <HOST>\] "POST .*
@@ -299,3 +305,31 @@ user@roger:> sudo systemctl restart fail2ban
 ```
 
 After this, you should **reboot** your virtual machine.
+
+---
+
+### Script to update packages
+
+To update packages regularly, We must create the following `.sh` script file:
+- `/root/scripts/script_log.sh`
+```sh
+#!/bin/bash
+apt-get update -y >> /var/log/update_script.log
+apt-get upgrade -y >> /var/log/update_script.log
+```
+
+And we must give this file the proper permissions, and let `root` run it without using `sudo`:
+```sh
+user@roger:> sudo chmod 755 /root/scripts/script_log.sh
+user@roger:> sudo chown root /root/scripts/script_log.sh
+```
+
+To have the script be run at the required times, you must modify the crontab file by doing `crontab -e` as the root user:
+```sh
+0 4 * * wed root /root/scripts/script_log.sh
+@reboot root /root/scripts/script_log.sh
+```
+
+---
+
+### Script to 
