@@ -195,6 +195,45 @@ To                         Action      From
 
 ---
 
+### Setting up portsentry
+
+First, we need to stop the currently running portsentry daemon by doing:
+```sh
+user@roger:> sudo /etc/init.d/portsentry stop
+```
+
+Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
+```ini
+TCP_MODE="atcp"
+UDP_MODE="audp"
+```
+
+Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
+```ini
+##################
+# Ignore Options #
+##################
+# 0 = Do not block UDP/TCP scans.
+# 1 = Block UDP/TCP scans.
+# 2 = Run external command only (KILL_RUN_CMD)
+
+BLOCK_UDP="1"
+BLOCK_TCP="1"
+```
+
+In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
+Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
+```ini
+KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+```
+
+We can now restart the portsentry process, by doing the following command:
+```sh
+user@roger:> sudo /etc/init.d/portsentry start
+```
+
+---
+
 ### Setting up fail2ban
 
 First you must create the following file: `/etc/fail2ban/jail.local`:
@@ -238,49 +277,25 @@ maxretry = 60
 findtime = 30
 bantime = 6000
 ```
-Then you need to start running the fail2ban service by doing:
+
+Then, we need to create two files (`http-get-dos.conf` and `http-post-dos.conf`) to configure fail2ban properly:
+##### http-get-dos.conf
+```sh
+[Definition]
+failregex = \[[^]]+\] \[.*\] \[client <HOST>\] "GET .*
+ignoreregex =
+```
+##### http-post-dos.conf
+```sh
+[Definition]
+failregex = \[[^]]+\] \[.*\] \[client <HOST>\] "POST .*
+ignoreregex =
+```
+
+After all that, you need to start running the fail2ban service by doing:
 ```sh
 user@roger:> sudo systemctl enable fail2ban
 user@roger:> sudo systemctl restart fail2ban
 ```
 
 After this, you should **reboot** your virtual machine.
-
----
-
-### Setting up portsentry
-
-First, we need to stop the currently running portsentry daemon by doing:
-```sh
-user@roger:> sudo /etc/init.d/portsentry stop
-```
-
-Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
-```ini
-TCP_MODE="atcp"
-UDP_MODE="audp"
-```
-
-Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
-```ini
-##################
-# Ignore Options #
-##################
-# 0 = Do not block UDP/TCP scans.
-# 1 = Block UDP/TCP scans.
-# 2 = Run external command only (KILL_RUN_CMD)
-
-BLOCK_UDP="1"
-BLOCK_TCP="1"
-```
-
-In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
-Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
-```ini
-KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
-```
-
-We can now restart the portsentry process, by doing the following command:
-```sh
-user@roger:> sudo /etc/init.d/portsentry start
-```
