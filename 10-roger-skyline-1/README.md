@@ -128,7 +128,7 @@ user@roger:> sudo vim /etc/ssh/sshd_config
 The following 4 lines must be present in the file, by either uncommenting these lines in the file, or by manually adding these lines yourself:
 ```sh
 ...
-Port [anything from 1000 to 9999]
+Port [port_ssh: can be anything from 1000 to 9999]
 ...
 PermitRootLogin no
 ...
@@ -146,17 +146,15 @@ After which, you can copy the generated **key** from the file `~/.ssh/id_rsa.pub
 
 The easiest way to do this is with the `ssh-copy-id` command from the host machine:
 ```sh
-$> ssh-copy-id -i ~/.ssh/id_rsa.pub -p [port] [user]@[IP_vm]
+$> ssh-copy-id -i ~/.ssh/id_rsa.pub -p [port_ssh] [user]@[IP_vm]
 ```
 
 To access the VM from the host with SSH, do the following command in a host terminal:
 ```sh
-$> ssh [user]@[IP_vm] -p [port]
+$> ssh [user]@[IP_vm] -p [port_ssh]
 # example:
 $> ssh user@192.168.56.3 -p 23
 ```
-
-After this, you should **reboot** your virtual machine.
 
 ---
 
@@ -166,7 +164,7 @@ After this, you should **reboot** your virtual machine.
 
 Instead of using iptables and its annoying syntax, we're gonna be using uncomplicated firewall (ufw)
 
-You can either run these commands by hand (with `sudo`), or you can make a sh script, and run it with `sudo` (you might need to `chmod` it to run it)
+You can either run these commands by hand (with `sudo`), or you put these in a `.sh` script, and run it with `sudo sh script.sh` (you might need to `chmod 755` the script file beforehand to run it)
 
 ```sh
 ufw default deny incoming
@@ -185,11 +183,11 @@ Status: active
 
 To                         Action      From
 --                         ------      ----
-6666                       ALLOW       Anywhere
+[port_ssh]                 ALLOW       Anywhere
 25                         ALLOW       Anywhere
 80/tcp                     ALLOW       Anywhere
 443                        ALLOW       Anywhere
-6666 (v6)                  ALLOW       Anywhere (v6)
+[port_ssh] (v6)            ALLOW       Anywhere (v6)
 25 (v6)                    ALLOW       Anywhere (v6)
 80/tcp (v6)                ALLOW       Anywhere (v6)
 443 (v6)                   ALLOW       Anywhere (v6)
@@ -198,3 +196,56 @@ To                         Action      From
 ---
 
 ### Setting up fail2ban
+
+First you must create the following file: `/etc/fail2ban/jail.local`:
+```
+[sshd]
+enabled = true
+banaction = iptables-multiport
+```
+Then you need to start running the fail2ban service by doing:
+```sh
+user@roger:> sudo systemctl enable fail2ban
+user@roger:> sudo systemctl restart fail2ban
+```
+
+After this, you should **reboot** your virtual machine.
+
+---
+
+### Setting up portsentry
+
+First, we need to stop the currently running portsentry daemon by doing:
+```sh
+user@roger:> sudo /etc/init.d/portsentry stop
+```
+
+Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
+```ini
+TCP_MODE="atcp"
+UDP_MODE="audp"
+```
+
+Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
+```ini
+##################
+# Ignore Options #
+##################
+# 0 = Do not block UDP/TCP scans.
+# 1 = Block UDP/TCP scans.
+# 2 = Run external command only (KILL_RUN_CMD)
+
+BLOCK_UDP="1"
+BLOCK_TCP="1"
+```
+
+In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
+Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
+```ini
+KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+```
+
+We can now restart the portsentry process, by doing the following command:
+```sh
+user@roger:> sudo /etc/init.d/portsentry start
+```
