@@ -8,6 +8,8 @@
 - _RAM_: 1.0 GB (1024 MB) of access memory
 - _ROM_: 8.0 GB Hard Disk, fixed size
 
+**IMPORTANT**: you need to go into the settings for your VM and change the 'Network' setting 'NAT' to 'Bridged Adapter'
+
 Then, start the newly created VM - the hypervisor program will prompt you to give the location of the VM ISO.
 
 After that, select **Install** (rather than graphical install).
@@ -101,10 +103,18 @@ iface lo inet loopback
 # The primary network interface
 allow-hotplug enp0s3
 iface enp0s3 inet static
-address 10.12.124.18
-netmask 255.255.255.252
-broadcast 10.12.255.255
-gateway 10.12.254.254
+	address 10.12.124.[you decide]
+	netmask 255.255.255.252
+	broadcast 10.12.255.255
+	gateway 10.12.254.254
+```
+
+With this done, your VM should have internet access set up.
+All you need to do for these to work is **reboot** the VM.
+
+You can test whether or not you have internet access by doing:
+```sh
+user@roger:> ping 8.8.8.8
 ```
 
 ---
@@ -117,10 +127,15 @@ user@roger:> sudo vim /etc/ssh/sshd_config
 ```
 The following 4 lines must be present in the file, by either uncommenting these lines in the file, or by manually adding these lines yourself:
 ```sh
-Port [anything except 22]
-PasswordAuthentification yes
+...
+Port [anything from 1000 to 9999]
+...
 PermitRootLogin no
+...
 PubkeyAuthentication yes
+...
+PasswordAuthentification yes
+...
 ```
 
 After this, you must generate a **public key** from your host machine by doing this command:
@@ -128,23 +143,58 @@ After this, you must generate a **public key** from your host machine by doing t
 $> ssh-keygen
 ```
 After which, you can copy the generated **key** from the file `~/.ssh/id_rsa.pub` on the host machine, and write that same **key** into the file `~/.ssh/authorized_keys` inside the VM, so as to allow SSH connections.
-```sh
-user@roger:> mkdir ~/.ssh
-user@roger:> echo '[RSA public key file contents]' > ~/.ssh/authorized_keys
-```
 
-With this done, your VM should have internet access and SSH set up.
-All you need to do for these to work is reboot the VM.
+The easiest way to do this is with the `ssh-copy-id` command from the host machine:
+```sh
+$> ssh-copy-id -i ~/.ssh/id_rsa.pub -p [port] [user]@[IP_vm]
+```
 
 To access the VM from the host with SSH, do the following command in a host terminal:
 ```sh
-$> ssh [user]@[IP] -p [VM_SSH_PORTNUMBER]
+$> ssh [user]@[IP_vm] -p [port]
 # example:
 $> ssh user@192.168.56.3 -p 23
 ```
+
+After this, you should **reboot** your virtual machine.
 
 ---
 
 ### Setting up Firewall
 
-**Configuring iptables**
+**Uncomplicated Firewall**
+
+Instead of using iptables and its annoying syntax, we're gonna be using uncomplicated firewall (ufw)
+
+You can either run these commands by hand (with `sudo`), or you can make a sh script, and run it with `sudo` (you might need to `chmod` it to run it)
+
+```sh
+ufw default deny incoming
+ufw default allow outgoing
+
+ufw allow 6666
+ufw allow 25
+ufw allow 80/tcp
+ufw allow 443
+
+ufw enable
+```
+After this, you can check everything is correct by doing `sudo ufw status`, the output should be like so:
+```
+Status: active
+
+To                         Action      From
+--                         ------      ----
+6666                       ALLOW       Anywhere
+25                         ALLOW       Anywhere
+80/tcp                     ALLOW       Anywhere
+443                        ALLOW       Anywhere
+6666 (v6)                  ALLOW       Anywhere (v6)
+25 (v6)                    ALLOW       Anywhere (v6)
+80/tcp (v6)                ALLOW       Anywhere (v6)
+443 (v6)                   ALLOW       Anywhere (v6)
+```
+
+---
+
+### Setting up fail2ban
