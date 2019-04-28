@@ -1,1 +1,2 @@
-/var/run/resolv.conf
+# /var/run/resolv.conf
+# Sur n'importe quelle machine UNIX: /etc/resolv.conf

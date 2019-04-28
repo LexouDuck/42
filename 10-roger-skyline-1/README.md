@@ -4,16 +4,20 @@
 
 ### Debian VM Setup
 
-- _OS Image_: Download a [Debian netinst iso](https://www.debian.org/distrib/)
+- _OS Image_: Download a [Debian netinst iso](https://www.debian.org/distrib/) and store it in the 42 goinfre storage space.
 - _RAM_: 1.0 GB (1024 MB) of access memory
 - _ROM_: 8.0 GB Hard Disk, fixed size
+
+Then, start the newly created VM - the hypervisor program will prompt you to give the location of the VM ISO.
+
+After that, select **Install** (rather than graphical install).
 
 **Localisation**
 
 - _Language_: English
-- _Area_: France
-- _Locale_: American English (en-US)
-- _Keyboard_: [you decide]
+- _Area_: other -> France
+- _Locale_: United States (en-US)
+- _Keyboard_: [depends: either American English or French]
 
 **Admin**
 
@@ -64,7 +68,7 @@ root@roger:> apt-get update -y
 root@roger:> apt-get upgrade -y
 root@roger:> apt-get install sudo
 root@roger:> apt-get install vim
-root@roger:> apt-get install crontab
+root@roger:> apt-get install ufw
 root@roger:> apt-get install iptables-persistent
 root@roger:> apt-get install fail2ban
 root@roger:> apt-get install sendmail
@@ -82,12 +86,6 @@ user@roger:>
 
 ### Configuring network interfaces
 
-We need to know the name of the 2nd network interface, you can see its name by doing:
-```sh
-user@roger:> ip a
-```
-Usually, it should be something like `enp0s8`
-
 To setup a static IP, we need to modify the `/etc/network/interfaces` file:
 ```sh
 user@roger:> sudo vim /etc/network/interfaces
@@ -97,17 +95,16 @@ You need to modify this file, such that it should look like this:
 source /etc/network/interfaces.d/*
 
 # The loopback network interface
-
 auto lo
 iface lo inet loopback
 
-# Primary network interfaces
-
+# The primary network interface
 allow-hotplug enp0s3
-iface enp0s3 inet dhcp
-
-allow-hotplug [2nd_interface]
-iface [2nd_interface] inet static address 192.168.56.3 netmask 255.255.255.252
+iface enp0s3 inet static
+address 10.12.124.18
+netmask 255.255.255.252
+broadcast 10.12.255.255
+gateway 10.12.254.254
 ```
 
 ---

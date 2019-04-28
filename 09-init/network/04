@@ -1,5 +1,4 @@
 # netstat montre l'état du réseau
 # -n remplace les addresses symboliques par leur IP numérique
 # -r montre la table de routage
-netstat -nr | grep default | head -1 | cut -d " " -f 13
-
+netstat -nr | grep default | head -1

@@ -1,2 +1,1 @@
-ifconfig -L en0 | grep "inet " | cut -d " " -f 5-6
-ifconfig -L en0 | grep "inet " | cut -d " " -f 3-4
+ifconfig -L en0
