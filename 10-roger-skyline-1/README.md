@@ -153,7 +153,7 @@ To access the VM from the host with SSH, do the following command in a host term
 ```sh
 $> ssh [user]@[IP_vm] -p [port_ssh]
 # example:
-$> ssh user@192.168.56.3 -p 23
+$> ssh user@10.12.124.45 -p 6666
 ```
 
 ---
@@ -198,10 +198,45 @@ To                         Action      From
 ### Setting up fail2ban
 
 First you must create the following file: `/etc/fail2ban/jail.local`:
-```
+```sh
+user@roger:> cat /etc/fail2ban/jail.local 
 [sshd]
+enable = true
+port = [port_ssh]
+filter = sshd
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+maxretry = 5
+findtime = 30
+bantime = 180
+
+[sshd-ddos]
+enable = true
+port = [port_ssh]
+filter = sshd-ddos
+logpath = %(sshd_log)s
+backend = %(sshd_backend)s
+maxretry = 5
+findtime = 30
+bantime = 180
+
+[http-get-dos]
 enabled = true
-banaction = iptables-multiport
+port = http,https
+filter = http-get-dos
+logpath = /var/log/http_dos.log
+maxretry = 100
+findtime = 30
+bantime = 6000
+
+[http-post-dos]
+enabled = true
+port = http,https
+filter = http-post-dos
+logpath = /var/log/http_dos.log
+maxretry = 60
+findtime = 30
+bantime = 6000
 ```
 Then you need to start running the fail2ban service by doing:
 ```sh
