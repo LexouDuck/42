@@ -372,4 +372,78 @@ The previous command will prompt you to select a text editor, you must write thi
 
 ---
 
+### Web server: apache
+
+Creation du dossier avec le nom du host voulu
+```sh
+user@roger:> sudo mkdir -p /var/www/init.login.fr/html
+```
+Changement des droits lie au dossier
+```sh
+user@roger:> sudo chown -R user:user /var/www/init.login.fr/html
+```
+Puis pour s'assurer que le dossier possede tous les droits :
+
+sudo chmod -R 755 /var/www/init.login.fr
+
+Creation d'un fichier pour tester la bonne fonctionnalite du sereveur :
+
+nano /var/www/init.login.fr/html/index.html
+
+Pour y mettre le code suivant :
+
+<html>
+    <head>
+        <title>Roger-Skyline</title>
+    </head>
+    <body>
+        <h1>Super ! Le serveur est fonctionnel</h1>
+    </body>
+</html>
+Afin de permettre a apache fournir ce contenu, il fautl lui attribuer les bonnes instructions :
+
+sudo nano /etc/apache2/sites-available/init.login.fr.conf
+
+Et y mettre a l'interieur :
+
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    ServerName init.login.fr
+    ServerAlias init.login.fr
+    DocumentRoot /var/www/init.login.fr/html
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+Puis l'activer a l'aide des commandes suivantes :
+
+cd /etc/apache2/sites-enabled
+sudo rm 000-default.conf
+sudo ln -s ../sites-available/init.login.fr.conf ./
+sudo service apache2 restart
+Afin d'activer le certificat SSL, aller dans le dossier /etc/ssl/crt/ puis utilise la commande suivante openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout roger.key -out roger.crt
+
+Puis editer le fichier /etc/apache2/sites-available/init.login.fr.conf pour y ajouter :
+
+<VirtualHost *:443>
+    DocumentRoot /var/www/init.login.fr/html
+    ServerName init.login.fr
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/crt/roger.crt
+    SSLCertificateKeyFile /etc/ssl/crt/roger.key
+</VirtualHost>
+Lancer la commande suivante sudo a2enmod ssl afin d'activer le module SSL d'apache, puis redemarrer le serveruweb systemctl restart apache2
+
+---
+
+Finally, we need to modify the `/etc/ssh/sshd_config` file:
+```sh
+user@roger:> sudo vim /etc/ssh/sshd_config
+```
+The following line must be changed back to 'no':
+```sh
+...
+PasswordAuthentification no
+...
+```
+
 **Author:** aduquesn
