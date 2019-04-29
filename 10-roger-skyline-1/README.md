@@ -310,7 +310,7 @@ After this, you should **reboot** your virtual machine.
 
 ### Script to update packages
 
-To update packages regularly, We must create the following `.sh` script file:
+To update packages regularly, you must create the following `.sh` script file:
 - `/root/scripts/script_log.sh`
 ```sh
 #!/bin/bash
@@ -324,7 +324,11 @@ user@roger:> sudo chmod 755 /root/scripts/script_log.sh
 user@roger:> sudo chown root /root/scripts/script_log.sh
 ```
 
-To have the script be run at the required times, you must modify the crontab file by doing `crontab -e` as the root user:
+To have the script be run at the required times, you must modify the crontab file by doing:
+```sh
+user@roger:> sudo crontab -e
+```
+The previous command will prompt you to select a text editor, you must write this in the crontab file:
 ```sh
 0 4 * * wed root /root/scripts/script_log.sh
 @reboot root /root/scripts/script_log.sh
@@ -332,4 +336,40 @@ To have the script be run at the required times, you must modify the crontab fil
 
 ---
 
-### Script to 
+### Script to oversee crontab modifications
+
+Let's create the following `.sh` script file:
+- `/root/scripts/script_crontab.sh`
+```sh
+#!/bin/sh
+
+CRON_FILE=/etc/crontab
+CHECK_FILE=/root/.crontab-checker
+
+if [ ! -f $CHECK_FILE ] || [ "`md5sum < $CRON_FILE`" != "`cat $CHECK_FILE`" ]
+then
+    echo "The crontab file has been modified !" | mail -s "root: crontab modified" root
+    md5sum < $CRON_FILE > $CHECK_FILE;
+    chmod 700 $CHECK_FILE;
+fi
+```
+This script will create a file containing the MD5 checksum of our crontab to check against whenever it's changed.
+
+Do not forget to set the correct permissions for this `.sh` script:
+```sh
+user@roger:> sudo chmod 755 /root/scripts/script_crontab.sh
+user@roger:> sudo chown root /root/scripts/script_crontab.sh
+```
+
+To have the script be run at the required times, you must modify the crontab file by doing:
+```sh
+user@roger:> sudo crontab -e
+```
+The previous command will prompt you to select a text editor, you must write this in the crontab file:
+```sh
+0 0 * * * root /root/scripts/script_crontab.sh
+```
+
+---
+
+**Author:** aduquesn
