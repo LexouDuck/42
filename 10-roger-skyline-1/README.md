@@ -3,12 +3,17 @@
 ---
 
 **IMPORTANT FOREWORD**
+
 - Mind the difference in how different programs use the term GB (GigaBytes)
   Sometimes it's (1GB = 10^9 = 1,000,000,000 bytes), sometimes (1GB = 2^30 = 1,073,741,824 bytes)
   This conversion might make your disk partitions be incorrectly sized if you don't pay attention !
   You can use `fdisk` to check the partitions, and `gparted` to resize them if needed.
+
 - Many times, doing `sudo service _ restart` will not have the full effect -> `sudo reboot` to be sure !
+
 - Check your `/etc/hosts.deny` file before each reboot, and remove from the file any IPs that you've been using to test things.
+
+---
 
 ### Debian VM Setup
 
@@ -214,45 +219,6 @@ To                         Action      From
 
 ---
 
-### Setting up portsentry
-
-First, we need to stop the currently running portsentry daemon by doing:
-```sh
-user@roger:> sudo /etc/init.d/portsentry stop
-```
-
-Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
-```ini
-TCP_MODE="atcp"
-UDP_MODE="audp"
-```
-
-Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
-```ini
-##################
-# Ignore Options #
-##################
-# 0 = Do not block UDP/TCP scans.
-# 1 = Block UDP/TCP scans.
-# 2 = Run external command only (KILL_RUN_CMD)
-
-BLOCK_UDP="1"
-BLOCK_TCP="1"
-```
-
-In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
-Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
-```ini
-KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
-```
-
-We can now restart the portsentry process, by doing the following command:
-```sh
-user@roger:> sudo /etc/init.d/portsentry start
-```
-
----
-
 ### Setting up fail2ban
 
 First you must create the following file: `/etc/fail2ban/jail.local`:
@@ -324,6 +290,69 @@ user@roger:> sudo systemctl restart fail2ban
 ```
 
 After this, you should **reboot** your virtual machine.
+
+**You may then proceed to test if your VM can resist DoS/SlowLoris attacks:**
+
+You can download the original implementation of the SlowLoris algorithm [here](https://www.exploit-db.com/exploits/8976)
+
+And you can run it by doing `perl slowloris.pl -dns [IP] -port [port]` - you should test it on both HTTP ports and SSH port.
+
+It should not be able to successfully send any packets to your VM (be careful with the SSH port, it seems to work differently)
+
+---
+
+### Setting up portsentry
+
+First, we need to stop the currently running portsentry daemon by doing:
+```sh
+user@roger:> sudo /etc/init.d/portsentry stop
+```
+
+Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
+```ini
+TCP_MODE="atcp"
+UDP_MODE="audp"
+```
+
+Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
+```ini
+##################
+# Ignore Options #
+##################
+# 0 = Do not block UDP/TCP scans.
+# 1 = Block UDP/TCP scans.
+# 2 = Run external command only (KILL_RUN_CMD)
+
+BLOCK_UDP="1"
+BLOCK_TCP="1"
+```
+
+In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
+Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
+```ini
+KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+```
+
+We can now restart the portsentry process, by doing the following command:
+```sh
+user@roger:> sudo /etc/init.d/portsentry start
+```
+
+After this, you should **reboot** your virtual machine.
+
+**You may then proceed to test if your VM can resist nmap attacks:**
+
+Make a clone of your VM, so you can have proper rights to call nmap (we can't use it from the 42 computers host machines).
+
+Then start it up, and change the static address it uses, so that there is no IP conflict with the existing VM.
+
+And to test, simply do the following commands (there are 2 different nmap tests to try):
+```sh
+user@roger:> sudo apt-get install nmap
+user@roger:> nmap [IP_vm]
+user@roger:> nmap -Pn [IP_vm]
+```
+It should not be able to output any of the open ports, it should say 'All 1000 ports are filtered'.
 
 ---
 
