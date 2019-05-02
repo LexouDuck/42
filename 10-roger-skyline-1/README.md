@@ -17,11 +17,11 @@
 
 ### Debian VM Setup
 
+**IMPORTANT**: In **Settings** -> **Network** tab of your newly created VM, change the setting 'NAT' to 'Bridged Adapter'
+
 - _OS Image_: Download a [Debian netinst iso](https://www.debian.org/distrib/) and store it in the 42 goinfre storage space.
 - _RAM_: 1.0 GB (1024 MB) of access memory
 - _ROM_: 8.0 GB Hard Disk, fixed size
-
-**IMPORTANT**: you need to go into the settings for your VM and change the 'Network' setting 'NAT' to 'Bridged Adapter'
 
 Then, start the newly created VM - the hypervisor program will prompt you to give the location of the VM ISO.
 
@@ -48,7 +48,7 @@ After that, select **Install** (rather than graphical install).
 
 **Disk partitions**
 
-Manual setup - select `SCSI3 (0,0,0) (sda) - etc` (that's the HDD), and confirm.
+Manual setup - select `SCSI1 (0,0,0) (sda) - etc` (that's the HDD), and confirm.
 
 Now, right under that HDD, there should be the `FREE SPACE` partition under it.
 
@@ -68,7 +68,8 @@ Select that `FREE SPACE` to set up each new partition, as follows:
 
 **Config**
 - _Particpative user survey_: No
-- _Software_: Debian Desktop Environment, with SSH Server and Standard system utilities
+- _Software_: `SSH Server` and `Standard system utilities`
+  You can use [spacebar] to toggle what you wish to install, and [enter] to confirm/continue.
 - _GRUB Boot Loader_: Yes, /dev/sda
 
 ---
@@ -83,12 +84,11 @@ root@roger:> apt-get update -y
 root@roger:> apt-get upgrade -y
 root@roger:> apt-get install sudo
 root@roger:> apt-get install vim
-root@roger:> apt-get install ufw
 root@roger:> apt-get install iptables-persistent
+root@roger:> apt-get install ufw
 root@roger:> apt-get install fail2ban
-root@roger:> apt-get install sendmail
 root@roger:> apt-get install portsentry
-root@roger:> apt-get install apache2
+root@roger:> apt-get install sendmail
 ```
 Setup the non-root user as sudoer and login:
 ```sh
@@ -217,13 +217,19 @@ To                         Action      From
 443 (v6)                   ALLOW       Anywhere (v6)
 ```
 
+UFW does not start on boot by default for some reason - to remedy this, you can add a `rc.local` shell script to manually enable ufw after boot:
+- `/etc/rc.local`
+```sh
+#!/bin/sh
+sudo ufw enable
+```
+
 ---
 
 ### Setting up fail2ban
 
 First you must create the following file: `/etc/fail2ban/jail.local`:
 ```sh
-user@roger:> cat /etc/fail2ban/jail.local 
 [sshd]
 enable = true
 banaction = iptables-multiport
@@ -267,6 +273,7 @@ bantime = 6000
 You must next create the http DOS attack log file that is referenced from the `jail.local` file:
 ```sh
 user@roger:> sudo touch /var/log/http_dos.log
+user@roger:> sudo chmod 644 /var/log/http_dos.log
 ```
 
 Then, we need to create two files (`http-get-dos.conf` and `http-post-dos.conf`) to configure fail2ban properly:
@@ -274,19 +281,16 @@ Then, we need to create two files (`http-get-dos.conf` and `http-post-dos.conf`)
 ```sh
 [Definition]
 failregex = \[[^]]+\] \[.*\] \[client <HOST>\] "GET .*
-ignoreregex =
 ```
 - `/etc/fail2ban/filter.d/http-post-dos.conf`
 ```sh
 [Definition]
 failregex = \[[^]]+\] \[.*\] \[client <HOST>\] "POST .*
-ignoreregex =
 ```
 
 After all that, you need to start running the fail2ban service by doing:
 ```sh
 user@roger:> sudo systemctl enable fail2ban
-user@roger:> sudo systemctl restart fail2ban
 ```
 
 After this, you should **reboot** your virtual machine.
