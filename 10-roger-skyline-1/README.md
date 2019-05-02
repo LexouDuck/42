@@ -17,7 +17,7 @@ After that, select **Install** (rather than graphical install).
 **Localisation**
 
 - _Language_: English
-- _Area_: other -> France
+- _Area_: other -> Europe -> France
 - _Locale_: United States (en-US)
 - _Keyboard_: [depends: either American English or French]
 
@@ -35,7 +35,7 @@ After that, select **Install** (rather than graphical install).
 
 **Disk partitions**
 
-Manual setup - select `SCSI1 (0,0,0) (sda) - etc` (that's the HDD), and confirm.
+Manual setup - select `SCSI3 (0,0,0) (sda) - etc` (that's the HDD), and confirm.
 
 Now, right under that HDD, there should be the `FREE SPACE` partition under it.
 
@@ -50,7 +50,7 @@ Select that `FREE SPACE` to set up each new partition, as follows:
 - _Additionnal CDs to scan_: No
 
 - _Country_: France
-- _Mirror_: ftp.fr.debian.org
+- _Mirror_: `ftp.fr.debian.org`
 - _HTTP Proxy_: None
 
 **Config**
