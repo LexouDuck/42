@@ -297,6 +297,9 @@ After this, you should **reboot** your virtual machine.
 
 **You may then proceed to test if your VM can resist DoS/SlowLoris attacks:**
 
+First, take a snapshot of your current VM state (so you can restore it after testing).
+In fact, you should **restore** this snapshot between each test, otherwise the IPs written in the `/etc/hosts.deny` file might make the other tests pre-emptively fail.
+
 You can download the original implementation of the SlowLoris algorithm [here](https://www.exploit-db.com/exploits/8976)
 
 And you can run it by doing `perl slowloris.pl -dns [IP] -port [port]` - you should test it on both HTTP ports and SSH port.
