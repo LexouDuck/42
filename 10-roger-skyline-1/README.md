@@ -304,7 +304,10 @@ You can download the original implementation of the SlowLoris algorithm [here](h
 
 And you can run it by doing `perl slowloris.pl -dns [IP] -port [port]` - you should test it on both HTTP ports and SSH port.
 
-It should not be able to successfully send any packets to your VM (be careful with the SSH port, it seems to work differently)
+It should not be able to successfully send any packets to your VM - though the SSH port will probably fail.
+This is usually because you're testing it from the host machine, which has the correct RSA keys for SSH.
+
+You will need to **clone** your current VM (name it attack-test or something), and on this new cloned VM, you can
 
 ---
 
@@ -359,13 +362,18 @@ user@roger:> sudo apt-get install nmap
 user@roger:> nmap [IP_vm]
 user@roger:> nmap -Pn [IP_vm]
 ```
+Each of the two test commands can take quite long to finish.
+
 It should not be able to output any of the open ports, it should say 'All 1000 ports are filtered'.
 
 ---
 
-### Script to update packages
+### Script to log package updates
 
-To update packages regularly, you must create the following `.sh` script file:
+To make a script that logs update packages regularly, you must create the following `.sh` script file:
+```sh
+user@roger:> sudo mkdir /root/scripts
+```
 - `/root/scripts/script_log.sh`
 ```sh
 #!/bin/bash
