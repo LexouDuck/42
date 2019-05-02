@@ -2,6 +2,19 @@
 
 ---
 
+**IMPORTANT FOREWORD**
+
+- Mind the difference in how different programs use the term GB (GigaBytes)
+  Sometimes it's (1GB = 10^9 = 1,000,000,000 bytes), sometimes (1GB = 2^30 = 1,073,741,824 bytes)
+  This conversion might make your disk partitions be incorrectly sized if you don't pay attention !
+  You can use `fdisk` to check the partitions, and `gparted` to resize them if needed.
+
+- Many times, doing `sudo service _ restart` will not have the full effect -> `sudo reboot` to be sure !
+
+- Check your `/etc/hosts.deny` file before each reboot, and remove from the file any IPs that you've been using to test things.
+
+---
+
 ### Debian VM Setup
 
 - _OS Image_: Download a [Debian netinst iso](https://www.debian.org/distrib/) and store it in the 42 goinfre storage space.
@@ -156,6 +169,17 @@ $> ssh [user]@[IP_vm] -p [port_ssh]
 $> ssh user@10.12.124.45 -p 6666
 ```
 
+Finally, we need to modify the `/etc/ssh/sshd_config` file:
+```sh
+user@roger:> sudo vim /etc/ssh/sshd_config
+```
+The following line must be changed back to 'no':
+```sh
+...
+PasswordAuthentification no
+...
+```
+
 ---
 
 ### Setting up Firewall
@@ -191,45 +215,6 @@ To                         Action      From
 25 (v6)                    ALLOW       Anywhere (v6)
 80/tcp (v6)                ALLOW       Anywhere (v6)
 443 (v6)                   ALLOW       Anywhere (v6)
-```
-
----
-
-### Setting up portsentry
-
-First, we need to stop the currently running portsentry daemon by doing:
-```sh
-user@roger:> sudo /etc/init.d/portsentry stop
-```
-
-Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
-```ini
-TCP_MODE="atcp"
-UDP_MODE="audp"
-```
-
-Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
-```ini
-##################
-# Ignore Options #
-##################
-# 0 = Do not block UDP/TCP scans.
-# 1 = Block UDP/TCP scans.
-# 2 = Run external command only (KILL_RUN_CMD)
-
-BLOCK_UDP="1"
-BLOCK_TCP="1"
-```
-
-In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
-Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
-```ini
-KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
-```
-
-We can now restart the portsentry process, by doing the following command:
-```sh
-user@roger:> sudo /etc/init.d/portsentry start
 ```
 
 ---
@@ -306,6 +291,69 @@ user@roger:> sudo systemctl restart fail2ban
 
 After this, you should **reboot** your virtual machine.
 
+**You may then proceed to test if your VM can resist DoS/SlowLoris attacks:**
+
+You can download the original implementation of the SlowLoris algorithm [here](https://www.exploit-db.com/exploits/8976)
+
+And you can run it by doing `perl slowloris.pl -dns [IP] -port [port]` - you should test it on both HTTP ports and SSH port.
+
+It should not be able to successfully send any packets to your VM (be careful with the SSH port, it seems to work differently)
+
+---
+
+### Setting up portsentry
+
+First, we need to stop the currently running portsentry daemon by doing:
+```sh
+user@roger:> sudo /etc/init.d/portsentry stop
+```
+
+Then, we must activate advanced TCP and UDP mode - you can do this by modifying the file `/etc/default/portsentry` like such:
+```ini
+TCP_MODE="atcp"
+UDP_MODE="audp"
+```
+
+Next, we must have portsentry block TCP and UDP scans, by writing the following settings into `/etc/portsentry/portsentry.conf`:
+```ini
+##################
+# Ignore Options #
+##################
+# 0 = Do not block UDP/TCP scans.
+# 1 = Block UDP/TCP scans.
+# 2 = Run external command only (KILL_RUN_CMD)
+
+BLOCK_UDP="1"
+BLOCK_TCP="1"
+```
+
+In this same configuration file `/etc/portsentry/portsentry.conf`, you must comment/remove the current `KILL_ROUTE` line.
+Instead of it, uncomment the corresponding `KILL_ROUTE` line which uses `iptables`, the line should look like this:
+```ini
+KILL_ROUTE="/sbin/iptables -I INPUT -s $TARGET$ -j DROP"
+```
+
+We can now restart the portsentry process, by doing the following command:
+```sh
+user@roger:> sudo /etc/init.d/portsentry start
+```
+
+After this, you should **reboot** your virtual machine.
+
+**You may then proceed to test if your VM can resist nmap attacks:**
+
+Make a clone of your VM, so you can have proper rights to call nmap (we can't use it from the 42 computers host machines).
+
+Then start it up, and change the static address it uses, so that there is no IP conflict with the existing VM.
+
+And to test, simply do the following commands (there are 2 different nmap tests to try):
+```sh
+user@roger:> sudo apt-get install nmap
+user@roger:> nmap [IP_vm]
+user@roger:> nmap -Pn [IP_vm]
+```
+It should not be able to output any of the open ports, it should say 'All 1000 ports are filtered'.
+
 ---
 
 ### Script to update packages
@@ -374,56 +422,57 @@ The previous command will prompt you to select a text editor, you must write thi
 
 ### Web server: apache
 
-Creation du dossier avec le nom du host voulu
+We must first create a folder to hold our html website data, with the correct permissions:
 ```sh
-user@roger:> sudo mkdir -p /var/www/init.login.fr/html
+user@roger:> sudo mkdir -p /var/www/init.[login].fr/html
+user@roger:> sudo chown -R user:user /var/www/init.[login].fr/html
+user@roger:> sudo chmod -R 755 /var/www/init.[login].fr
 ```
-Changement des droits lie au dossier
-```sh
-user@roger:> sudo chown -R user:user /var/www/init.login.fr/html
-```
-Puis pour s'assurer que le dossier possede tous les droits :
 
-sudo chmod -R 755 /var/www/init.login.fr
-
-Creation d'un fichier pour tester la bonne fonctionnalite du sereveur :
-
-nano /var/www/init.login.fr/html/index.html
-
-Pour y mettre le code suivant :
-
+And now we can create a simple HTML index page to test the web server:
+- `/var/www/init.[login].fr/html/index.html`
+```xml
 <html>
     <head>
         <title>Roger-Skyline</title>
     </head>
     <body>
-        <h1>Super ! Le serveur est fonctionnel</h1>
+        <h1>The website works!</h1>
+        <p>Lorem ipsum</p>
     </body>
 </html>
-Afin de permettre a apache fournir ce contenu, il fautl lui attribuer les bonnes instructions :
+```
 
-sudo nano /etc/apache2/sites-available/init.login.fr.conf
-
-Et y mettre a l'interieur :
-
+We need apache to know how to deliver this HTML content, so we'll create an apache config file:
+- `/etc/apache2/sites-available/init.login.fr.conf`
+```xml
 <VirtualHost *:80>
     ServerAdmin admin@example.com
-    ServerName init.login.fr
-    ServerAlias init.login.fr
-    DocumentRoot /var/www/init.login.fr/html
+    ServerName init.[login].fr
+    ServerAlias init.[login].fr
+    DocumentRoot /var/www/init.[login].fr/html
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
-Puis l'activer a l'aide des commandes suivantes :
+```
 
-cd /etc/apache2/sites-enabled
-sudo rm 000-default.conf
-sudo ln -s ../sites-available/init.login.fr.conf ./
-sudo service apache2 restart
-Afin d'activer le certificat SSL, aller dans le dossier /etc/ssl/crt/ puis utilise la commande suivante openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout roger.key -out roger.crt
+We can now activate our server by doing the following commands:
+```sh
+user@roger:> cd /etc/apache2/sites-enabled
+user@roger:> sudo rm 000-default.conf
+user@roger:> sudo ln -s ../sites-available/init.login.fr.conf ./
+user@roger:> sudo service apache2 restart
+```
 
-Puis editer le fichier /etc/apache2/sites-available/init.login.fr.conf pour y ajouter :
+So as to have a valid SSL certificate, we then need to do the following commands:
+```
+user@roger:> cd /etc/ssl/certs/
+user@roger:> sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout roger.key -out roger.crt
+```
 
+And then we must add the port 443 config to our config file, so HTTPS can function:
+- `/etc/apache2/sites-available/init.login.fr.conf`
+```xml
 <VirtualHost *:443>
     DocumentRoot /var/www/init.login.fr/html
     ServerName init.login.fr
@@ -431,19 +480,15 @@ Puis editer le fichier /etc/apache2/sites-available/init.login.fr.conf pour y aj
     SSLCertificateFile /etc/ssl/crt/roger.crt
     SSLCertificateKeyFile /etc/ssl/crt/roger.key
 </VirtualHost>
-Lancer la commande suivante sudo a2enmod ssl afin d'activer le module SSL d'apache, puis redemarrer le serveruweb systemctl restart apache2
+```
+Lancer la commande suivante sudo a2enmod ssl afin d'activer le module SSL d'apache, puis redemarrer le serveruweb
+```sh
+user@roger:> sudo systemctl restart apache2
+```
+(Though, you might want to `sudo reboot` just to be sure)
+
+After this, you might wanna do some DoS/SlowLoris and nmap tests.
 
 ---
-
-Finally, we need to modify the `/etc/ssh/sshd_config` file:
-```sh
-user@roger:> sudo vim /etc/ssh/sshd_config
-```
-The following line must be changed back to 'no':
-```sh
-...
-PasswordAuthentification no
-...
-```
 
 **Author:** aduquesn
