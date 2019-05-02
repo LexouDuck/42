@@ -404,14 +404,16 @@ The previous command will prompt you to select a text editor, you must write thi
 Let's create the following `.sh` script file:
 - `/root/scripts/script_crontab.sh`
 ```sh
-#!/bin/sh
+#!/bin/bash
 
-CRON_FILE=/etc/crontab
-CHECK_FILE=/root/.crontab-checker
+CRON_FILE="/etc/crontab"
+CHECK_FILE="/root/.crontab-checker"
+CHECKSUM=`md5sum < $CRON_FILE`
 
-if [ ! -f $CHECK_FILE ] || [ "`md5sum < $CRON_FILE`" != "`cat $CHECK_FILE`" ]
+if [ ! -f "$CHECK_FILE" ] || [ "$CHECKSUM" != "`cat $CHECK_FILE`" ]
 then
-    echo "The crontab file has been modified !" | mail -s "root: crontab modified" root
+    echo "The crontab file has been modified !" | \
+    sendmail -s "root: crontab modified" root;
     md5sum < $CRON_FILE > $CHECK_FILE;
     chmod 700 $CHECK_FILE;
 fi
