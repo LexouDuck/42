@@ -177,7 +177,12 @@ The following line must be changed back to 'no':
 ```sh
 ...
 PasswordAuthentification no
+PermitEmptyPasswords no
 ...
+ClientAliveInterval 120
+ClientAliveInterval 3
+...
+MaxAuthTries 5
 ```
 
 ---
@@ -407,13 +412,13 @@ Let's create the following `.sh` script file:
 #!/bin/bash
 
 CRON_FILE="/etc/crontab"
-CHECK_FILE="/root/.crontab-checker"
+CHECK_FILE="/root/.crontab-md5"
 CHECKSUM=`md5sum < $CRON_FILE`
 
 if [ ! -f "$CHECK_FILE" ] || [ "$CHECKSUM" != "`cat $CHECK_FILE`" ]
 then
-    echo "The crontab file has been modified !" | \
-    sendmail -s "root: crontab modified" root;
+    echo "crontab changed; mail sent to root" 
+    echo "crontab file has been modified" | sendmail root;
     md5sum < $CRON_FILE > $CHECK_FILE;
     chmod 700 $CHECK_FILE;
 fi
@@ -438,6 +443,8 @@ The previous command will prompt you to select a text editor, you must write thi
 ---
 
 ### Web server: apache
+
+**IMPORTANT** : I never managed to have the apache server resist slowloris attacks, so take the following part with a grain of salt...
 
 We must first create a folder to hold our html website data, with the correct permissions:
 ```sh
@@ -464,7 +471,7 @@ We need apache to know how to deliver this HTML content, so we'll create an apac
 - `/etc/apache2/sites-available/init.login.fr.conf`
 ```xml
 <VirtualHost *:80>
-    ServerAdmin admin@example.com
+    ServerAdmin admin@42.fr
     ServerName init.[login].fr
     ServerAlias init.[login].fr
     DocumentRoot /var/www/init.[login].fr/html
@@ -491,15 +498,16 @@ And then we must add the port 443 config to our config file, so HTTPS can functi
 - `/etc/apache2/sites-available/init.login.fr.conf`
 ```xml
 <VirtualHost *:443>
-    DocumentRoot /var/www/init.login.fr/html
-    ServerName init.login.fr
+    DocumentRoot /var/www/init.[login].fr/html
+    ServerName init.[login].fr
     SSLEngine on
-    SSLCertificateFile /etc/ssl/crt/roger.crt
-    SSLCertificateKeyFile /etc/ssl/crt/roger.key
+    SSLCertificateFile /etc/ssl/certs/roger.crt
+    SSLCertificateKeyFile /etc/ssl/certs/roger.key
 </VirtualHost>
 ```
-Lancer la commande suivante sudo a2enmod ssl afin d'activer le module SSL d'apache, puis redemarrer le serveruweb
+To activate our SSL-certified apache web server, we then need to do the following commands:
 ```sh
+user@roger:> sudo a2enmod ssl
 user@roger:> sudo systemctl restart apache2
 ```
 (Though, you might want to `sudo reboot` just to be sure)
