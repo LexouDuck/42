@@ -177,10 +177,14 @@ The following line must be changed back to 'no':
 ```sh
 ...
 PasswordAuthentification no
+...
+```
+Furthermore, to add another layer of security, the following lines should be uncommented/added:
+```sh
 PermitEmptyPasswords no
 ...
 ClientAliveInterval 120
-ClientAliveInterval 3
+ClientAliveCountMax 3
 ...
 MaxAuthTries 5
 ```
@@ -199,7 +203,7 @@ You can either run these commands by hand (with `sudo`), or you put these in a `
 ufw default deny incoming
 ufw default allow outgoing
 
-ufw allow 6666
+ufw allow [port_ssh]
 ufw allow 25
 ufw allow 80/tcp
 ufw allow 443
@@ -233,7 +237,9 @@ sudo ufw enable
 
 ### Setting up fail2ban
 
-First you must create the following file: `/etc/fail2ban/jail.local`:
+First, we must create a jail.local file, to set which 'IP ban rules' we want.
+So we must create the following file:
+- `/etc/fail2ban/jail.local`
 ```sh
 [sshd]
 enable = true
@@ -274,14 +280,16 @@ maxretry = 60
 findtime = 30
 bantime = 6000
 ```
+(replace `[port_ssh]` with the SSH port you chose)
 
-You must next create the http DOS attack log file that is referenced from the `jail.local` file:
+You must next create the HTTP DoS attack log file that is referenced from the `jail.local` file:
 ```sh
 user@roger:> sudo touch /var/log/http_dos.log
 user@roger:> sudo chmod 644 /var/log/http_dos.log
 ```
 
-Then, we need to create two files (`http-get-dos.conf` and `http-post-dos.conf`) to configure fail2ban properly:
+Then, we need to create two files (`http-get-dos.conf` and `http-post-dos.conf`) to configure fail2ban properly.
+These files hold a regex pattern to match HTTP requests:
 - `/etc/fail2ban/filter.d/http-get-dos.conf`
 ```sh
 [Definition]
@@ -303,16 +311,16 @@ After this, you should **reboot** your virtual machine.
 **You may then proceed to test if your VM can resist DoS/SlowLoris attacks:**
 
 First, take a snapshot of your current VM state (so you can restore it after testing).
-In fact, you should **restore** this snapshot between each test, otherwise the IPs written in the `/etc/hosts.deny` file might make the other tests pre-emptively fail.
+In fact, you should **restore** this snapshot between each test, otherwise the IPs that get added in the `/etc/hosts.deny` file might make the other tests pre-emptively fail.
 
 You can download the original implementation of the SlowLoris algorithm [here](https://www.exploit-db.com/exploits/8976)
 
-And you can run it by doing `perl slowloris.pl -dns [IP] -port [port]` - you should test it on both HTTP ports and SSH port.
+And you can run it by doing `perl slowloris.pl -dns [IP] -port [port]` - you should test it on both HTTP ports and the SSH port you chose.
 
-It should not be able to successfully send any packets to your VM - though the SSH port will probably fail.
-This is usually because you're testing it from the host machine, which has the correct RSA keys for SSH.
+The test will probably take long, but after waiting, it should not be able to successfully send any packets to your VM.
+The SSH port test will probably fail, this is usually because you're testing it from the host machine, which has the correct RSA keys for SSH.
 
-You will need to **clone** your current VM (name it attack-test or something), and on this new cloned VM, you can
+You will need to **clone** your current VM (name it attack-test or something), and on this new cloned VM, you can try out slowloris from a machine with an "unknown" IP/RSA status. Just remember to change the IP of the new cloned VM so that there is no IP conflict.
 
 ---
 
@@ -355,11 +363,9 @@ user@roger:> sudo /etc/init.d/portsentry start
 
 After this, you should **reboot** your virtual machine.
 
-**You may then proceed to test if your VM can resist nmap attacks:**
+**You may then proceed to test if your VM can resist portscan attacks:**
 
-Make a clone of your VM, so you can have proper rights to call nmap (we can't use it from the 42 computers host machines).
-
-Then start it up, and change the static address it uses, so that there is no IP conflict with the existing VM.
+Using the same clone of your VM, you can have proper rights to call `nmap` (we can't use it from the 42 computers host machines cause we're not root/sudo users).
 
 And to test, simply do the following commands (there are 2 different nmap tests to try):
 ```sh
@@ -367,7 +373,7 @@ user@roger:> sudo apt-get install nmap
 user@roger:> nmap [IP_vm]
 user@roger:> nmap -Pn [IP_vm]
 ```
-Each of the two test commands can take quite long to finish.
+Each of the two test commands can take quite long to finish (you can press any key while `nmap` is running to get an output of the estimated remaining time).
 
 It should not be able to output any of the open ports, it should say 'All 1000 ports are filtered'.
 
@@ -386,7 +392,7 @@ apt-get update -y >> /var/log/update_script.log
 apt-get upgrade -y >> /var/log/update_script.log
 ```
 
-And we must give this file the proper permissions, and let `root` run it without using `sudo`:
+And we must give this file the proper permissions:
 ```sh
 user@roger:> sudo chmod 755 /root/scripts/script_log.sh
 user@roger:> sudo chown root /root/scripts/script_log.sh
