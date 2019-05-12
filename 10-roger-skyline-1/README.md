@@ -233,6 +233,12 @@ UFW does not start on boot by default for some reason - to remedy this, you can 
 sudo ufw enable
 ```
 
+And we must give this script the proper permissions so it can be run:
+```sh
+user@roger:> sudo chmod 755 /etc/rc.local
+user@roger:> sudo chown root /etc/rc.local
+```
+
 ---
 
 ### Setting up fail2ban
