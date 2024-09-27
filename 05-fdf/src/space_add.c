@@ -27,8 +27,8 @@ t_vertex	*add_vertex(t_space *space, float x, float y, float z)
 		vertex->display |= (((int)fabsf(z * 10) & 0xFF) << 16);
 	if (!(result = (t_list *)malloc(sizeof(t_list))))
 		return (NULL);
-	result->content_size = sizeof(t_vertex);
-	result->content = vertex;
+	result->item_size = sizeof(t_vertex);
+	result->item = vertex;
 	result->next = NULL;
 	ft_lstadd(&(space->vertices), result);
 	return (vertex);
@@ -47,8 +47,8 @@ t_edge		*add_edge(t_space *space, t_vertex *v1, t_vertex *v2)
 	edge->vertex2 = v2;
 	if (!(result = (t_list *)malloc(sizeof(t_list))))
 		return (NULL);
-	result->content_size = sizeof(t_edge);
-	result->content = edge;
+	result->item_size = sizeof(t_edge);
+	result->item = edge;
 	result->next = NULL;
 	ft_lstadd(&(space->edges), result);
 	return (edge);
@@ -70,8 +70,8 @@ t_face		*add_face(t_space *space, t_edge *e1, t_edge *e2, t_edge *e3)
 	face->edge3 = e3;
 	if (!(result = (t_list *)malloc(sizeof(t_list))))
 		return (NULL);
-	result->content_size = sizeof(t_face);
-	result->content = face;
+	result->item_size = sizeof(t_face);
+	result->item = face;
 	result->next = NULL;
 	ft_lstadd(&(space->faces), result);
 	return (face);

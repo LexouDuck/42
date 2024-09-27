@@ -18,24 +18,24 @@ static int	fdf_init(t_fdf *fdf, int fd)
 
 	if ((error = fdf_readmap(fdf, fd)))
 	{
-		ft_putendl("Error: the given fdf file is invalid -> returned error:");
-		ft_putendl(error);
+		ft_output_line("Error: given fdf file is invalid -> returned error:");
+		ft_output_line(error);
 		return (ERROR);
 	}
 	if (!(fdf->camera = camera_new(fdf)) ||
 		!(fdf->space = (t_space *)malloc(sizeof(t_space))))
 	{
-		ft_putendl("Error: could not initialize the 3d space");
+		ft_output_line("Error: could not initialize the 3d space");
 		return (ERROR);
 	}
 	if (fdf_getmap_verts(fdf) == ERROR)
 	{
-		ft_putendl("Error: could not create the vertices for the 3d space");
+		ft_output_line("Error: could not create vertices for the 3d space");
 		return (ERROR);
 	}
 	if (fdf_getmap_edges(fdf) == ERROR)
 	{
-		ft_putendl("Error: could not create the edges for the 3d space");
+		ft_output_line("Error: could not create edges for the 3d space");
 		return (ERROR);
 	}
 	return (OK);
@@ -63,17 +63,17 @@ static int	open_window(t_fdf *fdf, char *title)
 	mlx.fdf = fdf;
 	if (!(mlx.mlx_ptr = mlx_init()))
 	{
-		ft_putendl("Error: could not initialize MinilibX");
+		ft_output_line("Error: could not initialize MinilibX");
 		return (ERROR);
 	}
 	if (img_init(&mlx))
 	{
-		ft_putendl("Error: could not create render image");
+		ft_output_line("Error: could not create render image");
 		return (ERROR);
 	}
 	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIDTH, HEIGHT, title)))
 	{
-		ft_putendl("Error: could not open new window");
+		ft_output_line("Error: could not open new window");
 		return (ERROR);
 	}
 	render(&mlx, mlx.fdf->camera);
@@ -93,7 +93,7 @@ int			main(int argc, char **argv)
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
 		{
-			ft_putendl("Error: could not open file");
+			ft_output_line("Error: could not open file");
 			return (ERROR);
 		}
 		if (fdf_init(&fdf, fd) == ERROR)
@@ -107,6 +107,6 @@ int			main(int argc, char **argv)
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("fdf: expecting one file as argument");
+	ft_output_line("fdf: expecting one file as argument");
 	return (ERROR);
 }

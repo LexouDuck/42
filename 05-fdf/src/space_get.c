@@ -20,9 +20,9 @@ t_vertex	*get_vertex(t_space *space, float x, float y, float z)
 	lst = space->vertices;
 	while (lst)
 	{
-		if (lst->content == NULL)
+		if (lst->item == NULL)
 			continue ;
-		vertex = (t_vertex *)lst->content;
+		vertex = (t_vertex *)lst->item;
 		if (vertex &&
 			vertex->absolute.x == x &&
 			vertex->absolute.y == y &&
@@ -41,9 +41,9 @@ t_edge		*get_edge(t_space *space, t_vertex *v1, t_vertex *v2)
 	lst = space->edges;
 	while (lst)
 	{
-		if (lst->content == NULL)
+		if (lst->item == NULL)
 			continue ;
-		edge = (t_edge *)lst->content;
+		edge = (t_edge *)lst->item;
 		if (edge->vertex1 == v1 &&
 			edge->vertex2 == v2)
 			return (edge);
@@ -60,9 +60,9 @@ t_face		*get_face(t_space *space, t_edge *e1, t_edge *e2, t_edge *e3)
 	lst = space->faces;
 	while (lst)
 	{
-		if (lst->content == NULL)
+		if (lst->item == NULL)
 			continue ;
-		face = (t_face *)lst->content;
+		face = (t_face *)lst->item;
 		if (face->edge1 == e1 &&
 			face->edge2 == e2 &&
 			face->edge3 == e3)

@@ -22,7 +22,14 @@
 
 # include <mlx.h>
 # include "../mlx_events.h"
+
 # include "libft/libft.h"
+# include "libft/libft_char.h"
+# include "libft/libft_memory.h"
+# include "libft/libft_string.h"
+# include "libft/libft_convert.h"
+# include "libft/libft_list.h"
+# include "libft/libft_io.h"
 
 # define ALT	0.1
 

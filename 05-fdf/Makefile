@@ -1,22 +1,39 @@
 NAME	=	fdf
 
-CC		=	gcc
-CFLAGS	=	-Wall -Werror -Wextra -O3
-
 RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
 GREEN	=	"\033[0;32m"
 
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
+OSFLAG := 
+ifeq ($(OS),Windows_NT)
+	OSFLAG := WIN
+else
+	UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		OSFLAG := LIN
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		OSFLAG := MAC
+	endif
+endif
+ifeq ($(OSFLAG),)
+_:=$(error "Could not estimate the current target platform")
+endif
+
+CC		=	gcc
+CFLAGS	=	-Wall -Werror -Wextra -O3 $(INCLUDE)
+
+INCLUDE	=	-I$(LMLX_PATH)
+
+LIBS	=	$(LIBFT) $(LIBMLX_$(OSFLAG)) $(LIBMATH)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
-LMLX_PATH	=	/usr/lib/
-LMLX_SUFFIX	=	
+LMLX_PATH	=	../minilibx/
 XWIN_PATH	=	/usr/include/X11/
 LIBMLX_MAC	=	-lmlx -framework OpenGL -framework AppKit
-LIBMLX_WIN	=	-L$(LMLX_PATH) -I$(XWIN_PATH) -lmlx -lX11.dll -lXext.dll
-LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
+LIBMLX_WIN	=	-L$(LMLX_PATH) -lmlx -L$(XWIN_PATH) -lX11.dll -lXext.dll
+LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx -L$(XWIN_PATH) -lX11     -lXext
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/

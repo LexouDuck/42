@@ -19,7 +19,7 @@ static void	fdf_readmap_create(t_fdf *fdf, char *file)
 	size_t	i;
 
 	width = 0;
-	ft_bzero(&v, sizeof(t_point));
+	ft_memclr(&v, sizeof(t_point));
 	i = -1;
 	while (file[++i])
 	{
@@ -59,7 +59,7 @@ static void	fdf_readmap_file(char **map, char *file)
 				++length;
 			v.color = (file[i + length] == '\n') ? '\n' : '\0';
 			file[i + length] = '\0';
-			map[v.y][v.x] = ft_atoi(file + i);
+			map[v.y][v.x] = ft_str_to_s8(file + i);
 			i += length;
 			file[i] = (char)v.color;
 			++v.x;
@@ -74,7 +74,7 @@ char		*fdf_readmap(t_fdf *fdf, int fd)
 	char	*file;
 	t_u32	i;
 
-	if (!(file = read_file(fd)))
+	if (ft_readfile(fd, &file, 0xFFFFFF))
 		return ("Could not read file");
 	fdf_readmap_create(fdf, file);
 	if (!(fdf->map = (char **)malloc(fdf->map_height * sizeof(char *))))
@@ -84,7 +84,7 @@ char		*fdf_readmap(t_fdf *fdf, int fd)
 	{
 		if (!(fdf->map[i] = (char *)malloc(fdf->map_width * sizeof(char))))
 			return ("Could not create fdf map line");
-		ft_bzero(fdf->map[i], fdf->map_width * sizeof(char));
+		ft_memclr(fdf->map[i], fdf->map_width * sizeof(char));
 		++i;
 	}
 	fdf_readmap_file(fdf->map, file);

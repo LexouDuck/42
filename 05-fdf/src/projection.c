@@ -80,7 +80,7 @@ void				project_vertices(t_mlx *mlx,
 		lst = mlx->fdf->space->vertices;
 		while (lst)
 		{
-			vertex = (t_vertex *)lst->content;
+			vertex = (t_vertex *)lst->item;
 			if (vertex)
 			{
 				project_vertex(vertex,

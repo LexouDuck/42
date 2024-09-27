@@ -21,7 +21,7 @@ static void		render_vertices(t_mlx *mlx, int render_colors)
 	lst = mlx->fdf->space->vertices;
 	while (lst)
 	{
-		vertex = (t_vertex *)lst->content;
+		vertex = (t_vertex *)lst->item;
 		if (vertex && (vertex->display & 0xFF000000))
 		{
 			pos.x = ((vertex->projected.x + 1) * 0.5) * WIDTH;
@@ -77,15 +77,15 @@ static void		render_debug(void *mlx, void *win, t_camera *camera)
 	mlx_string_put(mlx, win, 10, 30, color, "Vector:");
 	mlx_string_put(mlx, win, 80, 30, color, str);
 	free(str);
-	str = ft_ftoa(camera->lat, 8);
+	str = ft_f32_to_str(camera->lat, 8);
 	mlx_string_put(mlx, win, 10, 50, color, "Lat:");
 	mlx_string_put(mlx, win, 60, 50, color, str);
 	free(str);
-	str = ft_ftoa(camera->lon, 8);
+	str = ft_f32_to_str(camera->lon, 8);
 	mlx_string_put(mlx, win, 10, 70, color, "Lon:");
 	mlx_string_put(mlx, win, 60, 70, color, str);
 	free(str);
-	str = ft_ftoa(camera->zoom, 8);
+	str = ft_f32_to_str(camera->zoom, 8);
 	mlx_string_put(mlx, win, 10, 90, color, "Zoom:");
 	mlx_string_put(mlx, win, 60, 90, color, str);
 	free(str);
@@ -104,7 +104,7 @@ void			render(t_mlx *mlx, t_camera *camera)
 	int			render_colors;
 	t_list		*lst;
 
-	ft_bzero(mlx->image->buffer, HEIGHT * mlx->image->line);
+	ft_memclr(mlx->image->buffer, HEIGHT * mlx->image->line);
 	camera_update(camera);
 	get_camera_matrix(camera);
 	project_vertices(mlx, &camera->matrix, camera);
@@ -116,8 +116,8 @@ void			render(t_mlx *mlx, t_camera *camera)
 		lst = mlx->fdf->space->edges;
 		while (lst)
 		{
-			if (lst->content)
-				render_edge(mlx, render_colors, (t_edge *)lst->content);
+			if (lst->item)
+				render_edge(mlx, render_colors, (t_edge *)lst->item);
 			lst = lst->next;
 		}
 	}
