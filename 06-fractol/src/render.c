@@ -21,8 +21,8 @@ void				render_debug_complex(t_mlx *mlx,
 	char	*c_imag;
 	t_point	c;
 
-	c_real = ft_ftoa(complex->x, 3);
-	c_imag = ft_ftoa(complex->y, 3);
+	c_real = ft_f64_to_str(complex->x, 3);
+	c_imag = ft_f64_to_str(complex->y, 3);
 	c.x = ft_strlen(c_real);
 	c.y = ft_strlen(c_imag);
 	if (!(result = (char *)malloc(c.x + c.y + 4)))
@@ -49,11 +49,11 @@ void				render_debug(t_mlx *mlx, t_complex *complex)
 	char	*c;
 
 	pos.color = 0xFFFFFF;
-	c = ft_ftoa(mlx->fractol->radius, 8);
+	c = ft_f64_to_str(mlx->fractol->radius, 8);
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 40, pos.color, "RADIUS:");
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 40, pos.color, c);
 	free(c);
-	c = ft_ftoa(mlx->fractol->zoom, 8);
+	c = ft_f64_to_str(mlx->fractol->zoom, 8);
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 10, 60, pos.color, "ZOOM:");
 	mlx_string_put(mlx->mlx_ptr, mlx->win_ptr, 60, 60, pos.color, c);
 	free(c);
@@ -101,7 +101,7 @@ void				render(t_mlx *mlx)
 	t_complex	c;
 
 	mlx->rendering = 1;
-	ft_bzero(mlx->image->buffer, WIN_H * mlx->image->line);
+	ft_memclr(mlx->image->buffer, WIN_H * mlx->image->line);
 	if (mlx->mouse)
 	{
 		c.x = 0;

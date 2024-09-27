@@ -99,17 +99,17 @@ static int	open_window(t_fractol *fractol, char *title)
 	mlx.fractol = fractol;
 	if (!(mlx.mlx_ptr = mlx_init()))
 	{
-		ft_putendl("Error: could not initialize MinilibX");
+		ft_output_line("Error: could not initialize MinilibX");
 		return (ERROR);
 	}
 	if (init_image(&mlx))
 	{
-		ft_putendl("Error: could not create render image");
+		ft_output_line("Error: could not create render image");
 		return (ERROR);
 	}
 	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIN_W, WIN_H, title)))
 	{
-		ft_putendl("Error: could not open new window");
+		ft_output_line("Error: could not open new window");
 		return (ERROR);
 	}
 	render(&mlx);
@@ -126,8 +126,9 @@ int			main(int argc, char **argv)
 	{
 		if (init_fractol(&fractol, argv[1]) == ERROR)
 		{
-			ft_putendl("fractol: invalid argument, should be:");
-			ft_putendl(" - julia\n - fatou\n - mandelbrot\n - newton");
+			ft_output_line("fractol: invalid argument, should be:");
+			ft_output_line(
+				"- julia\n- fatou\n- mandelbrot\n- burningship\n- newton");
 			return (ERROR);
 		}
 		srand(time(NULL));
@@ -136,7 +137,7 @@ int			main(int argc, char **argv)
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("fractol: expecting one argument among the following:");
-	ft_putendl(" - julia\n - fatou\n - mandelbrot\n - burningship\n - newton");
+	ft_output_line("fractol: expecting one argument among the following:");
+	ft_output_line("- julia\n- fatou\n- mandelbrot\n- burningship\n- newton");
 	return (OK);
 }

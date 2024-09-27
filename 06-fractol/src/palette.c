@@ -46,40 +46,40 @@ t_u32		palette_getcolor(t_palette const palette, int i, double n)
 static void	palette_randomize(t_palette *palette)
 {
 	palette->r.center = rand() % 256;
-	palette->r.amplitude = rand() % (256 - palette->r.center);
-	palette->r.phase = (double)(rand() % 360) * M_PI / 180;
-	palette->r.frequency = (double)(rand() % 80) / 1000.0 + 0.1;
 	palette->g.center = rand() % 256;
-	palette->g.amplitude = rand() % (256 - palette->g.center);
-	palette->g.phase = (double)(rand() % 360) * M_PI / 180;
-	palette->g.frequency = (double)(rand() % 80) / 1000.0 + 0.1;
 	palette->b.center = rand() % 256;
+	palette->r.amplitude = rand() % (256 - palette->r.center);
+	palette->g.amplitude = rand() % (256 - palette->g.center);
 	palette->b.amplitude = rand() % (256 - palette->b.center);
+	palette->r.phase = (double)(rand() % 360) * M_PI / 180;
+	palette->g.phase = (double)(rand() % 360) * M_PI / 180;
 	palette->b.phase = (double)(rand() % 360) * M_PI / 180;
+	palette->r.frequency = (double)(rand() % 80) / 1000.0 + 0.1;
+	palette->g.frequency = (double)(rand() % 80) / 1000.0 + 0.1;
 	palette->b.frequency = (double)(rand() % 80) / 1000.0 + 0.1;
 }
 
 int			event_key_palette(t_mlx *mlx, int key)
 {
-	if (key == KEY_NUMPAD_ENTER)
+	if (key == KEY_NUMPAD_0 || key == '0')
 		palette_randomize(&mlx->fractol->palette);
-	else if (key == KEY_NUMPAD_1)
+	else if (key == KEY_NUMPAD_1 || key == '1')
 		mlx->fractol->palette.r.center += 20;
-	else if (key == KEY_NUMPAD_2)
+	else if (key == KEY_NUMPAD_2 || key == '2')
 		mlx->fractol->palette.r.amplitude += 2;
-	else if (key == KEY_NUMPAD_3)
+	else if (key == KEY_NUMPAD_3 || key == '3')
 		mlx->fractol->palette.r.frequency += 0.01;
-	else if (key == KEY_NUMPAD_4)
+	else if (key == KEY_NUMPAD_4 || key == '4')
 		mlx->fractol->palette.g.center += 20;
-	else if (key == KEY_NUMPAD_5)
+	else if (key == KEY_NUMPAD_5 || key == '5')
 		mlx->fractol->palette.g.amplitude += 2;
-	else if (key == KEY_NUMPAD_6)
+	else if (key == KEY_NUMPAD_6 || key == '6')
 		mlx->fractol->palette.g.frequency += 0.01;
-	else if (key == KEY_NUMPAD_7)
+	else if (key == KEY_NUMPAD_7 || key == '7')
 		mlx->fractol->palette.b.center += 20;
-	else if (key == KEY_NUMPAD_8)
+	else if (key == KEY_NUMPAD_8 || key == '8')
 		mlx->fractol->palette.b.amplitude += 2;
-	else if (key == KEY_NUMPAD_9)
+	else if (key == KEY_NUMPAD_9 || key == '9')
 		mlx->fractol->palette.b.frequency += 0.01;
 	else
 		return (1);

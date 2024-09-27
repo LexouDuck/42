@@ -19,12 +19,19 @@
 
 # include <mlx.h>
 # include "../mlx_events.h"
+
 # include "libft/libft.h"
+# include "libft/libft_char.h"
+# include "libft/libft_memory.h"
+# include "libft/libft_string.h"
+# include "libft/libft_convert.h"
+# include "libft/libft_list.h"
+# include "libft/libft_io.h"
 
-# define WIN_W	1280
-# define WIN_H	800
+# define WIN_W	640
+# define WIN_H	480
 
-# define MAX_ZOOM	200
+# define MAX_ZOOM	64
 
 typedef struct	s_point
 {
