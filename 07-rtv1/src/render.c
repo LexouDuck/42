@@ -27,7 +27,7 @@ t_object		*render_trace(
 	lst = rtv1->objects;
 	while (lst)
 	{
-		object = (t_object *)lst->content;
+		object = (t_object *)lst->item;
 		ft_memcpy(&tmp, ray, sizeof(t_ray));
 		tmp.t = nearest;
 		set_ray_to_object_space(&tmp, object);
@@ -74,8 +74,8 @@ static void		render_pixels(
 	float scale,
 	float ratio)
 {
-	t_vector	tmp;
 	t_matrix	*matrix;
+	t_vector	tmp;
 	t_ray		ray;
 	t_point		pixel;
 
@@ -89,8 +89,9 @@ static void		render_pixels(
 		while (++pixel.x < WIDTH)
 		{
 			ray.pos = tmp;
-			vector_set(&ray.dir, (2 * ((pixel.x + 0.5) / WIDTH) - 1) * scale
-				* ratio, (1 - 2 * ((pixel.y + 0.5) / HEIGHT)) * scale, 1);
+			vector_set(&ray.dir,
+				(0 + 2 * ((pixel.x + 0.5) / WIDTH) - 1) * scale * ratio,
+				(1 - 2 * ((pixel.y + 0.5) / HEIGHT)) * scale, 1);
 			matrix->t = (t_vector){0, 0, 0};
 			vector_transform(&ray.dir, matrix);
 			vector_normalize(&ray.dir);
@@ -109,7 +110,7 @@ void			render(t_mlx *mlx, t_camera *camera)
 	t_u32		*buffer;
 
 	buffer = (t_u32 *)mlx->image->buffer;
-	ft_bzero(buffer, HEIGHT * mlx->image->line);
+	ft_memclr(buffer, HEIGHT * mlx->image->line);
 	camera_update(camera);
 	get_camera_matrix(camera);
 	render_pixels(mlx->rtv1, buffer,

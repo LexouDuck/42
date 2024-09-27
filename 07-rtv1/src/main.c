@@ -12,76 +12,32 @@
 
 #include "../rtv1.h"
 
-/*
-**static void	rtv1_printdebug(t_rtv1 *rtv1)
-**{
-**	t_object *object;
-**	t_light *light;
-**	t_list *lst;
-**
-**	ft_putendl("RTV1 File successfully read:");
-**	ft_putstr("BG Color: "); ft_putendl(ft_itoa_hex(rtv1->bg_color, "#"));
-**	ft_putendl("Lights:");
-**	lst = rtv1->lights;
-**	while (lst)
-**	{
-**		light = (t_light *)lst->content;
-**		ft_putstr(ft_itoa_hex(light->color, "\t#"));
-**		ft_putstr(", ");
-**		ft_putstr(ft_itoa(light->strength));
-**		ft_putstr(", (");
-**		ft_putstr(ft_ftoa(light->position.x, 6)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(light->position.y, 6)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(light->position.z, 6)); ft_putstr(")\n");
-**		lst = lst->next;
-**	}
-**	ft_putendl("Objects:");
-**	lst = rtv1->objects;
-**	while (lst)
-**	{
-**		object = (t_object *)lst->content;
-**		static const char *types[6] = {
-**			"N/A", "SPHERE  ", "CYLINDER", "CUBE    ", CONE    "};
-**		ft_putstr(types[(int)object->type]);
-**		ft_putstr(ft_itoa_hex(object->color, "-> #")); ft_putstr(",\t(");
-**		ft_putstr(ft_ftoa(object->position.x, 3)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(object->position.y, 3)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(object->position.z, 3)); ft_putstr(")\t{");
-**		ft_putstr(ft_ftoa(object->rotation.x, 3)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(object->rotation.y, 3)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(object->rotation.z, 3)); ft_putstr("}\t[");
-**		ft_putstr(ft_ftoa(object->scale.x, 3)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(object->scale.y, 3)); ft_putstr(", ");
-**		ft_putstr(ft_ftoa(object->scale.z, 3)); ft_putstr("]\n");
-**		lst = lst->next;
-**	}
-**}
-*/
-
-/*
-**	else rtv1_printdebug(rtv1);
-*/
-
 static int	rtv1_init(t_rtv1 *rtv1, int fd)
 {
 	t_parser	parser;
 	char		*error;
+	char		*lineno;
 
 	rtv1->camera = NULL;
 	rtv1->lights = NULL;
 	rtv1->objects = NULL;
+	rtv1->bg_color = 0;
 	if ((error = rtv1_read_file(rtv1, &parser, fd)))
 	{
-		ft_putstr("Error: while reading rt file -> at line ");
-		ft_putnbr(parser.line);
-		ft_putstr(":\n");
-		ft_putendl(error);
+		ft_output_str("Error: while reading rt file -> at line ");
+		if ((lineno = ft_s32_to_str(parser.line)))
+		{
+			ft_output_line(lineno);
+			free(lineno);
+		}
+		ft_output_line(error);
 		free(error);
 		return (ERROR);
 	}
+	//else rtv1_printdebug(rtv1);
 	if (!(rtv1->camera = camera_new()))
 	{
-		ft_putendl("Error: could not initialize the camera");
+		ft_output_line("Error: could not initialize the camera");
 		return (ERROR);
 	}
 	return (OK);
@@ -105,7 +61,7 @@ static int	rtv1_init_objects(t_list *lst)
 	getnormal[4] = getnormal_cone;
 	while (lst)
 	{
-		if (!(object = (t_object *)lst->content))
+		if (!(object = (t_object *)lst->item))
 			return (ERROR);
 		object->intersect = intersect[(int)object->type];
 		object->getnormal = getnormal[(int)object->type];
@@ -137,17 +93,17 @@ static int	open_window(t_rtv1 *rtv1, char *title)
 	mlx.rtv1 = rtv1;
 	if (!(mlx.mlx_ptr = mlx_init()))
 	{
-		ft_putendl("Error: could not initialize MinilibX");
+		ft_output_line("Error: could not initialize MinilibX");
 		return (ERROR);
 	}
 	if (img_init(&mlx))
 	{
-		ft_putendl("Error: could not create render image");
+		ft_output_line("Error: could not create render image");
 		return (ERROR);
 	}
 	if (!(mlx.win_ptr = mlx_new_window(mlx.mlx_ptr, WIDTH, HEIGHT, title)))
 	{
-		ft_putendl("Error: could not open new window");
+		ft_output_line("Error: could not open new window");
 		return (ERROR);
 	}
 	render(&mlx, mlx.rtv1->camera);
@@ -166,7 +122,7 @@ int			main(int argc, char **argv)
 		fd = open(argv[1], O_RDONLY);
 		if (fd < 0)
 		{
-			ft_putendl("Error: could not open file");
+			ft_output_line("Error: could not open file");
 			return (ERROR);
 		}
 		if (rtv1_init(&rtv1, fd))
@@ -177,6 +133,6 @@ int			main(int argc, char **argv)
 			return (ERROR);
 		return (OK);
 	}
-	ft_putendl("rtv1: expecting one file as argument");
+	ft_output_line("rtv1: expecting one file as argument");
 	return (ERROR);
 }

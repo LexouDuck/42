@@ -50,7 +50,6 @@ int					intersect_sphere(t_object *object, t_ray *ray)
 	float		tmp;
 	float		root1;
 	float		root2;
-
 	quadratic.x = vector_scalar(&ray->dir, &ray->dir);
 	quadratic.y = vector_scalar(&ray->dir, &ray->pos) * 2;
 	quadratic.z = vector_scalar(&ray->pos, &ray->pos) - 1;

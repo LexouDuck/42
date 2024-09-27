@@ -13,6 +13,8 @@
 #ifndef __RTV1_H
 # define __RTV1_H
 
+# include <stdio.h>
+
 # include <stdlib.h>
 # include <math.h>
 # include <unistd.h>
@@ -22,10 +24,44 @@
 
 # include <mlx.h>
 # include "../mlx_events.h"
+
 # include "libft/libft.h"
+# include "libft/libft_char.h"
+# include "libft/libft_memory.h"
+# include "libft/libft_string.h"
+# include "libft/libft_convert.h"
+# include "libft/libft_list.h"
+# include "libft/libft_io.h"
+
+/*
+**	PROGRAM OPTIONS
+*/
 
 # define WIDTH	320
 # define HEIGHT	240
+
+# define LIGHT_BIAS	0.0001
+
+/*
+**	CAMERA MODES
+*/
+
+# define CAMERA_NONE		0
+# define CAMERA_ROTATE		1
+# define CAMERA_ZOOM		2
+# define CAMERA_PAN			3
+
+/*
+**	RENDER MODES
+*/
+
+# define RENDER_DIFFUSE		0b001
+# define RENDER_SHADOWS		0b010
+# define RENDER_SPECULAR	0b100
+
+/*
+**	TYPES
+*/
 
 typedef struct	s_parser
 {
@@ -69,18 +105,18 @@ typedef struct	s_ray
 	float		t;
 }				t_ray;
 
-typedef enum	e_geom
+typedef enum	e_shape
 {
 	none,
 	sphere,
 	cylinder,
 	cube,
 	cone,
-}				t_geom;
+}				t_shape;
 
 typedef struct	s_object
 {
-	t_geom		type;
+	t_shape		type;
 	t_vector	position;
 	t_vector	rotation;
 	t_vector	scale;
@@ -128,12 +164,6 @@ typedef struct	s_camera
 	t_matrix	matrix;
 }				t_camera;
 
-# define RENDER_DIFFUSE		0b001
-# define RENDER_SHADOWS		0b010
-# define RENDER_SPECULAR	0b100
-
-# define LIGHT_BIAS	0.0001
-
 typedef struct	s_rtv1
 {
 	t_camera	*camera;
@@ -160,7 +190,7 @@ typedef struct	s_mlx
 }				t_mlx;
 
 /*
-**	====	color.c
+**	color.c
 */
 t_u32			color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
 t_u8			color_get_a(t_u32 color);
@@ -169,7 +199,7 @@ t_u8			color_get_g(t_u32 color);
 t_u8			color_get_b(t_u32 color);
 
 /*
-**	====	vector.c
+**	vector.c
 */
 t_vector		*vector_new(float x, float y, float z);
 void			vector_set(t_vector *vector, float x, float y, float z);
@@ -178,7 +208,7 @@ void			vector_scale(t_vector *vector, float scale);
 char			*vector_tostr(t_vector *vector, int precision);
 
 /*
-**	====	vector_op.c
+**	vector_op.c
 */
 void			vector_invert(t_vector *vector);
 void			vector_normalize(t_vector *vector);
@@ -187,7 +217,7 @@ void			vector_multiply(t_vector *result, t_vector *v1, t_vector *v2);
 void			vector_transform(t_vector *vector, t_matrix *matrix);
 
 /*
-**	====	matrix.c
+**	matrix.c
 */
 t_matrix		*matrix_new(
 	t_vector *u, t_vector *v, t_vector *w, t_vector *t);
@@ -198,7 +228,7 @@ void			matrix_inverse(t_matrix *matrix);
 void			matrix_multiply(t_matrix *m1, t_matrix *m2);
 
 /*
-**	====	camera.c
+**	camera.c
 */
 t_camera		*camera_new();
 void			camera_pan(t_camera *camera, float x, float y);
@@ -207,18 +237,14 @@ void			camera_zoom_tilt(t_camera *camera, float x, float y);
 void			camera_update(t_camera *camera);
 
 /*
-**	====	rt object files
+**	rt object files
 */
 int				intersect_disk(t_ray *ray, float base, float *t);
 
-int				intersect_sphere(
-	t_object *object, t_ray *ray);
-int				intersect_cylinder(
-	t_object *object, t_ray *ray);
-int				intersect_cube(
-	t_object *object, t_ray *ray);
-int				intersect_cone(
-	t_object *object, t_ray *ray);
+int				intersect_sphere(t_object *object, t_ray *ray);
+int				intersect_cylinder(t_object *object, t_ray *ray);
+int				intersect_cube(t_object *object, t_ray *ray);
+int				intersect_cone(t_object *object, t_ray *ray);
 
 void			getnormal_sphere(
 	t_vector *result, t_object *object, t_vector *hit_pos);
@@ -230,7 +256,7 @@ void			getnormal_cone(
 	t_vector *result, t_object *object, t_vector *hit_pos);
 
 /*
-**	====	read.c & read_util.c
+**	read.c & read_util.c
 */
 char			*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd);
 void			read_whitespace(t_parser *parser);
@@ -240,7 +266,7 @@ char			*read_number_arg(t_parser *parser, float *result);
 char			*read_color_arg(t_parser *parser, t_u32 *result);
 
 /*
-**	====	render.c & render_util.c
+**	render.c & render_util.c
 */
 void			rtv1_read_object_getmatrix(t_object *object);
 void			get_camera_matrix(t_camera *camera);
@@ -258,21 +284,18 @@ void			set_ray_to_object_space(t_ray *ray, t_object *object);
 void			set_hitposnormal_toworld(t_object *object, t_shader *shader);
 
 /*
-**	====	shader.c
+**	shader.c
 */
 t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader);
 
 /*
-**	====	event.c
+**	event.c
 */
 int				setup_events(t_mlx *mlx);
 
 /*
-** === CAMERA MODES ===
+**	debug.c
 */
-# define CAMERA_NONE		0
-# define CAMERA_ROTATE		1
-# define CAMERA_ZOOM		2
-# define CAMERA_PAN			3
+void			rtv1_printdebug(t_rtv1 *rtv1);
 
 #endif

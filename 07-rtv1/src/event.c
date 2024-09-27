@@ -107,11 +107,11 @@ static int	event_key(int key, void *param)
 		exit(OK);
 	}
 	else if (key == KEY_HOME)
-		camera->render += (camera->render & 0b100) ? -0b100 : 0b100;
+		camera->render += (camera->render & RENDER_SPECULAR) ? -RENDER_SPECULAR : RENDER_SPECULAR;
 	else if (key == KEY_END)
-		camera->render += (camera->render & 0b010) ? -0b010 : 0b010;
+		camera->render += (camera->render & RENDER_SHADOWS) ? -RENDER_SHADOWS : RENDER_SHADOWS;
 	else if (key == KEY_DELETE)
-		camera->render += (camera->render & 0b001) ? -0b001 : 0b001;
+		camera->render += (camera->render & RENDER_DIFFUSE) ? -RENDER_DIFFUSE : RENDER_DIFFUSE;
 	else if (key == KEY_LEFT || key == KEY_RIGHT)
 		camera->anchor.x += (key == KEY_LEFT) ? -1 : 1;
 	else if (key == KEY_DOWN || key == KEY_UP)

@@ -56,7 +56,7 @@ static char	*read_vector_arg_number(t_parser *parser, float *result, char sep)
 		return (read_error(sep, "separator char", file[parser->index]));
 	file[parser->index] = '\0';
 	++(parser->index);
-	*result = ft_atof(number);
+	*result = ft_str_to_f32(number);
 	return (NULL);
 }
 
@@ -104,7 +104,7 @@ char		*read_number_arg(t_parser *parser, float *result)
 			parser->line += 1;
 		file[parser->index] = '\0';
 		++(parser->index);
-		*result = ft_atof(number);
+		*result = ft_str_to_f32(number);
 		return (NULL);
 	}
 	return (read_error('0', "or any other digit, for a number argument", c));
@@ -132,7 +132,7 @@ char		*read_color_arg(t_parser *parser, t_u32 *result)
 			parser->line += 1;
 		file[parser->index] = '\0';
 		++(parser->index);
-		*result = ft_atoi_hex(color);
+		*result = ft_hex_to_u32(color);
 		return (NULL);
 	}
 	return (read_error('#', "starting char for color arg", c));

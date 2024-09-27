@@ -1,35 +1,45 @@
 NAME	=	rtv1
 
-CC		=	gcc
-CFLAGS	=	-Wall -Wextra -O3 -MMD
-
 RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
 GREEN	=	"\033[0;32m"
 
+OSFLAG := 
 ifeq ($(OS),Windows_NT)
-	LIBMLX = $(LIBMLX_WIN)
+	OSFLAG := WIN
 else
 	UNAME_S := $(shell uname -s)
 	ifeq ($(UNAME_S),Linux)
-		LIBMLX = $(LIBMLX_LIN)
+		OSFLAG := LIN
 	endif
 	ifeq ($(UNAME_S),Darwin)
-		LIBMLX = $(LIBMLX_MAC)
+		OSFLAG := MAC
 	endif
 endif
+ifeq ($(OSFLAG),)
+_:=$(error "Could not estimate the current target platform")
+endif
 
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX)
+CC		=	gcc
+CFLAGS	= -g \
+	-Wall \
+	-Wextra \
+	-Winline \
+	-O3 \
+	-MMD \
+	$(INCLUDE)
+
+INCLUDE	=	-I$(LMLX_PATH)
+
+LIBS	=	$(LIBFT) $(LIBMLX_$(OSFLAG)) $(LIBMATH)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm
-LMLX_PATH	=	/usr/lib/
-LMLX_SUFFIX	=	
+LMLX_PATH	=	../minilibx/
 XWIN_PATH	=	/usr/include/X11/
 LIBMLX_MAC	=	-lmlx -framework OpenGL -framework AppKit
-LIBMLX_WIN	=	-L$(LMLX_PATH) -I$(XWIN_PATH) -lmlx -lX11.dll -lXext.dll
-LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx$(LMLX_SUFFIX) -L$(XWIN_PATH) -lX11 -lXext
-OPENCL		=	-lopencl
+LIBMLX_WIN	=	-L$(LMLX_PATH) -lmlx -L$(XWIN_PATH) -lX11.dll -lXext.dll
+LIBMLX_LIN	=	-L$(LMLX_PATH) -lmlx -L$(XWIN_PATH) -lX11     -lXext     -fPIC
 
 SRCDIR	=	./src/
 OBJDIR	=	./obj/
@@ -52,7 +62,8 @@ SRCS	= 	color.c				\
 			rt_cone.c			\
 			read_util.c			\
 			read.c				\
-			main.c
+			main.c				\
+			debug.c
 
 OBJS	=	${SRCS:%.c=$(OBJDIR)%.o}
 DEPENDS	=	${OBJS:.o=.d}

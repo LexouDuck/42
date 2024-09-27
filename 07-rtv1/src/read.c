@@ -32,9 +32,10 @@ void		read_whitespace(t_parser *parser)
 	}
 }
 
-static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
+static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_shape shape)
 {
 	char		*error;
+	void		*result;
 	t_object	object;
 
 	object.type = shape;
@@ -44,13 +45,16 @@ static char	*rtv1_read_object(t_rtv1 *rtv1, t_parser *parser, t_geom shape)
 		(error = read_vector_arg(parser, &object.scale)))
 		return (error);
 	rtv1_read_object_getmatrix(&object);
-	ft_lstappend(&(rtv1->objects), ft_lstnew(&object, sizeof(t_object)));
+	result = malloc(sizeof(t_object));
+	ft_memcpy(result, &object, sizeof(t_object));
+	ft_lstappend(&(rtv1->objects), ft_lstnew(result, sizeof(t_object)));
 	return (NULL);
 }
 
 static char	*rtv1_read_light(t_rtv1 *rtv1, t_parser *parser)
 {
 	char		*error;
+	void		*result;
 	t_light		light;
 
 	if ((error = read_color_arg(parser, &(light.color))))
@@ -59,13 +63,15 @@ static char	*rtv1_read_light(t_rtv1 *rtv1, t_parser *parser)
 		return (error);
 	if ((error = read_vector_arg(parser, &(light.position))))
 		return (error);
-	ft_lstadd(&(rtv1->lights), ft_lstnew(&light, sizeof(t_light)));
+	result = malloc(sizeof(t_light));
+	ft_memcpy(result, &light, sizeof(t_light));
+	ft_lstadd(&(rtv1->lights), ft_lstnew(result, sizeof(t_light)));
 	return (NULL);
 }
 
-static char	*rtv1_read_command(t_rtv1 *rtv1, t_parser *parser, char *label)
+static char	*rtv1_read_command(t_rtv1 *rtv1, t_parser *parser, char const *label)
 {
-	t_geom	shape;
+	t_shape	shape;
 
 	shape = none;
 	if (ft_strequ(label, "NONE"))
@@ -95,7 +101,7 @@ char		*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd)
 
 	parser->line = 1;
 	parser->file = NULL;
-	if (!(parser->file = read_file(fd)))
+	if (ft_readfile(fd, &parser->file, 0xFFFFFF))
 		return ("Couldn't read rt file");
 	parser->index = 0;
 	while (parser->file[parser->index])
@@ -107,7 +113,7 @@ char		*rtv1_read_file(t_rtv1 *rtv1, t_parser *parser, int fd)
 		while (parser->file[parser->index] &&
 			ft_isalpha(parser->file[parser->index]))
 			++(parser->index);
-		if (!parser->file[parser->index])
+		if (parser->file[parser->index] == '\0')
 			return ("Unexpected end of file after label");
 		parser->file[parser->index++] = '\0';
 		if ((error = rtv1_read_command(rtv1, parser, label)))

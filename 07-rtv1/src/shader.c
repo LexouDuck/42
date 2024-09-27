@@ -106,12 +106,12 @@ t_u32			render_shade(t_rtv1 *rtv1, t_ray *ray, t_shader *shader)
 	lst = rtv1->lights;
 	while (lst)
 	{
-		shader_setupray(shader, (t_light *)lst->content);
+		shader_setupray(shader, (t_light *)lst->item);
 		if (!(render & RENDER_SHADOWS) ||
 			!(render_trace(rtv1, &shader->ray, shader->ray.t, NULL)))
 		{
 			if (render & RENDER_DIFFUSE)
-				shader_diffuse(shader, (t_light *)lst->content);
+				shader_diffuse(shader, (t_light *)lst->item);
 			if (render & RENDER_SPECULAR)
 				shader_specular(shader, ray);
 		}

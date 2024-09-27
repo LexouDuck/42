@@ -26,15 +26,15 @@ void		render_debug(void *mlx, void *win, t_camera *camera)
 	mlx_string_put(mlx, win, 10, 40, color, "Vector:");
 	mlx_string_put(mlx, win, 60, 40, color, str);
 	free(str);
-	str = ft_ftoa(camera->lat, 8);
+	str = ft_f32_to_str(camera->lat, 8);
 	mlx_string_put(mlx, win, 10, 60, color, "Lat:");
 	mlx_string_put(mlx, win, 50, 60, color, str);
 	free(str);
-	str = ft_ftoa(camera->lon, 8);
+	str = ft_f32_to_str(camera->lon, 8);
 	mlx_string_put(mlx, win, 10, 80, color, "Lon:");
 	mlx_string_put(mlx, win, 50, 80, color, str);
 	free(str);
-	str = ft_ftoa(camera->zoom, 8);
+	str = ft_f32_to_str(camera->zoom, 8);
 	mlx_string_put(mlx, win, 10, 99, color, "Zoom:");
 	mlx_string_put(mlx, win, 50, 99, color, str);
 	free(str);
