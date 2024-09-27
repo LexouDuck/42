@@ -4,7 +4,7 @@ This is a simple program to view wireframe renderings of heightmaps
 
 ### format
 
-You can find test files in the `./tests` folder.
+You can find test files in the `./tests` folder, they have a `.fdf` extension.
 These are just simple height maps, i.e. matrices where each number represent altitude of a vertex.
 
 ### controls

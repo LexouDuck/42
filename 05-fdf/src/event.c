@@ -116,11 +116,11 @@ static int	event_key(int key, void *param)
 		exit(OK);
 	}
 	else if (key == KEY_DELETE)
-		camera->render += (camera->render & 4) ? -4 : 4;
+		camera->render += (camera->render & RENDER_COLOR) ? -RENDER_COLOR : RENDER_COLOR;
 	else if (key == KEY_HOME)
-		camera->render += (camera->render & 2) ? -2 : 2;
+		camera->render += (camera->render & RENDER_LINES) ? -RENDER_LINES : RENDER_LINES;
 	else if (key == KEY_END)
-		camera->render += (camera->render & 1) ? -1 : 1;
+		camera->render += (camera->render & RENDER_PERSP) ? -RENDER_PERSP : RENDER_PERSP;
 	else if (key == KEY_LEFT || key == KEY_RIGHT)
 		camera->anchor.x += (key == KEY_LEFT) ? -1 : 1;
 	else if (key == KEY_DOWN || key == KEY_UP)

@@ -28,10 +28,18 @@
 # include "libft/libft_list.h"
 # include "libft/libft_io.h"
 
+/*
+**	PROGRAM OPTIONS
+*/
+
 # define WIN_W	640
 # define WIN_H	480
 
 # define MAX_ZOOM	64
+
+/*
+**	TYPES
+*/
 
 typedef struct	s_point
 {
@@ -103,7 +111,7 @@ typedef struct	s_mlx
 }				t_mlx;
 
 /*
-**	====	complex.c
+**	complex.c
 */
 void			complex_add(t_complex *result,
 	t_complex const c1, t_complex const c2);
@@ -116,7 +124,7 @@ void			complex_div(t_complex *result,
 void			complex_pow(t_complex *result, t_complex const c, int n);
 
 /*
-**	====	color.c
+**	color.c
 */
 t_u32			color_new(t_u8 a, t_u8 r, t_u8 g, t_u8 b);
 t_u8			color_get_a(t_u32 color);
@@ -125,14 +133,14 @@ t_u8			color_get_g(t_u32 color);
 t_u8			color_get_b(t_u32 color);
 
 /*
-**	====	render.c
+**	render.c
 */
 
 int				handle_expose(void *param);
 void			render(t_mlx *mlx);
 
 /*
-**	====	palette.c
+**	palette.c
 */
 int				event_key_palette(t_mlx *mlx, int key);
 t_u32			palette_getcolor(t_palette const palette, int i, double n);
@@ -143,7 +151,7 @@ t_channel		palette_set_channel(
 	double		frequency);
 
 /*
-**	====	fractal.c
+**	fractal.c
 */
 t_u32			render_julia(
 	t_fractol *fractol, t_complex *z, t_complex *c);
@@ -157,7 +165,7 @@ t_u32			render_newton(
 	t_fractol *fractol, t_complex *z, t_complex *c);
 
 /*
-**	====	event.c
+**	event.c
 */
 int				setup_events(t_mlx *mlx);
 
