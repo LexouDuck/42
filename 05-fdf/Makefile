@@ -7,7 +7,7 @@ RESET	=	"\033[0m"
 RED		=	"\033[0;31m"
 GREEN	=	"\033[0;32m"
 
-LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_MAC)
+LIBS	=	$(LIBFT) $(LIBMATH) $(LIBMLX_WIN)
 
 LIBFT		=	-L$(LFTDIR) -lft
 LIBMATH		=	-lm

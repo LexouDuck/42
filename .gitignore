@@ -4,6 +4,7 @@ correc.*
 *.zip
 *.tar
 *.gif
+./docs/*
 
 # object files, link files and libraries
 *.o
